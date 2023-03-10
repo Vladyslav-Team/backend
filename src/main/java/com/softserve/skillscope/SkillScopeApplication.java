@@ -8,5 +8,4 @@ public class SkillScopeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SkillScopeApplication.class, args);
 	}
-
 }
