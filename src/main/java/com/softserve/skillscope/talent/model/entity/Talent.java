@@ -17,4 +17,9 @@ public class Talent {
     @Id
     @GeneratedValue
     private Integer id;
+
+    private String email;
+    private String password;
+    private String name;
+    private String surname;
 }
