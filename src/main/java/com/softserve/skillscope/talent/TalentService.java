@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TalentService {
     List<Talent> showAllTalents();
-    void crateTalent(Talent talent);
+    void createTalent(Talent talent);
     void updateTalent(Talent talent);
     void deleteTalent(int id);
 }

@@ -20,7 +20,7 @@ public class TalentServiceImpl implements TalentService {
     }
 
     @Override
-    public void crateTalent(Talent talent) {
+    public void createTalent(Talent talent) {
         talentRepo.save(talent);
     }
 
