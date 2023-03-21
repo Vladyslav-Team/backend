@@ -37,5 +37,5 @@ public class TalentInfo {
 
     private String education;
 
-    private String aboutMe;
+    private String about;
 }
