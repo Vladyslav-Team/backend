@@ -1,20 +1,28 @@
 package com.softserve.skillscope.talent.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Setter
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Talent {
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
+
+    private String email;
+
+    private String password;
+
+    private String name;
+
+    private String surname;
+
+    @OneToOne(mappedBy = "talent", cascade = CascadeType.ALL)
+    private TalentInfo talentInfo;
 }
