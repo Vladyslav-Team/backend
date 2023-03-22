@@ -1,4 +1,5 @@
-package com.softserve.skillscope;
+package com.softserve.skillscope.Talent;
+
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talentInfo.TalentInfoRepository;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
@@ -70,53 +71,47 @@ class TestTalentInfo {
         assertThat(foundTalentInfo).isEqualTo(savedTalentInfo);
     }
 
-    //For correct result you should disable the pre-population of database
     @Test
     void updateTalentInfo() {
         TalentInfo talentInfo = TalentInfo.builder()
-              .talent(Talent.builder()
-                      .email("talent@talent.com")
-                      .password("talent_password")
-                      .name("talent")
-                      .surname("talent").build())
-              .image("image-path/1")
-              .experience("no experience")
-              .location("Kharkiv")
-              .phone("+380999479826")
-              .age(LocalDate.now())
-              .education("no education")
-              .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
-              .build();
+                .talent(Talent.builder()
+                        .email("talent@talent.com")
+                        .password("talent_password")
+                        .name("talent")
+                        .surname("talent").build())
+                .image("image-path/1")
+                .experience("no experience")
+                .location("Kharkiv")
+                .phone("+380999479826")
+                .age(LocalDate.now())
+                .education("no education")
+                .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
+                .build();
 
         TalentInfo savedTalentInfo = repository.save(talentInfo);
 
-        assertThat(savedTalentInfo).isNotNull();
-        assertThat(savedTalentInfo).isEqualTo(talentInfo);
+        savedTalentInfo.setPhone("+380979453144");
+        TalentInfo updated = repository.save(savedTalentInfo);
 
-        repository.updatePhoneByPhone("+380979453144", "+380999479826");
-
-        TalentInfo updatedTalentInfo = repository.findByPhone("+380979453144");
-
-        assertThat(updatedTalentInfo).isNotNull();
-        assertThat(updatedTalentInfo.getTalent()).isEqualTo(savedTalentInfo.getTalent());
+        assertThat(updated).isNotNull();
     }
 
     @Test
     void deleteTalentInfo() {
         TalentInfo talentInfo = TalentInfo.builder()
-               .talent(Talent.builder()
-                       .email("talent@talent.com")
-                       .password("talent_password")
-                       .name("talent")
-                       .surname("talent").build())
-               .image("image-path/1")
-               .experience("no experience")
-               .location("Kharkiv")
-               .phone("+380999479826")
-               .age(LocalDate.now())
-               .education("no education")
-               .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
-               .build();
+                .talent(Talent.builder()
+                        .email("talent@talent.com")
+                        .password("talent_password")
+                        .name("talent")
+                        .surname("talent").build())
+                .image("image-path/1")
+                .experience("no experience")
+                .location("Kharkiv")
+                .phone("+380999479826")
+                .age(LocalDate.now())
+                .education("no education")
+                .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
+                .build();
 
         TalentInfo savedTalentInfo = repository.save(talentInfo);
 

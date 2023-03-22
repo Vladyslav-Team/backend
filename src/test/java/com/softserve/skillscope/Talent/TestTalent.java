@@ -51,7 +51,6 @@ class TestTalent {
         assertThat(foundTalent).isEqualTo(savedTalent);
     }
 
-    //For correct result you should disable the pre-population of database
     @Test
     void updateTalent() {
         Talent talent = Talent
@@ -63,8 +62,8 @@ class TestTalent {
                 .build();
         Talent savedTalent = repository.save(talent);
         savedTalent.setEmail("thenewtalent@talent.com");
-        repository.save(savedTalent);
-        assertThat(savedTalent).isNotNull();
+        Talent updatedTalent = repository.save(savedTalent);
+        assertThat(updatedTalent).isNotNull();
     }
 
     @Test

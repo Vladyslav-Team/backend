@@ -27,6 +27,7 @@ public class TalentInfo {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Talent talent;
 
+    @NotEmpty
     private String image;
 
     @Size(max = 254)
