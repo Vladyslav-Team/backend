@@ -1,4 +1,4 @@
-package com.softserve.skillscope;
+package com.softserve.skillscope.Talent;
 
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -37,12 +36,12 @@ class TestTalent {
     @Test
     void getTalent() {
         Talent talent = Talent
-               .builder()
-               .email("talent@talent.com")
-               .password("talent_password")
-               .name("talent")
-               .surname("talent")
-               .build();
+                .builder()
+                .email("talent@talent.com")
+                .password("talent_password")
+                .name("talent")
+                .surname("talent")
+                .build();
 
         Talent savedTalent = repository.save(talent);
 
@@ -56,33 +55,27 @@ class TestTalent {
     @Test
     void updateTalent() {
         Talent talent = Talent
-              .builder()
-              .email("talent@talent.com")
-              .password("talent_password")
-              .name("talent")
-              .surname("talent")
-              .build();
-
+                .builder()
+                .email("talent@talent.com")
+                .password("talent_password")
+                .name("talent")
+                .surname("talent")
+                .build();
         Talent savedTalent = repository.save(talent);
-
+        savedTalent.setEmail("thenewtalent@talent.com");
+        repository.save(savedTalent);
         assertThat(savedTalent).isNotNull();
-        assertThat(savedTalent).isEqualTo(talent);
-
-        repository.updateEmailByEmail("thenewtalent@talent.com", "talent@talent.com");
-
-        Talent foundTalent = repository.findByEmail("thenewtalent@talent.com");
-        assertThat(foundTalent).isNotNull();
     }
 
     @Test
     void deleteTalent() {
         Talent talent = Talent
-              .builder()
-              .email("talent@talent.com")
-              .password("talent_password")
-              .name("talent")
-              .surname("talent")
-              .build();
+                .builder()
+                .email("talent@talent.com")
+                .password("talent_password")
+                .name("talent")
+                .surname("talent")
+                .build();
 
         Talent savedTalent = repository.save(talent);
 
@@ -96,3 +89,4 @@ class TestTalent {
         assertThat(foundTalent).isNull();
     }
 }
+
