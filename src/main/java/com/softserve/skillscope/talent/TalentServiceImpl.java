@@ -2,13 +2,15 @@ package com.softserve.skillscope.talent;
 
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentFlashcard;
+
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.*;
-import java.util.ArrayList;
+
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -18,28 +20,15 @@ public class TalentServiceImpl implements TalentService {
     TalentRepository talentRepo;
 
     @Override
-    public List<TalentFlashcard> showAllTalents(){
-        List<TalentFlashcard> talentFlashcardList = new ArrayList<>();
-
-        try {
-            Connection con = DriverManager.getConnection ("jdbc:h2:mem:SkillScopeDB", "sa", "");
-            Statement stmt=con.createStatement();
-            ResultSet rs=stmt.executeQuery("SELECT * FROM TALENT JOIN TALENT_INFO ON TALENT.ID = TALENT_INFO.TALENT_ID;;");
-            while (rs.next()) {
-                Long id = rs.getLong("id");
-                String name = rs.getString("name");
-                String surname = rs.getString("surname");
-                String image = rs.getString("image");
-                String location = rs.getString("location");
-
-                TalentFlashcard talentData = new TalentFlashcard(id, name, surname, image, location);
-                talentFlashcardList.add(talentData);
-            }
-            con.close();
-        }
-        catch(Exception e)  {System.out.println("Отримано виняток "+e);}
-
-        return talentFlashcardList;
+    public List<TalentFlashcard> showAllTalents() {
+        return talentRepo.findAll().stream()
+                .map(talent -> new TalentFlashcard(
+                        talent.getId(),
+                        talent.getTalentInfo().getImage(),
+                        talent.getName(),
+                        talent.getSurname(),
+                        talent.getTalentInfo().getLocation()))
+                .collect(Collectors.toList());
     }
 
     @Override
