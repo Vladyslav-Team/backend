@@ -1,6 +1,7 @@
 package com.softserve.skillscope.talent;
 
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.entity.TalentFlashcard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,7 @@ public class TalentController {
     private TalentService talentService;
 
     @GetMapping("/talents")
-    public List<Talent> showAllTalents(){
+    public List<TalentFlashcard> showAllTalents(){
         return talentService.showAllTalents();
     }
 }
