@@ -7,9 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface TalentInfoRepository extends JpaRepository<TalentInfo, Long> {
-    TalentInfo findByPhone(String phone);
-    @Transactional
-    @Modifying
-    @Query("update TalentInfo t set t.phone = ?1 where t.phone = ?2")
-    void updatePhoneByPhone(String phone, String phone1);
+
 }
