@@ -17,7 +17,7 @@ or
 ```mvn install / mvn clean install```
 
 ### Run Spring Boot app using Maven:
-Now you can launch the server(default port is 8080, custom is 28852).
+Now you can launch the server(current one is 28852, default port is 8080).
 
 * run Spring Boot app using Maven:
 ```mvn spring-boot:run```
