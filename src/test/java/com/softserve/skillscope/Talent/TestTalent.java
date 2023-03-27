@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -17,6 +21,7 @@ class TestTalent {
 
     @Autowired
     TalentRepository repository;
+
     @Test
     void createTalent() {
         Talent talent = Talent
@@ -86,6 +91,15 @@ class TestTalent {
         Talent foundTalent = repository.findById(savedTalent.getId()).orElse(null);
 
         assertThat(foundTalent).isNull();
+    }
+
+    @Test
+    void getTalentsByPage() {
+        int pageNum = 3;
+        int pageSize = 3;
+        Page<Talent> page = repository.findAll(PageRequest.of(pageNum - 1, pageSize));
+        List<Talent> talents = page.getContent();
+        assertThat(talents.size()).isEqualTo(pageSize);
     }
 }
 
