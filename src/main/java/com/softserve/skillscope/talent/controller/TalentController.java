@@ -1,5 +1,6 @@
-package com.softserve.skillscope.talent;
+package com.softserve.skillscope.talent.controller;
 
+import com.softserve.skillscope.talent.service.interfaces.TalentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
