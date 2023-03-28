@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
 
@@ -28,6 +29,7 @@ public class TalentInfo {
     private Talent talent;
 
     @NotEmpty
+    @URL
     private String image;
 
     @Size(max = 254)

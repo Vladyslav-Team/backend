@@ -13,6 +13,8 @@ public interface TalentMapper {
                 .image(talent.getTalentInfo().getImage())
                 .name(talent.getName())
                 .surname(talent.getSurname())
-                .location(talent.getTalentInfo().getLocation()).build();
+                .location(talent.getTalentInfo().getLocation())
+                .experience(talent.getTalentInfo().getExperience())
+                .build();
     }
 }
