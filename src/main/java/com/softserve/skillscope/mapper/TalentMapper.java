@@ -1,17 +1,18 @@
 package com.softserve.skillscope.mapper;
 
+import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talent.model.entity.TalentFlashcard;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TalentMapper {
-    default TalentFlashcard toTalentFlashcard(Talent talent){
-        return new TalentFlashcard(talent.getId(),
-                talent.getTalentInfo().getImage(),
-                talent.getName(),
-                talent.getSurname(),
-                talent.getTalentInfo().getLocation());
+    default GeneralTalent toGeneralTalent(Talent talent) {
+        return GeneralTalent.builder()
+                .id(talent.getId())
+                .image(talent.getTalentInfo().getImage())
+                .name(talent.getName())
+                .surname(talent.getSurname())
+                .location(talent.getTalentInfo().getLocation()).build();
     }
 }
