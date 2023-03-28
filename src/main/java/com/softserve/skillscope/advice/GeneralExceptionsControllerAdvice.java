@@ -1,4 +1,4 @@
-package com.softserve.skillscope.exception.advice;
+package com.softserve.skillscope.advice;
 
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
