@@ -23,27 +23,34 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
-    private final TalentRepository repository;
+    private final TalentRepository talentRepo;
 
-    private final TalentInfoRepository infoRepository;
+    private final TalentInfoRepository talentInfoRepo;
+
     @Override
     public String registration(RegistrationRequest request) {
-        if (repository.existsByEmail(request.email())) {
+        if (talentRepo.existsByEmail(request.email())) {
             throw new TalentAlreadyExistsException();
         }
+
         Talent talent = Talent.builder()
                 .name(request.name())
                 .surname(request.surname())
                 .email(request.email())
                 .password(request.password())
                 .build();
-        TalentInfo info = TalentInfo.builder()
+
+        TalentInfo talentInfo = TalentInfo.builder()
+                .id(talent.getId())
                 .location(request.location())
                 .age(request.dateOfBirth())
+                .talent(talent)
                 .build();
-        talent.setTalentInfo(info);
-        //todo fix this
-        Talent savedTalent = repository.save(talent);
+
+        talent.setTalentInfo(talentInfo);
+        Talent savedTalent = talentRepo.save(talent);
+        talentInfoRepo.save(talentInfo);
+
 
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -58,8 +65,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String login(String username) {
-        Talent talent = repository.findByEmail(username).orElse(null);
-        if  (talent == null) {
+        Talent talent = talentRepo.findByEmail(username).orElse(null);
+        if (talent == null) {
             throw new TalentNotFoundException();
         }
         Instant now = Instant.now();

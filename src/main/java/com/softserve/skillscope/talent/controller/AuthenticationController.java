@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/talents")
 public class AuthenticationController {
     AuthenticationService authenticationService;
-    @PostMapping()
+    @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
     public String registration(@Valid @RequestBody RegistrationRequest request) {
         return authenticationService.registration(request);
