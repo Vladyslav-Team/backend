@@ -14,8 +14,10 @@ import lombok.*;
 @Entity
 public class Talent {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @OneToOne(mappedBy = "talent", cascade = CascadeType.ALL)
+    private TalentInfo talentInfo;
 
     @NotEmpty
     @Size(min = 5, max = 254)
@@ -32,7 +34,4 @@ public class Talent {
     @NotEmpty
     @Size(min = 1, max = 64)
     private String surname;
-
-    @OneToOne(mappedBy = "talent", cascade = CascadeType.ALL)
-    private TalentInfo talentInfo;
 }
