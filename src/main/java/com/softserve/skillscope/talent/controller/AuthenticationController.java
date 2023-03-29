@@ -2,11 +2,11 @@ package com.softserve.skillscope.talent.controller;
 
 import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
 import com.softserve.skillscope.talent.service.interfaces.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     AuthenticationService authenticationService;
     @PostMapping()
-    public String registration(RegistrationRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public String registration(@Valid @RequestBody RegistrationRequest request) {
         return authenticationService.registration(request);
     }
 
     @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
     public String login(Authentication authentication) {
         return authenticationService.login(authentication.getName());
     }
