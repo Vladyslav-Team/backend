@@ -6,7 +6,6 @@ import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.service.interfaces.AuthenticationService;
-import com.softserve.skillscope.talentInfo.TalentInfoRepository;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -25,8 +24,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
     private final TalentRepository talentRepo;
 
-    private final TalentInfoRepository talentInfoRepo;
-
     @Override
     public String registration(RegistrationRequest request) {
         if (talentRepo.existsByEmail(request.email())) {
@@ -41,16 +38,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
 
         TalentInfo talentInfo = TalentInfo.builder()
-                .id(talent.getId())
                 .location(request.location())
                 .age(request.dateOfBirth())
-                .talent(talent)
+                .image(checkEmptyImage(request))
                 .build();
 
+        talentInfo.setTalent(talent);
         talent.setTalentInfo(talentInfo);
-        Talent savedTalent = talentRepo.save(talent);
-        talentInfoRepo.save(talentInfo);
 
+        Talent savedTalent = talentRepo.save(talent);
 
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -78,5 +74,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .claim("id", talent.getId())
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    private String checkEmptyImage(RegistrationRequest request) {
+        return request.image() == null
+                ? "https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd" : request.image();
     }
 }
