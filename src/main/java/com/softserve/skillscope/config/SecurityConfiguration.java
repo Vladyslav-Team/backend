@@ -3,6 +3,8 @@ package com.softserve.skillscope.config;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.talent.TalentRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -51,10 +54,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/talents/{talent-id}").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/talents/logout").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/talents/{talent-id}").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/talents/{talent-id}").authenticated()
-                .anyRequest().denyAll());
+                .anyRequest().authenticated());
 
         //HTTP session state management
         http.sessionManagement().sessionCreationPolicy(STATELESS);
@@ -72,6 +72,15 @@ public class SecurityConfiguration {
                 .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
         );
         return http.build();
+    }
+
+    @Bean
+    UserDetailsService userDetailsService(
+            TalentRepository repository
+    ) {
+        return email -> repository.findByEmail(email)
+                .map(user -> new TalentDetailsImpl(user.getEmail(), passwordEncoder().encode(user.getPassword())))
+                .orElseThrow(() -> new TalentNotFoundException());
     }
 
     @Bean

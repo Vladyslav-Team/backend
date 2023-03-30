@@ -1,9 +1,10 @@
 package com.softserve.skillscope.talent.service.interfaces;
 
+import com.softserve.skillscope.talent.model.dto.JwtToken;
 import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
 
 public interface AuthenticationService {
-    String registration(RegistrationRequest registrationRequest);
+    JwtToken registration(RegistrationRequest registrationRequest);
 
-    String login(String username);
+    JwtToken login(String username);
 }

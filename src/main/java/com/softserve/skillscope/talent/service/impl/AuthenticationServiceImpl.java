@@ -4,6 +4,7 @@ import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsExc
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
+import com.softserve.skillscope.talent.model.dto.JwtToken;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.service.interfaces.AuthenticationService;
 import com.softserve.skillscope.talentInfo.TalentInfoRepository;
@@ -27,7 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final TalentInfoRepository infoRepository;
     @Override
-    public String registration(RegistrationRequest request) {
+    public JwtToken registration(RegistrationRequest request) {
         if (repository.existsByEmail(request.email())) {
             throw new TalentAlreadyExistsException();
         }
@@ -53,11 +54,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(request.email())
                 .claim("id", savedTalent.getId())
                 .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return JwtToken.builder().token(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue()).build();
     }
 
     @Override
-    public String login(String username) {
+    public JwtToken login(String username) {
         Talent talent = repository.findByEmail(username).orElse(null);
         if  (talent == null) {
             throw new TalentNotFoundException();
@@ -70,6 +71,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(username)
                 .claim("id", talent.getId())
                 .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        return new JwtToken(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
     }
 }

@@ -1,6 +1,7 @@
 package com.softserve.skillscope.talent.controller;
 
 import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
+import com.softserve.skillscope.talent.model.dto.JwtToken;
 import com.softserve.skillscope.talent.service.interfaces.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -15,13 +16,13 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public String registration(@Valid @RequestBody RegistrationRequest request) {
+    public JwtToken registration(@Valid @RequestBody RegistrationRequest request) {
         return authenticationService.registration(request);
     }
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public String login(Authentication authentication) {
+    public JwtToken login(Authentication authentication) {
         return authenticationService.login(authentication.getName());
     }
 }
