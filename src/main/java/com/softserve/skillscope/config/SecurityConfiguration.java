@@ -48,7 +48,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         //Routing security filter
         http.authorizeHttpRequests(req -> req
-                .requestMatchers(antMatcher("/h2/")).permitAll() //works only for testing
+                .requestMatchers(antMatcher("/h2/**")).permitAll() //works only for testing
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents/{talent-id}").permitAll()

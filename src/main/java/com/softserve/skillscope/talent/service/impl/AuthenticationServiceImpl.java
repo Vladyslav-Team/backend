@@ -3,11 +3,10 @@ package com.softserve.skillscope.talent.service.impl;
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
 import com.softserve.skillscope.talent.model.dto.JwtToken;
+import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.service.interfaces.AuthenticationService;
-import com.softserve.skillscope.talentInfo.TalentInfoRepository;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -24,12 +23,12 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
-    private final TalentRepository repository;
+    private final TalentRepository talentRepo;
 
-    private final TalentInfoRepository infoRepository;
+
     @Override
     public JwtToken registration(RegistrationRequest request) {
-        if (repository.existsByEmail(request.email())) {
+        if (talentRepo.existsByEmail(request.email())) {
             throw new TalentAlreadyExistsException();
         }
         Talent talent = Talent.builder()
@@ -38,13 +37,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.email())
                 .password(request.password())
                 .build();
-        TalentInfo info = TalentInfo.builder()
+
+        TalentInfo talentInfo = TalentInfo.builder()
                 .location(request.location())
                 .age(request.dateOfBirth())
+                .image(checkEmptyImage(request))
                 .build();
-        talent.setTalentInfo(info);
-        //todo fix this
-        Talent savedTalent = repository.save(talent);
+
+        talentInfo.setTalent(talent);
+        talent.setTalentInfo(talentInfo);
+
+        Talent savedTalent = talentRepo.save(talent);
+
 
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -59,8 +63,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtToken login(String username) {
-        Talent talent = repository.findByEmail(username).orElse(null);
-        if  (talent == null) {
+        Talent talent = talentRepo.findByEmail(username).orElse(null);
+        if (talent == null) {
             throw new TalentNotFoundException();
         }
         Instant now = Instant.now();
@@ -72,5 +76,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .claim("id", talent.getId())
                 .build();
         return new JwtToken(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
+    }
+
+    private String checkEmptyImage(RegistrationRequest request) {
+        return request.image() == null
+                ? "https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd" : request.image();
     }
 }

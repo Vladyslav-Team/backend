@@ -10,6 +10,8 @@ public record RegistrationRequest (
     String email,
     String password,
     String location,
+    String image,
+    //TODO @SEM Check if this field is necessary
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate dateOfBirth
 )

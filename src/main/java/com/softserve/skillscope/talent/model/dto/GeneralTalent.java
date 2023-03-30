@@ -9,6 +9,7 @@ public record GeneralTalent(
         @NotBlank String image,
         @NotBlank String name,
         @NotBlank String surname,
-        @NotBlank String location
+        @NotBlank String location,
+        @NotBlank String experience
 ) {
 }
