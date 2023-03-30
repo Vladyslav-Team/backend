@@ -41,8 +41,8 @@ public class TalentInfo {
 
     @Size(max = 16)
     private String phone;
-
-    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+//TODO: @SEM resolves problems with age
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 //    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private LocalDate age;
 

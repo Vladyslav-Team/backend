@@ -22,7 +22,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public JwtToken login(Authentication authentication) {
+    public JwtToken login(@Valid Authentication authentication) {
         return authenticationService.login(authentication.getName());
     }
 }
