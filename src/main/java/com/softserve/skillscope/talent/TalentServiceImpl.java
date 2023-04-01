@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,7 +24,8 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
         try {
-            Page<Talent> pageTalents = talentRepo.findAll(PageRequest.of(page - 1, talentProp.talentPageSize()));
+            Page<Talent> pageTalents =
+                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
             int totalPages = pageTalents.getTotalPages();
 
             if (page > totalPages) {
@@ -35,7 +35,6 @@ public class TalentServiceImpl implements TalentService {
             List<GeneralTalent> talents = new java.util.ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
                     .toList());
-            Collections.reverse(talents);
 
             return GeneralTalentResponse.builder()
                     .totalItems(pageTalents.getTotalElements())
