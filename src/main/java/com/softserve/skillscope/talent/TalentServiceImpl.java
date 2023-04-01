@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -31,9 +32,10 @@ public class TalentServiceImpl implements TalentService {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralTalent> talents = pageTalents.stream()
+            List<GeneralTalent> talents = new java.util.ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
-                    .toList();
+                    .toList());
+            Collections.reverse(talents);
 
             return GeneralTalentResponse.builder()
                     .totalItems(pageTalents.getTotalElements())
