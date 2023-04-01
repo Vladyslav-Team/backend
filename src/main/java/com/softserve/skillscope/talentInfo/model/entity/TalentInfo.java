@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Entity
 public class TalentInfo {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @MapsId
@@ -41,7 +41,9 @@ public class TalentInfo {
 
     @Size(max = 16)
     private String phone;
-
+    //TODO: @SEM resolves problems with age
+    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    //    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private LocalDate age;
 
     @Size(max = 64)
