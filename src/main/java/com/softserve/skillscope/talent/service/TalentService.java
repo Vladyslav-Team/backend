@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talent.service.interfaces;
+package com.softserve.skillscope.talent.service;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talent.model.dto;
+package com.softserve.skillscope.talent.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -11,8 +11,8 @@ public record RegistrationRequest (
     String password,
     String location,
     String image,
-    //TODO @SEM Check if this field is necessary
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     LocalDate dateOfBirth
 )
 {}

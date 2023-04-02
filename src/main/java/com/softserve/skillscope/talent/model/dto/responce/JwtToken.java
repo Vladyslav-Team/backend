@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talent.model.dto;
+package com.softserve.skillscope.talent.model.dto.responce;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

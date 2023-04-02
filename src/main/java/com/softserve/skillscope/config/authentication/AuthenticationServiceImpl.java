@@ -1,12 +1,11 @@
-package com.softserve.skillscope.talent.service.impl;
+package com.softserve.skillscope.config.authentication;
 
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.dto.JwtToken;
-import com.softserve.skillscope.talent.model.dto.RegistrationRequest;
+import com.softserve.skillscope.talent.model.dto.responce.JwtToken;
+import com.softserve.skillscope.talent.model.dto.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talent.service.interfaces.AuthenticationService;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

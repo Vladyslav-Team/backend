@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talent.model.dto;
+package com.softserve.skillscope.talent.model.dto.responce;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
