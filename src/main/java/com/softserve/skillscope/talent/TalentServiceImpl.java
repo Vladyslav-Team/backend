@@ -5,14 +5,13 @@ import com.softserve.skillscope.mapper.TalentMapper;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
+import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -23,26 +22,26 @@ public class TalentServiceImpl implements TalentService {
     private TalentMapper talentMapper;
 
     @Override
-    public Map<String, Object> getAllTalentsByPage(int page) {
+    public GeneralTalentResponse getAllTalentsByPage(int page) {
         try {
-            Page<Talent> pageTalents = talentRepo.findAll(PageRequest.of(page - 1, talentProp.talentPageSize()));
+            Page<Talent> pageTalents =
+                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
             int totalPages = pageTalents.getTotalPages();
 
             if (page > totalPages) {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralTalent> talentsList = pageTalents.stream()
+            List<GeneralTalent> talents = new java.util.ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
-                    .toList();
+                    .toList());
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("totalItems", pageTalents.getTotalElements());
-            response.put("talents", talentsList);
-            response.put("totalPages", totalPages);
-            response.put("currentPage", page);
-
-            return response;
+            return GeneralTalentResponse.builder()
+                    .totalItems(pageTalents.getTotalElements())
+                    .totalPage(totalPages)
+                    .currentPage(page)
+                    .talents(talents)
+                    .build();
 
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());

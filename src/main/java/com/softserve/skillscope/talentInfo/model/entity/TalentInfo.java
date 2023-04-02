@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talentInfo.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,7 +20,7 @@ import java.time.LocalDate;
 @Entity
 public class TalentInfo {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @MapsId
@@ -41,7 +42,8 @@ public class TalentInfo {
 
     @Size(max = 16)
     private String phone;
-
+    @NotEmpty
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate age;
 
     @Size(max = 64)
