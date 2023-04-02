@@ -42,7 +42,7 @@ public class TalentInfo {
 
     @Size(max = 16)
     private String phone;
-    @NotEmpty
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate age;
 

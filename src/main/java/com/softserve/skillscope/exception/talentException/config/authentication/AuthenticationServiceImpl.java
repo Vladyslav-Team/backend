@@ -1,4 +1,4 @@
-package com.softserve.skillscope.config.authentication;
+package com.softserve.skillscope.exception.talentException.config.authentication;
 
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
