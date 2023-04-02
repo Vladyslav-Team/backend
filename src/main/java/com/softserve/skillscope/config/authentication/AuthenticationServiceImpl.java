@@ -3,7 +3,7 @@ package com.softserve.skillscope.config.authentication;
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.responce.JwtToken;
+import com.softserve.skillscope.talent.model.response.JwtToken;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
