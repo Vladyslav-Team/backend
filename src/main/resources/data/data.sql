@@ -1,57 +1,57 @@
 -- Talent
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (1, 'Maksym@hotmail.com', '234lk5234asD', 'Maksym', 'Khudoliy')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Maksym@hotmail.com', '234lk5234asD', 'Maksym', 'Khudoliy')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (2, 'Oleksandr@gmail.com', '23422kl34', 'Oleksandr ', 'Butrym')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Oleksandr@gmail.com', '23422kl34', 'Oleksandr ', 'Butrym')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (3, 'Vladyslav@gmail.com', '23422kl34', 'Vladyslav ', 'Khrychov')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Vladyslav@gmail.com', '23422kl34', 'Vladyslav ', 'Khrychov')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (4, 'samerx777888@gmail.com', '6K87LJ9H6K7L8JH9', 'Samer', 'Khomsi Kak')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('samerx777888@gmail.com', '6K87LJ9H6K7L8JH9', 'Samer', 'Khomsi Kak')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (5, 'Illia7788@gmail.com', '6K87LJ9H6K7L8JH9', 'Illia', 'Kyselov')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Illia7788@gmail.com', '6K87LJ9H6K7L8JH9', 'Illia', 'Kyselov')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (6, 'Kyryl88@gmail.com', '6K87LJ9H6K7L21', 'Kyryl', 'Srebriakov')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Kyryl88@gmail.com', '6K87LJ9H6K7L21', 'Kyryl', 'Srebriakov')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (7, 'Kyryl88@gmail.com', '6K87LJ9H6K7L21', 'Denys', 'Panfilovskyi')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Kyryl88@gmail.com', '6K87LJ9H6K7L21', 'Denys', 'Panfilovskyi')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (8, 'Oleksandra21@gmail.com', '6K87LJ9H6K7L21', 'Oleksandra', 'Hryshchenko')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Oleksandra21@gmail.com', '6K87LJ9H6K7L21', 'Oleksandra', 'Hryshchenko')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (9, 'Kyryl88@gmail.com', '6K87LJ9H6K7L21', 'Daria ', 'Hontar')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Kyryl88@gmail.com', '6K87LJ9H6K7L21', 'Daria ', 'Hontar')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (10, 'Yarik@stehr.com', '6K87LJ9H6K7L8JH9', 'Yarik', 'Usenko')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Yarik@stehr.com', '6K87LJ9H6K7L8JH9', 'Yarik', 'Usenko')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (11, 'Vladislav@stehr.com', '6K87LJ9H6K7L8JH9', 'Vladislav', 'Zabilskij')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Vladislav@stehr.com', '6K87LJ9H6K7L8JH9', 'Vladislav', 'Zabilskij')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (12, 'Olesia@stehr.com', '6K87LJ9H6K7L8JH9', 'Olesia', 'Polezhai')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Olesia@stehr.com', '6K87LJ9H6K7L8JH9', 'Olesia', 'Polezhai')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (13, 'Bohdan@stehr.com', '6K87LJ9H6K7L8JH9', 'Bohdan', 'Anashkin')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Bohdan@stehr.com', '6K87LJ9H6K7L8JH9', 'Bohdan', 'Anashkin')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (14, 'Billy@stehr.com', '6K87LJ9H6K7L8JH9', 'Billy', 'Herrington')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Billy@stehr.com', '6K87LJ9H6K7L8JH9', 'Billy', 'Herrington')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (15, 'Darkholme@sauer.biz', '2k4lj5h633jh6', 'Van', 'Darkholme')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Darkholme@sauer.biz', '2k4lj5h633jh6', 'Van', 'Darkholme')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (16, 'Steve@hotmail.com', 'jl3hb456kjb6mn345', 'Steve', 'Rambo')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Steve@hotmail.com', 'jl3hb456kjb6mn345', 'Steve', 'Rambo')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (17, 'Sylvester@langworth.com', '2jk345hljh34l56', 'Sylvester', 'Stallone')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('Sylvester@langworth.com', '2jk345hljh34l56', 'Sylvester', 'Stallone')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (18, 'morton67@cremin.net', 'kj34l5kj6h4j5hg', 'Dolph', 'Lundgren')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('morton67@cremin.net', 'kj34l5kj6h4j5hg', 'Dolph', 'Lundgren')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (19, 'daugherty.emanuel@gmail.com', 'klj24h56kjhg36457kj6hg', 'Van', 'Damme')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('daugherty.emanuel@gmail.com', 'klj24h56kjhg36457kj6hg', 'Van', 'Damme')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (20, 'jordan14@dare.net', 'kj34h56ljh45765jkl', 'Arnold', 'Schwarzenegger')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('jordan14@dare.net', 'kj34h56ljh45765jkl', 'Arnold', 'Schwarzenegger')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (21, 'medhurst.kiera@bartell.com', 'lk587kmn67m8', 'Ricardo', 'Milos')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('medhurst.kiera@bartell.com', 'lk587kmn67m8', 'Ricardo', 'Milos')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (22, 'dusty@gmail.com', 'jkh456l7kjh4l5', 'Denys', 'Karpenko')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('dusty@gmail.com', 'jkh456l7kjh4l5', 'Denys', 'Karpenko')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (23, 'llssgqi@mydefipet.live', '234m56n34lk5j7h54', 'Svyatoslav', 'Hryshchenkovskii')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('llssgqi@mydefipet.live', '234m56n34lk5j7h54', 'Svyatoslav', 'Hryshchenkovskii')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (24, 'vmpecko@femailtor.com', '45nb674n5b67,nb', 'Vitalii', 'Kharechko')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('vmpecko@femailtor.com', '45nb674n5b67,nb', 'Vitalii', 'Kharechko')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (25, 'aypztmpcovdzylqkd@gmail.com', '23n54gbkj3254ngmn', 'Ayton', 'Crouford')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('aypztmpcovdzylqkd@gmail.com', '23n54gbkj3254ngmn', 'Ayton', 'Crouford')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (26, 'dustofappearance678@gmail.com', '2345bg6kmnb34', 'Leonardo', 'Biller')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('dustofappearance678@gmail.com', '2345bg6kmnb34', 'Leonardo', 'Biller')
 
-INSERT INTO TALENT (id, email, password, name, surname) VALUES (27, 'alexandercaripo631@gmail.com', 'jh34lkj65hb3jn54b', 'Alexander', 'Caripo')
+INSERT INTO TALENT (email, password, name, surname) VALUES ('alexandercaripo631@gmail.com', 'jh34lkj65hb3jn54b', 'Alexander', 'Caripo')
 
 --Talent info
 INSERT INTO TALENT_INFO (talent_id, image, experience, location, phone, age, education, about) VALUES (1, 'https://drive.google.com/uc?export=view&id=1278-BQmUxr8cd9LBhz1ZSNAgrPXAdO8k', 'Top secret', 'Ukraine', '+380677236263', '1998-02-13', 'SoftServe', 'ac tincidunt lorem consectetur in. Nam quis leo elit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam fermentum sed eros sit amet hendrerit. ')
@@ -107,4 +107,3 @@ INSERT INTO TALENT_INFO (talent_id, image, experience, location, phone, age, edu
 INSERT INTO TALENT_INFO (talent_id, image, experience, location, phone, age, education, about) VALUES (26, 'https://thumbs.dreamstime.com/b/smart-man-showing-okay-sign-handsome-young-ok-over-white-32991125.jpg', 'no experience', 'Odessa', '+380960608974', '2003-11-13', 'KhNURE', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sem lacus, dapibus eu justo nec, dapibus imperdiet quam. Morbi dictum aliquam efficitur. Pellentesque')
 
 INSERT INTO TALENT_INFO (talent_id, image, experience, location, phone, age, education, about) VALUES (27, 'https://media.istockphoto.com/id/175440771/photo/handsome-young-man-gesturing-thumbs-up-isolated.jpg?s=612x612&w=0&k=20&c=RMLEXPrDjwFg7uPb_Ri3KqpYF0BAEPjzloAB81viyCk=', 'no experience', 'Kyiv', '+380506654299', '1992-04-06', 'ZDMU', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.')
-

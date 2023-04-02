@@ -1,7 +1,8 @@
-package com.softserve.skillscope.talent;
+package com.softserve.skillscope.talent.service;
 
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.mapper.TalentMapper;
+import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;

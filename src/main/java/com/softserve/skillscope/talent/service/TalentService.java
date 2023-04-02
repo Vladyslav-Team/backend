@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talent;
+package com.softserve.skillscope.talent.service;
 
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 
