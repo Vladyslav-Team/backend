@@ -1,4 +1,4 @@
-package com.softserve.skillscope.exception.talentException.config.authentication;
+package com.softserve.skillscope.config.authentication;
 
 import com.softserve.skillscope.talent.model.response.JwtToken;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;

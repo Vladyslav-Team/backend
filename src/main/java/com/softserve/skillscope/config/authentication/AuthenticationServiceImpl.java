@@ -1,4 +1,4 @@
-package com.softserve.skillscope.exception.talentException.config.authentication;
+package com.softserve.skillscope.config.authentication;
 
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
@@ -41,6 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .location(request.location())
                 .age(request.dateOfBirth())
                 .image(checkEmptyImage(request))
+                .experience("Not mention yet")
                 .build();
 
         talentInfo.setTalent(talent);

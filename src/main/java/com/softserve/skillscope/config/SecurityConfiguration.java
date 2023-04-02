@@ -1,4 +1,4 @@
-package com.softserve.skillscope.exception.talentException.config;
+package com.softserve.skillscope.config;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

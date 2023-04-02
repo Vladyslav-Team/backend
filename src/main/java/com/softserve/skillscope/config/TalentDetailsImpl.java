@@ -1,4 +1,4 @@
-package com.softserve.skillscope.exception.talentException.config;
+package com.softserve.skillscope.config;
 
 
 import org.springframework.security.core.GrantedAuthority;
