@@ -42,9 +42,7 @@ public class TalentInfo {
 
     @Size(max = 16)
     private String phone;
-
-    //TODO: @SEM resolves problems with age
-    //@Illia Kyselov in addition to @S
+    @NotEmpty
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate age;
 

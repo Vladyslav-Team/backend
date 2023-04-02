@@ -1,7 +1,7 @@
 package com.softserve.skillscope.talent.service;
 
-import java.util.Map;
+import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 
 public interface TalentService {
-    Map<String, Object> getAllTalentsByPage(int page);
+    GeneralTalentResponse getAllTalentsByPage(int page);
 }

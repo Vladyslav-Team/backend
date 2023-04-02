@@ -1,5 +1,6 @@
-package com.softserve.skillscope.talent.controller;
+package com.softserve.skillscope.talent;
 
+import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.service.TalentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ public class TalentController {
 
     @GetMapping("/talents")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, Object> showAllTalents(@RequestParam(defaultValue = "1") int page) {
+    public GeneralTalentResponse showAllTalents(@RequestParam(defaultValue = "1") int page) {
         return talentService.getAllTalentsByPage(page);
     }
 }
