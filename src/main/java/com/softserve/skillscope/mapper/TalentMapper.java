@@ -1,6 +1,6 @@
 package com.softserve.skillscope.mapper;
 
-import com.softserve.skillscope.talent.model.dto.responce.GeneralTalent;
+import com.softserve.skillscope.talent.model.responce.GeneralTalent;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

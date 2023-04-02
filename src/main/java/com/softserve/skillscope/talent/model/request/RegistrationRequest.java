@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talent.model.dto.request;
+package com.softserve.skillscope.talent.model.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
