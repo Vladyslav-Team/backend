@@ -10,7 +10,7 @@ import java.util.List;
 public record GeneralTalentResponse(
         @JsonProperty("totalItems")
         long totalItems,
-        @JsonProperty("totalPage")
+        @JsonProperty("totalPages")
         int totalPage,
         @JsonProperty("currentPage")
         int currentPage,
