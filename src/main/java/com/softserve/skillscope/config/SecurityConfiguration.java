@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                 .requestMatchers(antMatcher("/h2/**")).permitAll() //works only for testing
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
-                .requestMatchers(HttpMethod.GET, "/talents/{talent-id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/talents/{talent-id}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents/login").permitAll()
                 .anyRequest().authenticated());

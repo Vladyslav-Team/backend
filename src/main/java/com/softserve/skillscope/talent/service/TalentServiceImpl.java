@@ -1,9 +1,11 @@
 package com.softserve.skillscope.talent.service;
 
 import com.softserve.skillscope.exception.generalException.BadRequestException;
+import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.mapper.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
+import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
@@ -47,5 +49,10 @@ public class TalentServiceImpl implements TalentService {
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
+    }
+
+    @Override
+    public TalentProfile getTalentProfile(Long talentId) {
+        return talentMapper.toTalentProfile(talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new));
     }
 }
