@@ -1,15 +1,19 @@
 package com.softserve.skillscope.talent.service;
 
 import com.softserve.skillscope.exception.generalException.BadRequestException;
+import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.mapper.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
+import com.softserve.skillscope.talent.model.response.DeletedTalent;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +51,17 @@ public class TalentServiceImpl implements TalentService {
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
+    }
+
+
+    @Override
+    public DeletedTalent delete(Long talentId) {
+        Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+        if (!talent.getEmail().equals((SecurityContextHolder.getContext().getAuthentication()).getName())){
+            throw new ForbiddenRequestException();
+        }
+        talentRepo.delete(talent);
+        return new DeletedTalent(talentId);
+
     }
 }
