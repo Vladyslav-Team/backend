@@ -26,7 +26,7 @@ public class AuthenticationController {
     public JwtToken login(@Valid Authentication authentication) {
         return authenticationService.login(authentication.getName());
     }
-
+//Added some logic
     @GetMapping("/logout")
     @ResponseStatus(HttpStatus.OK)
     public void logout(Authentication authentication) {
