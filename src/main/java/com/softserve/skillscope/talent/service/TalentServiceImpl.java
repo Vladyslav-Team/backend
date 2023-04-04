@@ -7,6 +7,7 @@ import com.softserve.skillscope.exception.talentException.TalentNotFoundExceptio
 import com.softserve.skillscope.mapper.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
+import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.response.DeletedTalent;
@@ -56,6 +57,11 @@ public class TalentServiceImpl implements TalentService {
     }
 
 
+    @Override
+    public TalentProfile getTalentProfile(Long talentId) {
+        return talentMapper.toTalentProfile(talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new));
+    }
+    
     @Override
     public DeletedTalent delete(Long talentId) {
         Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
