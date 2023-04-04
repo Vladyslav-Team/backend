@@ -1,4 +1,4 @@
-package com.softserve.skillscope.config.authentication;
+package com.softserve.skillscope.authentication;
 
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
@@ -6,16 +6,19 @@ import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsExc
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.response.JwtToken;
-import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -29,6 +32,8 @@ import java.util.Map;
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
     private final TalentRepository talentRepo;
+    private final TalentProperties talentProps;
+    private final PasswordEncoder passwordEncoder;
 
     private Map<String, String> verifiedTokens = new HashMap<>();
 
@@ -41,14 +46,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .name(request.name())
                 .surname(request.surname())
                 .email(request.email())
-                .password(request.password())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
 
         TalentInfo talentInfo = TalentInfo.builder()
                 .location(request.location())
-                .age(request.dateOfBirth())
+                .age(request.birthday())
                 .image(checkEmptyImage(request))
-                .experience("Not mention yet")
+                .experience("Experience is not mention")
                 .build();
 
         talentInfo.setTalent(talent);
@@ -98,6 +103,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private String checkEmptyImage(RegistrationRequest request) {
         return request.image() == null
-                ? "https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd" : request.image();
+                ? talentProps.defaultImage() : request.image();
     }
 }
