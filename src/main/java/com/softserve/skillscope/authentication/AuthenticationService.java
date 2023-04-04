@@ -1,4 +1,4 @@
-package com.softserve.skillscope.config.authentication;
+package com.softserve.skillscope.authentication;
 
 import com.softserve.skillscope.talent.model.response.JwtToken;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
@@ -6,5 +6,5 @@ import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 public interface AuthenticationService {
     JwtToken registration(RegistrationRequest registrationRequest);
 
-    JwtToken login(String username);
+    JwtToken signIn(String username);
 }

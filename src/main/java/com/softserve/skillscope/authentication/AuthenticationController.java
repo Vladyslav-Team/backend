@@ -1,4 +1,4 @@
-package com.softserve.skillscope.config.authentication;
+package com.softserve.skillscope.authentication;
 
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.response.JwtToken;
@@ -21,7 +21,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public JwtToken login(@Valid Authentication authentication) {
-        return authenticationService.login(authentication.getName());
+    public JwtToken signIn(@Valid Authentication authentication) {
+        return authenticationService.signIn(authentication.getName());
     }
 }
