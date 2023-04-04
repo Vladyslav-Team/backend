@@ -1,24 +1,22 @@
 package com.softserve.skillscope.authentication;
 
-import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.response.JwtToken;
+import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
