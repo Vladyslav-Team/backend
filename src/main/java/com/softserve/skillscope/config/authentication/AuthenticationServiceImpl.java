@@ -69,7 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public JwtToken login(String username) {
+    public JwtToken signIn(String username) {
         Talent talent = talentRepo.findByEmail(username).orElse(null);
         if (talent == null) {
             throw new TalentNotFoundException();
@@ -87,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void logout(String details) {
+    public void signOut(String details) {
         if (verifiedTokens.containsKey(details)) {
             verifiedTokens.remove(details);
         }

@@ -6,7 +6,7 @@ import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 public interface AuthenticationService {
     JwtToken registration(RegistrationRequest registrationRequest);
 
-    JwtToken login(String username);
+    JwtToken signIn(String username);
 
-    void logout(String details);
+    void signOut(String details);
 }

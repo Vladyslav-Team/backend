@@ -23,12 +23,12 @@ public class AuthenticationController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public JwtToken signIn(@Valid Authentication authentication) {
-        return authenticationService.login(authentication.getName());
+        return authenticationService.signIn(authentication.getName());
     }
 //Added some logic
     @GetMapping("/logout")
     @ResponseStatus(HttpStatus.OK)
-    public void logout(Authentication authentication) {
-        authenticationService.logout(authentication.getName());
+    public void signOut(Authentication authentication) {
+        authenticationService.signOut(authentication.getName());
     }
 }
