@@ -7,4 +7,5 @@ public interface AuthenticationService {
     JwtToken registration(RegistrationRequest registrationRequest);
 
     JwtToken login(String username);
+    String usernameCurrentTalent();
 }

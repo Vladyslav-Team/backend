@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talent.service;
 
+import com.softserve.skillscope.config.authentication.AuthenticationService;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
@@ -25,6 +26,7 @@ public class TalentServiceImpl implements TalentService {
 
     private TalentRepository talentRepo;
     private TalentMapper talentMapper;
+    private AuthenticationService authenticationService;
 
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
@@ -57,11 +59,10 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public DeletedTalent delete(Long talentId) {
         Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
-        if (!talent.getEmail().equals((SecurityContextHolder.getContext().getAuthentication()).getName())){
+        if (!talent.getEmail().equalsIgnoreCase(authenticationService.usernameCurrentTalent())){
             throw new ForbiddenRequestException();
         }
         talentRepo.delete(talent);
         return new DeletedTalent(talentId);
-
     }
 }
