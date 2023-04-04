@@ -16,9 +16,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +27,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class TalentServiceImpl implements TalentService {
     private TalentProperties talentProp;
+
     private TalentRepository talentRepo;
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
@@ -60,7 +61,17 @@ public class TalentServiceImpl implements TalentService {
 
     @Override
     public TalentProfile getTalentProfile(Long talentId) {
-        return talentMapper.toTalentProfile(talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new));
+        return talentMapper.toTalentProfile(findTalentById(talentId));
+    }
+
+    @Override
+    public TalentResponse delete(Long talentId) {
+        Talent talent = findTalentById(talentId);
+        if (!isCurrentTalent(talent)){
+            throw new ForbiddenRequestException();
+        }
+        talentRepo.delete(talent);
+        return new TalentResponse(talentId, "Deleted successfully!");
     }
 
     @Transactional
