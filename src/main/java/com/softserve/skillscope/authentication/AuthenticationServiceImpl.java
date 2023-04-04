@@ -45,7 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .location(request.location())
                 .age(request.birthday())
                 .image(checkEmptyImage(request))
-                .experience("Not mention yet")
+                .experience("Experience is not mention")
                 .build();
 
         talentInfo.setTalent(talent);

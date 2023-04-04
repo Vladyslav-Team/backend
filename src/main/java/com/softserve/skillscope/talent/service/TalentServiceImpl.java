@@ -16,9 +16,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +27,6 @@ import java.util.Objects;
 @AllArgsConstructor
 public class TalentServiceImpl implements TalentService {
     private TalentProperties talentProp;
-
     private TalentRepository talentRepo;
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
@@ -67,7 +66,7 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public TalentResponse delete(Long talentId) {
         Talent talent = findTalentById(talentId);
-        if (!isCurrentTalent(talent)){
+        if (isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
         }
         talentRepo.delete(talent);
@@ -78,12 +77,12 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public TalentResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
         Talent talent = findTalentById(talentId);
-        if (!isCurrentTalent(talent)) {
+        if (isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
         }
-        boolean isPasswordSame = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
+        boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
 
-        if (!isPasswordSame)
+        if (!isSamePassword)
             talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
 
         talent.setName(talentToUpdate.name());
@@ -122,8 +121,8 @@ public class TalentServiceImpl implements TalentService {
                 .orElseThrow(TalentNotFoundException::new);
     }
 
-    private boolean isCurrentTalent(Talent talent) {
+    private boolean isNotCurrentTalent(Talent talent) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return email.equalsIgnoreCase(talent.getEmail());
+        return !email.equalsIgnoreCase(talent.getEmail());
     }
 }
