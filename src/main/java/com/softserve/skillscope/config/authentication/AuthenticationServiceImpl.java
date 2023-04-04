@@ -1,14 +1,17 @@
 package com.softserve.skillscope.config.authentication;
 
+import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.response.JwtToken;
-import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.request.RegistrationRequest;
+import com.softserve.skillscope.talent.model.response.JwtToken;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -16,14 +19,18 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional
 @AllArgsConstructor
+@Getter
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
     private final TalentRepository talentRepo;
 
+    private Map<String, String> verifiedTokens = new HashMap<>();
 
     @Override
     public JwtToken registration(RegistrationRequest request) {
@@ -49,7 +56,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Talent savedTalent = talentRepo.save(talent);
 
-
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")
@@ -58,6 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(request.email())
                 .claim("id", savedTalent.getId())
                 .build();
+        verifiedTokens.put(request.email(), jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
         return JwtToken.builder().token(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue()).build();
     }
 
@@ -75,7 +82,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .subject(username)
                 .claim("id", talent.getId())
                 .build();
+        verifiedTokens.put(username, jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
         return new JwtToken(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
+    }
+
+    @Override
+    public void logout(String details) {
+        if (verifiedTokens.containsKey(details)) {
+            verifiedTokens.remove(details);
+        }
+        else {
+            throw new UnauthorizedUserException();
+        }
     }
 
     private String checkEmptyImage(RegistrationRequest request) {
