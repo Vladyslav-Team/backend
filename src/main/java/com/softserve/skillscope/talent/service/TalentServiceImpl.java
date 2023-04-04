@@ -1,6 +1,5 @@
 package com.softserve.skillscope.talent.service;
 
-import com.softserve.skillscope.config.authentication.AuthenticationService;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
@@ -10,8 +9,8 @@ import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
-import com.softserve.skillscope.talent.model.response.DeletedTalent;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
+import com.softserve.skillscope.talent.model.response.TalentResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +26,6 @@ public class TalentServiceImpl implements TalentService {
 
     private TalentRepository talentRepo;
     private TalentMapper talentMapper;
-    private AuthenticationService authenticationService;
 
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
@@ -59,16 +57,26 @@ public class TalentServiceImpl implements TalentService {
 
     @Override
     public TalentProfile getTalentProfile(Long talentId) {
-        return talentMapper.toTalentProfile(talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new));
+        return talentMapper.toTalentProfile(findTalentById(talentId));
     }
     
     @Override
-    public DeletedTalent delete(Long talentId) {
-        Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
-        if (!talent.getEmail().equalsIgnoreCase(authenticationService.usernameCurrentTalent())){
+    public TalentResponse delete(Long talentId) {
+        Talent talent = findTalentById(talentId);
+        if (!isCurrentTalent(talent)){
             throw new ForbiddenRequestException();
         }
         talentRepo.delete(talent);
-        return new DeletedTalent(talentId);
+        return new TalentResponse(talentId, "Deleted successfully!");
+    }
+
+    private Talent findTalentById(Long id) {
+        return talentRepo.findById(id)
+                .orElseThrow(TalentNotFoundException::new);
+    }
+
+    private boolean isCurrentTalent(Talent talent) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return email.equalsIgnoreCase(talent.getEmail());
     }
 }

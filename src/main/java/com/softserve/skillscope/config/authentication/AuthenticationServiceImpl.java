@@ -9,7 +9,6 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -82,10 +81,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String checkEmptyImage(RegistrationRequest request) {
         return request.image() == null
                 ? "https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd" : request.image();
-    }
-
-    @Override
-    public String usernameCurrentTalent(){
-        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }
