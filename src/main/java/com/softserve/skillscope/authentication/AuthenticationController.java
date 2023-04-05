@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/talents")
 public class AuthenticationController {
     AuthenticationService authenticationService;
+
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public JwtToken registration(@Valid @RequestBody RegistrationRequest request) {
@@ -23,5 +24,11 @@ public class AuthenticationController {
     @ResponseStatus(HttpStatus.OK)
     public JwtToken signIn(@Valid Authentication authentication) {
         return authenticationService.signIn(authentication.getName());
+    }
+
+    @GetMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void signOut(Authentication authentication) {
+        authenticationService.signOut(authentication.getName());
     }
 }
