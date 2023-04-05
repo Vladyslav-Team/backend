@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public JwtToken registration(@Valid @RequestBody RegistrationRequest request) {
         return authenticationService.registration(request);
