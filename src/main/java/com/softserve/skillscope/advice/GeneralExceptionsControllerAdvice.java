@@ -1,5 +1,6 @@
 package com.softserve.skillscope.advice;
 
+import com.softserve.skillscope.exception.ErrorDTO;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
@@ -15,14 +16,14 @@ public class GeneralExceptionsControllerAdvice {
 
     @ExceptionHandler(ForbiddenRequestException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<String> forbiddenRequestExceptionHandler(ForbiddenRequestException exception) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
+    public ResponseEntity<ErrorDTO> forbiddenRequestExceptionHandler(ForbiddenRequestException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(UnauthorizedUserException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<String> unauthorizedUserExceptionHandler(UnauthorizedUserException exception) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
+    public ResponseEntity<ErrorDTO> unauthorizedUserExceptionHandler(UnauthorizedUserException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(BadRequestException.class)
