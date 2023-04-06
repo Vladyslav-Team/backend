@@ -103,9 +103,7 @@ public class TalentServiceImpl implements TalentService {
      */
     @Override
     public TalentImageResponse getTalentImage(Long talentId) {
-        Talent talent = findTalentById(talentId);
-        if (isNotCurrentTalent(talent)) throw new ForbiddenRequestException();
-        return talentMapper.toTalentImage(talent);
+        return talentMapper.toTalentImage(findTalentById(talentId));
     }
 
     /*
