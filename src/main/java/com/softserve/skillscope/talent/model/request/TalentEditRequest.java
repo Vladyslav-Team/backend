@@ -19,7 +19,6 @@ public record TalentEditRequest(
         @NotBlank(message = "Surname mustn't be blank ")
         @Size(min = 1, max = 64, message = "Surname must be less than 64 characters and more than 1")
         String surname,
-        @URL
         String image,
         @Size(max = 254, message = "Experience must be less than 254 characters")
         String experience,

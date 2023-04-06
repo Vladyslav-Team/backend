@@ -30,7 +30,6 @@ public class TalentInfo {
     private Talent talent;
 
     @NotEmpty
-    @URL
     private String image;
 
     @Size(max = 254)
