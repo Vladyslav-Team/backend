@@ -11,6 +11,7 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
+import com.softserve.skillscope.talent.model.response.TalentImageResponse;
 import com.softserve.skillscope.talent.model.response.TalentResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -94,6 +95,15 @@ public class TalentServiceImpl implements TalentService {
         Talent saveTalent = talentRepo.save(talent);
 
         return new TalentResponse(saveTalent.getId(), "Edited successfully!");
+    }
+
+    /*
+     * This method returns String with talent's image, so frontend can draw the avatar.
+     * Check if it's the image of own talent, in another case forbidden to get it.
+     */
+    @Override
+    public TalentImageResponse getTalentImage(Long talentId) {
+        return talentMapper.toTalentImage(findTalentById(talentId));
     }
 
     /*
