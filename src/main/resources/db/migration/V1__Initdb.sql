@@ -23,3 +23,27 @@ CREATE TABLE talent_info
 
 ALTER TABLE talent_info
     ADD CONSTRAINT FK_TALENTINFO_ON_TALENT FOREIGN KEY (talent_id) REFERENCES talent (id) ON DELETE CASCADE;
+
+
+CREATE TABLE Proof (
+    Id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    publication_date DATE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    talent_id INT NOT NULL,
+    CONSTRAINT fk_talent FOREIGN KEY (talent_id) REFERENCES Talent(Id) ON DELETE CASCADE
+);
+
+CREATE DOMAIN ProofStatus AS VARCHAR(20) CHECK (VALUE IN ('DRAFT', 'HIDDEN', 'PUBLISHED'));
+
+/*CREATE TABLE Proof (*/
+/*    id SERIAL PRIMARY KEY NOT NULL,*/
+/*    publication_date DATE,*/
+/*    title VARCHAR(255) NOT NULL,*/
+/*    description TEXT NOT NULL,*/
+/*    status ProofStatus NOT NULL,*/
+/*    talent_id INT NOT NULL REFERENCES Talent(Id) ON DELETE CASCADE*/
+/*);*/
+/**/
+/*CREATE TYPE ProofStatus AS ENUM ('DRAFT', 'HIDDEN', 'PUBLISHED');*/
