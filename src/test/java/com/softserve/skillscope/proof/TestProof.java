@@ -1,6 +1,7 @@
 package com.softserve.skillscope.proof;
 
-import com.softserve.skillscope.proof.entity.Proof;
+import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.transaction.Transactional;
@@ -19,9 +20,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class TestProof {
 
     @Autowired
-    ProofRepository proofRepository;
+    ProofRepository proofTestRepository;
     @Autowired
-    TalentRepository talentRepository;
+    TalentRepository talentTestRepository;
 
     @Test
     void createProof(){
@@ -36,10 +37,12 @@ class TestProof {
                 .publicationDate(LocalDate.now())
                 .title("Test Title")
                 .description("Test Description")
+                .status(ProofStatus.DRAFT)
+                //.proofStatus(ProofStatus.HIDDEN)
                 .build();
 
-        Talent savedTalent = talentRepository.save(talent);
-        Proof savedProof = proofRepository.save(proof);
+        Talent savedTalent = talentTestRepository.save(talent);
+        Proof savedProof = proofTestRepository.save(proof);
 
         assertThat(savedProof).isNotNull();
         assertThat(savedProof).isEqualTo(proof);
@@ -58,15 +61,16 @@ class TestProof {
                 .publicationDate(LocalDate.now())
                 .title("Test Title")
                 .description("Test Description")
+                .status(ProofStatus.DRAFT)
                 .build();
 
-        Talent savedTalent = talentRepository.save(talent);
-        Proof savedProof = proofRepository.save(proof);
+        Talent savedTalent = talentTestRepository.save(talent);
+        Proof savedProof = proofTestRepository.save(proof);
 
         assertThat(savedProof).isNotNull();
         assertThat(savedProof).isEqualTo(proof);
 
-        Proof foundProof = proofRepository.findById(savedProof.getId()).get();
+        Proof foundProof = proofTestRepository.findById(savedProof.getId()).get();
 
         assertThat(savedProof).isNotNull();
         assertThat(foundProof).isEqualTo(savedProof);
@@ -85,13 +89,14 @@ class TestProof {
                 .publicationDate(LocalDate.now())
                 .title("Test Title")
                 .description("Test Description")
+                .status(ProofStatus.DRAFT)
                 .build();
 
-        Talent savedTalent = talentRepository.save(talent);
-        Proof savedProof = proofRepository.save(proof);
+        Talent savedTalent = talentTestRepository.save(talent);
+        Proof savedProof = proofTestRepository.save(proof);
 
         savedProof.setTitle("New title");
-        Proof updated = proofRepository.save(savedProof);
+        Proof updated = proofTestRepository.save(savedProof);
 
         assertThat(updated).isNotNull();
     }
@@ -109,17 +114,18 @@ class TestProof {
                 .publicationDate(LocalDate.now())
                 .title("Test Title")
                 .description("Test Description")
+                .status(ProofStatus.DRAFT)
                 .build();
 
-        Talent savedTalent = talentRepository.save(talent);
-        Proof savedProof = proofRepository.save(proof);
+        Talent savedTalent = talentTestRepository.save(talent);
+        Proof savedProof = proofTestRepository.save(proof);
 
         assertThat(savedProof).isNotNull();
         assertThat(savedProof).isEqualTo(proof);
 
-        proofRepository.delete(savedProof);
+        proofTestRepository.delete(savedProof);
 
-        Proof foundProof = proofRepository.findById(savedProof.getId()).orElse(null);
+        Proof foundProof = proofTestRepository.findById(savedProof.getId()).orElse(null);
 
         assertThat(foundProof).isNull();
     }

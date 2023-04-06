@@ -1,6 +1,6 @@
 package com.softserve.skillscope.proof;
 
-import com.softserve.skillscope.proof.entity.Proof;
+import com.softserve.skillscope.proof.model.entity.Proof;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
