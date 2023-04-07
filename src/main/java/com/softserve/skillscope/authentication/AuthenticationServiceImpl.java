@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         TalentInfo talentInfo = TalentInfo.builder()
                 .location(request.location())
-                .age(request.birthday())
+                .birthday(request.birthday())
                 .image(checkEmptyImage(request))
                 .experience("Experience is not mention")
                 .build();
