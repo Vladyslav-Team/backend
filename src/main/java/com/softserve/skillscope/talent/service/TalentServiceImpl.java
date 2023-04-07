@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -118,7 +117,7 @@ public class TalentServiceImpl implements TalentService {
                 talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
             }
         }
-        if (!Objects.equals(talent.getTalentInfo().getImage(), talentToUpdate.image()))
+        if (talentToUpdate.image() != null)
             talent.getTalentInfo().setImage(talentToUpdate.image());
 
         if (talentToUpdate.about() != null)
