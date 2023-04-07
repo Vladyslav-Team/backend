@@ -14,11 +14,12 @@ public class ProofServiceImpl implements ProofService{
     private ProofRepository proofRepo;
 
     @Override
-    public void setProofStatus(Proof proof, ProofStatus status) {
-        if (Arrays.stream(ProofStatus.values()).noneMatch(s -> s == status)) {
-            throw new IllegalArgumentException("Invalid status: " + status);
+    public ProofStatus setProofStatus(ProofStatus status) {
+        for(ProofStatus validProofStatus : ProofStatus.values()){
+            if(validProofStatus == status){
+                return status;
+            }
         }
-        proof.setStatus(status);
-        proofRepo.save(proof);
+        throw new IllegalArgumentException("Invalid status: + status");
     }
 }
