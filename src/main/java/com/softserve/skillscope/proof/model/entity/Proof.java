@@ -6,13 +6,13 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 @Setter
 @Getter
@@ -45,21 +45,4 @@ public class Proof {
     @Column(name = "status")
     @NotNull
     private ProofStatus status;
-
-
-    public void setProofStatus(ProofStatus status) {
-        boolean validStatus = false;
-        for (ProofStatus validProofStatus : ProofStatus.values()) {
-            if (validProofStatus == status) {
-                validStatus = true;
-                break;
-            }
-        }
-        if (!validStatus) {
-            throw new IllegalArgumentException("Invalid status: " + status);
-        }
-        this.status = status;
-    }
-
-
 }
