@@ -20,6 +20,6 @@ public class ProofServiceImpl implements ProofService{
                 return status;
             }
         }
-        throw new IllegalArgumentException("Invalid status: + status");
+        throw new IllegalArgumentException("Invalid status:" + status);
     }
 }
