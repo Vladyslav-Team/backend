@@ -50,7 +50,11 @@ public class TalentController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void uploadImage(@PathVariable("talent_id") Long talentId, @RequestParam MultipartFile file) {
-        talentService.uploadTalentProfileImage(talentId, file);
+        try {
+            talentService.uploadTalentProfileImage(talentId, file);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping(path = "/{talent_id}/image/download")
