@@ -48,7 +48,14 @@ public class Proof {
 
 
     public void setProofStatus(ProofStatus status) {
-        if (status != ProofStatus.DRAFT && status != ProofStatus.HIDDEN && status != ProofStatus.PUBLISHED) {
+        boolean validStatus = false;
+        for (ProofStatus validProofStatus : ProofStatus.values()) {
+            if (validProofStatus == status) {
+                validStatus = true;
+                break;
+            }
+        }
+        if (!validStatus) {
             throw new IllegalArgumentException("Invalid status: " + status);
         }
         this.status = status;
