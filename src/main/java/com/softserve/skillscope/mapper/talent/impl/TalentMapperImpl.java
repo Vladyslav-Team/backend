@@ -1,6 +1,6 @@
-package com.softserve.skillscope.mapper.impl;
+package com.softserve.skillscope.mapper.talent.impl;
 
-import com.softserve.skillscope.mapper.TalentMapper;
+import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -35,7 +35,7 @@ public class TalentMapperImpl implements TalentMapper {
                 .location(talent.getTalentInfo().getLocation())
                 .about(talent.getTalentInfo().getAbout())
                 .education(talent.getTalentInfo().getEducation())
-                .age(Period.between(talent.getTalentInfo().getAge(), LocalDate.now()).getYears())
+                .age(Period.between(talent.getTalentInfo().getBirthday(), LocalDate.now()).getYears())
                 .email(talent.getEmail())
                 .phone(talent.getTalentInfo().getPhone())
                 .build();

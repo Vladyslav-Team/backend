@@ -3,6 +3,8 @@ package com.softserve.skillscope.talent.model.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
+import java.time.LocalDate;
+
 @Builder
 public record TalentProfile(
         @NotBlank Long id,
