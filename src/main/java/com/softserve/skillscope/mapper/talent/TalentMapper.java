@@ -1,4 +1,4 @@
-package com.softserve.skillscope.mapper;
+package com.softserve.skillscope.mapper.talent;
 
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;

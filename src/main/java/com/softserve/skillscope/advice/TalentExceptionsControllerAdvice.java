@@ -17,10 +17,4 @@ public class TalentExceptionsControllerAdvice {
     public ResponseEntity<ErrorDTO> talentAlreadyExistsExceptionHandler(TalentAlreadyExistsException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
-
-    @ExceptionHandler(TalentNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorDTO> talentNotFoundExceptionExceptionHandler(TalentNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
-    }
 }
