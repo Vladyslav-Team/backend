@@ -56,6 +56,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents/login").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/talents/{talent-id}").authenticated()
+                .requestMatchers(HttpMethod.GET, "/proofs/{proof-id}").authenticated()
                 .anyRequest().authenticated());
 
         //HTTP session state management

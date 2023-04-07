@@ -28,9 +28,9 @@ public class TalentController {
         return talentService.getTalentProfile(talentId);
     }
 
-     @DeleteMapping("/talents/{talent-id}")
+    @DeleteMapping("/talents/{talent-id}")
     @ResponseBody
-     TalentResponse delete(@PathVariable("talent-id") Long talentId) {
+    TalentResponse delete(@PathVariable("talent-id") Long talentId) {
         return talentService.delete(talentId);
     }
 

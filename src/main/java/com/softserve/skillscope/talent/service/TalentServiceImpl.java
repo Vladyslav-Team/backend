@@ -3,7 +3,7 @@ package com.softserve.skillscope.talent.service;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
-import com.softserve.skillscope.mapper.TalentMapper;
+import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
@@ -80,15 +80,6 @@ public class TalentServiceImpl implements TalentService {
         if (isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
         }
-        boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
-
-        if (!isSamePassword)
-            talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
-
-        talent.setName(talentToUpdate.name());
-        talent.setSurname(talentToUpdate.surname());
-        talent.getTalentInfo().setLocation(talentToUpdate.location());
-        talent.getTalentInfo().setAge(talentToUpdate.birthday());
 
         checkIfFieldsNotEmpty(talentToUpdate, talent);
         Talent saveTalent = talentRepo.save(talent);
@@ -100,6 +91,24 @@ public class TalentServiceImpl implements TalentService {
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
     private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
+        if (talentToUpdate.name() != null)
+            talent.setName(talentToUpdate.name());
+
+        if (talentToUpdate.surname() != null)
+            talent.setSurname(talentToUpdate.surname());
+
+        if (talentToUpdate.location() != null)
+            talent.getTalentInfo().setLocation(talentToUpdate.location());
+
+        if (talentToUpdate.birthday() != null)
+            talent.getTalentInfo().setAge(talentToUpdate.birthday());
+
+        if (talentToUpdate.password() != null) {
+            boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
+            if (!isSamePassword) {
+                talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
+            }
+        }
         if (!Objects.equals(talent.getTalentInfo().getImage(), talentToUpdate.image()))
             talent.getTalentInfo().setImage(talentToUpdate.image());
 
