@@ -110,7 +110,7 @@ public class TalentServiceImpl implements TalentService {
             talent.getTalentInfo().setLocation(talentToUpdate.location());
 
         if (talentToUpdate.birthday() != null)
-            talent.getTalentInfo().setAge(talentToUpdate.birthday());
+            talent.getTalentInfo().setBirthday(talentToUpdate.birthday());
 
         if (talentToUpdate.password() != null) {
             boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
