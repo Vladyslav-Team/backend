@@ -1,6 +1,6 @@
 package com.softserve.skillscope.talent.service;
 
-import com.softserve.skillscope.amazon_s3.S3Service;
+import com.softserve.skillscope.amazon_s3.S3ServiceImpl;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
@@ -17,7 +17,6 @@ import com.softserve.skillscope.talent.model.response.TalentResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.http.entity.ContentType;
-import org.imgscalr.Scalr;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,9 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +38,7 @@ public class TalentServiceImpl implements TalentService {
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
 
-    private S3Service s3Service; //todo to replace with interface
+    private S3ServiceImpl s3ServiceImpl;
 
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
@@ -140,7 +136,7 @@ public class TalentServiceImpl implements TalentService {
     }
 
     @Override
-    public void uploadImage(Long talentId, MultipartFile file) {
+    public void uploadTalentProfileImage(Long talentId, MultipartFile file) {
         Talent talent = findTalentById(talentId);
         if (isNotCurrentTalent(talent)) {
             throw new UnauthorizedUserException();
@@ -148,10 +144,10 @@ public class TalentServiceImpl implements TalentService {
         isFileEmpty(file);
         isFileImage(file);
 
-        String path = String.format("%s/%s", s3Service.getBucketName(), talentId);
+        String path = String.format("%s/%s", s3ServiceImpl.getBucketName(), talentId);
         String filename = String.format("%s-%s", file.getName(), UUID.randomUUID());
         try {
-            s3Service.save(path, filename, file.getInputStream());
+            s3ServiceImpl.save(path, filename, file.getInputStream());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -167,6 +163,36 @@ public class TalentServiceImpl implements TalentService {
                 talent.getTalentInfo().getAge(),
                 talent.getTalentInfo().getPhone()
                 ));
+    }
+
+    @Override
+    public List<String> getAllImages() {
+        return s3ServiceImpl.listAllFiles();
+    }
+
+    @Override
+    public byte[] downloadTalentProfileImage(Long talentId) {
+        Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+        String path = String.format("%s/%s", talentId, talent.getTalentInfo().getImage());
+        return s3ServiceImpl.download(path);
+    }
+
+    public void deleteTalentProfileImage(Long talentId) {
+        Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+        String path = String.format("%s/%s", talentId, talent.getTalentInfo().getImage());
+        s3ServiceImpl.deleteFile(path);
+        editTalentProfile(talentId, new TalentEditRequest(
+                talent.getPassword(),
+                talent.getName(),
+                talent.getSurname(),
+                "here should be the path of default talent profile image",
+                talent.getTalentInfo().getExperience(),
+                talent.getTalentInfo().getLocation(),
+                talent.getTalentInfo().getAbout(),
+                talent.getTalentInfo().getEducation(),
+                talent.getTalentInfo().getAge(),
+                talent.getTalentInfo().getPhone()
+        ));
     }
 
     private void isFileImage(MultipartFile file) {

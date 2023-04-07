@@ -4,11 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
 
 @Builder
+@Setter
+@Getter
 public record TalentEditRequest(
         @NotBlank(message = "Password mustn't be blank ")
         @Size(min = 5, max = 64, message = "Password must be less than 64 characters and more than 5")

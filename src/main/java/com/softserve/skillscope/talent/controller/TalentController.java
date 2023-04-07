@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 public class TalentController {
@@ -48,6 +50,21 @@ public class TalentController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void uploadImage(@PathVariable("talent_id") Long talentId, @RequestParam MultipartFile file) {
-        talentService.uploadImage(talentId, file);
+        talentService.uploadTalentProfileImage(talentId, file);
+    }
+
+    @GetMapping(path = "/{talent_id}/image/download")
+    public byte[] downloadImage(@PathVariable("talent_id") Long talentId) {
+        return talentService.downloadTalentProfileImage(talentId);
+    }
+
+    @DeleteMapping("/{talent_id}/image/delete")
+    public void deleteTalentProfileImage(@PathVariable("talent_id") Long talentId) {
+        talentService.deleteTalentProfileImage(talentId);
+    }
+
+    @GetMapping("/images")
+    public List<String> getAllFiles() {
+        return talentService.getAllImages();
     }
 }
