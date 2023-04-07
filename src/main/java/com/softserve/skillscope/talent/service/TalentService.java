@@ -6,6 +6,7 @@ import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface TalentService {
@@ -13,7 +14,7 @@ public interface TalentService {
     TalentResponse delete(Long talentId);
     TalentProfile getTalentProfile(Long talentId);
     TalentResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate);
-    void uploadTalentProfileImage(Long talentId, MultipartFile file);
+    void uploadTalentProfileImage(Long talentId, MultipartFile file) throws Exception;
     byte[] downloadTalentProfileImage(Long talentId);
     void deleteTalentProfileImage(Long talentId);
     List<String> getAllImages();

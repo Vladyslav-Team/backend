@@ -17,6 +17,7 @@ import com.softserve.skillscope.talent.model.response.TalentResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.http.entity.ContentType;
+import org.imgscalr.Scalr;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -144,13 +147,29 @@ public class TalentServiceImpl implements TalentService {
         isFileEmpty(file);
         isFileImage(file);
 
+        BufferedImage resizedImage = null;
+        try {
+            resizedImage = resizeImage(ImageIO.read(file.getInputStream()), 300);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        File newfile = new File(file.getName());
+        try {
+            ImageIO.write(resizedImage, "jpg", newfile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        InputStream targetStream = null;
+        try {
+            targetStream = new FileInputStream(newfile);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         String path = String.format("%s/%s", s3ServiceImpl.getBucketName(), talentId);
         String filename = String.format("%s-%s", file.getName(), UUID.randomUUID());
-        try {
-            s3ServiceImpl.save(path, filename, file.getInputStream());
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        s3ServiceImpl.save(path, filename, targetStream);
+
         editTalentProfile(talentId, new TalentEditRequest(
                 talent.getPassword(),
                 talent.getName(),
@@ -208,5 +227,9 @@ public class TalentServiceImpl implements TalentService {
         if (file.isEmpty()) {
             throw new IllegalStateException("Image is empty");
         }
+    }
+
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth) throws Exception {
+        return Scalr.resize(originalImage, targetWidth);
     }
 }
