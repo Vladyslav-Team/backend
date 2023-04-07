@@ -89,7 +89,7 @@ public class TalentServiceImpl implements TalentService {
         talent.setName(talentToUpdate.name());
         talent.setSurname(talentToUpdate.surname());
         talent.getTalentInfo().setLocation(talentToUpdate.location());
-        talent.getTalentInfo().setAge(talentToUpdate.birthday());
+        talent.getTalentInfo().setBirthday(talentToUpdate.birthday());
 
         checkIfFieldsNotEmpty(talentToUpdate, talent);
         Talent saveTalent = talentRepo.save(talent);

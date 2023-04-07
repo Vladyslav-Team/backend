@@ -15,7 +15,6 @@ public record TalentProfile(
         @NotBlank String location,
         @NotBlank String about,
         @NotBlank String education,
-        @NotBlank LocalDate birthday,
         @NotBlank int age,
         @NotBlank String email,
         @NotBlank String phone
