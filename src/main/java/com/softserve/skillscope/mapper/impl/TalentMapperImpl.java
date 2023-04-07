@@ -4,6 +4,7 @@ import com.softserve.skillscope.mapper.TalentMapper;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.response.TalentImageResponse;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -41,4 +42,8 @@ public class TalentMapperImpl implements TalentMapper {
                 .build();
     }
 
+    @Override
+    public TalentImageResponse toTalentImage(Talent talent) {
+        return new TalentImageResponse(talent.getTalentInfo().getImage());
+    }
 }
