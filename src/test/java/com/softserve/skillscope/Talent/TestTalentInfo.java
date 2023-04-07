@@ -32,7 +32,7 @@ class TestTalentInfo {
                 .experience("no experience")
                 .location("Kharkiv")
                 .phone("+380999479826")
-                .age(LocalDate.now())
+                .birthday(LocalDate.now())
                 .education("no education")
                 .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
                 .build();
@@ -55,7 +55,7 @@ class TestTalentInfo {
                 .experience("no experience")
                 .location("Kharkiv")
                 .phone("+380999479826")
-                .age(LocalDate.now())
+                .birthday(LocalDate.now())
                 .education("no education")
                 .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
                 .build();
@@ -83,7 +83,7 @@ class TestTalentInfo {
                 .experience("no experience")
                 .location("Kharkiv")
                 .phone("+380999479826")
-                .age(LocalDate.now())
+                .birthday(LocalDate.now())
                 .education("no education")
                 .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
                 .build();
@@ -108,7 +108,7 @@ class TestTalentInfo {
                 .experience("no experience")
                 .location("Kharkiv")
                 .phone("+380999479826")
-                .age(LocalDate.now())
+                .birthday(LocalDate.now())
                 .education("no education")
                 .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
                 .build();
