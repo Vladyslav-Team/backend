@@ -44,7 +44,7 @@ public class TalentInfo {
     private String phone;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate age;
+    private LocalDate birthday;
 
     @Size(max = 64)
     private String education;
