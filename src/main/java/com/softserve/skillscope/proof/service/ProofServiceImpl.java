@@ -42,9 +42,9 @@ public class ProofServiceImpl implements ProofService {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralProof> proofs = pageProofs.stream()
+            List<GeneralProof> proofs = new java.util.ArrayList<>(pageProofs.stream()
                     .map(proofMapper::toGeneralProof)
-                    .toList();
+                    .toList());
 
             return GeneralProofResponse.builder()
                     .totalItems(pageProofs.getTotalElements())
