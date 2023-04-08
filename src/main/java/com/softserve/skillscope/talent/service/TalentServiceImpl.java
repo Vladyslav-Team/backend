@@ -3,6 +3,7 @@ package com.softserve.skillscope.talent.service;
 import com.softserve.skillscope.amazon_s3.S3ServiceImpl;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.generalException.S3Exception;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.mapper.TalentMapper;
@@ -146,24 +147,25 @@ public class TalentServiceImpl implements TalentService {
         }
         isFileEmpty(file);
         isFileImage(file);
-
+        //Write this code just like this, because if we add exception to the method signature we should use try-catch
+        // block every time when we will use this method, so it is convinient to place try-catch blocks here
         BufferedImage resizedImage = null;
         try {
             resizedImage = resizeImage(ImageIO.read(file.getInputStream()), 300);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new S3Exception();
         }
         File newfile = new File(file.getName());
         try {
             ImageIO.write(resizedImage, "jpg", newfile);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new S3Exception();
         }
         InputStream targetStream = null;
         try {
             targetStream = new FileInputStream(newfile);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new S3Exception();
         }
 
         String path = String.format("%s/%s", s3ServiceImpl.getBucketName(), talentId);
@@ -229,7 +231,7 @@ public class TalentServiceImpl implements TalentService {
         }
     }
 
-    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth) throws Exception {
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth) {
         return Scalr.resize(originalImage, targetWidth);
     }
 }

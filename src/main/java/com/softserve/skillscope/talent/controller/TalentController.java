@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talent.controller;
 
+import com.softserve.skillscope.exception.generalException.S3Exception;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
@@ -53,7 +54,7 @@ public class TalentController {
         try {
             talentService.uploadTalentProfileImage(talentId, file);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new S3Exception();
         }
     }
 

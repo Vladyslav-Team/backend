@@ -1,8 +1,9 @@
 package com.softserve.skillscope.advice;
 
 import com.softserve.skillscope.exception.ErrorDTO;
-import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
+import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.generalException.S3Exception;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +31,17 @@ public class GeneralExceptionsControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseStatusException pageNotFoundExceptionHandler(BadRequestException exception) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    @ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
+    public ResponseEntity<ErrorDTO> s3BucketExceptionHandler(S3Exception exception) {
+        return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(new ErrorDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(IllegalAccessError.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorDTO> illegalStateExceptionHandler(IllegalStateException exception) {
+        return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(new ErrorDTO(exception.getMessage()));
     }
 }
