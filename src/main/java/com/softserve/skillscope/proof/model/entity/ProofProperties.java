@@ -5,7 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "proof")
 public record ProofProperties(
-        int proofPageSize,
         ProofStatus defaultType
 ) {
 }
