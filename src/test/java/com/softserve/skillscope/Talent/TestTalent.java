@@ -1,8 +1,5 @@
 package com.softserve.skillscope.Talent;
 
-import com.softserve.skillscope.proof.ProofRepository;
-import com.softserve.skillscope.proof.model.entity.Proof;
-import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.transaction.Transactional;
@@ -13,11 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -26,9 +21,6 @@ class TestTalent {
 
     @Autowired
     TalentRepository repository;
-    @Autowired
-    ProofRepository proofTestRepository;
-
 
     @Test
     void createTalent() {
@@ -108,32 +100,6 @@ class TestTalent {
         Page<Talent> page = repository.findAll(PageRequest.of(pageNum - 1, pageSize));
         List<Talent> talents = page.getContent();
         assertThat(talents.size()).isEqualTo(pageSize);
-    }
-
-    @Test
-    void getTalentProofs(){
-        Talent talent = Talent
-                .builder()
-                .email("talent@talent.com")
-                .password("talent_password")
-                .name("talent")
-                .surname("talent")
-                .build();
-
-        Talent savedTalent = repository.save(talent);
-
-        Proof proof1 = new Proof(1L, talent, LocalDate.now(), "Proof 1", "Description of proof 1", ProofStatus.DRAFT);
-        proofTestRepository.save(proof1);
-
-        Proof proof2 = new Proof(2L, talent, LocalDate.now(), "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED);
-        proofTestRepository.save(proof2);
-
-        Proof proof3 = new Proof(3L, talent, LocalDate.now(), "Proof 3", "Description of proof 3", ProofStatus.HIDDEN);
-        proofTestRepository.save(proof3);
-
-        List<Proof> proofList = proofTestRepository.findByTalentId(talent.getId());
-        assertEquals(3, proofList.size());
-        proofList.forEach(proof -> assertEquals(talent, proof.getTalent()));
     }
 }
 

@@ -52,13 +52,8 @@ public class SecurityConfiguration {
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents/{talent-id}").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/talents/{talent-id}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/talent/image/{talent-id}").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/talents/{talent-id}").authenticated()
-                .requestMatchers(HttpMethod.GET, "/proofs").permitAll()
-                .requestMatchers(HttpMethod.GET, "/proofs/{proof-id}").authenticated()
                 .anyRequest().authenticated());
 
         //HTTP session state management
@@ -73,17 +68,19 @@ public class SecurityConfiguration {
         //Configure JWT-filter
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .exceptionHandling(c -> c
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-                );
+                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+        );
         return http.build();
     }
 
     @Bean
-    UserDetailsService userDetailsService(TalentRepository repository) {
+    UserDetailsService userDetailsService(
+            TalentRepository repository
+    ) {
         return email -> repository.findByEmail(email)
-                .map(user -> new TalentDetailsImpl(user.getEmail(), user.getPassword()))
-                .orElseThrow(TalentNotFoundException::new);
+                .map(user -> new TalentDetailsImpl(user.getEmail(), passwordEncoder().encode(user.getPassword())))
+                .orElseThrow(() -> new TalentNotFoundException());
     }
 
     @Bean
@@ -127,7 +124,6 @@ public class SecurityConfiguration {
             }
         };
     }
-
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
