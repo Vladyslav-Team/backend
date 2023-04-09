@@ -20,15 +20,15 @@ public class ProofController {
     }
 
     @GetMapping("/proofs")
-    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, boolean newest) {
-        return proofService.getAllProofByPage(page, newest);
+    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest){
+        return proofService.getAllProofByPage(Optional.ofNullable(null), page, newest.orElse(true));
     }
 
     @GetMapping("/talents/{talent-id}/proofs")
     @ResponseStatus(HttpStatus.OK)
     public GeneralProofResponse showAllProofsByTalentId(@PathVariable("talent-id") Long talentId,
                                                         @RequestParam(defaultValue = "1") Optional<Integer> page,
-                                                        Optional<Boolean> sortByNewest) {
-        return proofService.getAllProofByPage(page.orElse(1), sortByNewest.orElse(true));
+                                                        @RequestParam(name = "newest") Optional<Boolean> newest) {
+        return proofService.getAllProofByPage(Optional.of(talentId), page.orElse(1), newest.orElse(true));
     }
 }

@@ -2,6 +2,7 @@ package com.softserve.skillscope.proof.service;
 
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
+import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
@@ -10,6 +11,7 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
+import com.softserve.skillscope.talent.TalentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +19,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
+    private TalentRepository talentRepo;
     private ProofRepository proofRepo;
     private ProofMapper proofMapper;
     private ProofProperties proofProp;
@@ -29,13 +33,22 @@ public class ProofServiceImpl implements ProofService {
     public FullProof getFullProof(Long proofId) {
         return proofMapper.toFullProof(findProofById(proofId));
     }
-
     @Override
-    public GeneralProofResponse getAllProofByPage(int page, boolean newest) {
+    public GeneralProofResponse getAllProofByPage(Optional<Long> talentIdWrapper, int page, boolean newest) {
+
         try {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
 
-            Page<Proof> pageProofs = proofRepo.findAll(PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
+            Page<Proof> pageProofs = null;
+            if (talentIdWrapper.isEmpty()) {
+                pageProofs = proofRepo.findAll(PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
+            }
+            else {
+                if (!talentRepo.existsById(talentIdWrapper.get())) {
+                    throw new TalentNotFoundException();
+                }
+                pageProofs = proofRepo.findByTalent_Id(talentIdWrapper.get() ,PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort));
+            }
             int totalPages = pageProofs.getTotalPages();
 
             if (page > totalPages) {
@@ -52,8 +65,8 @@ public class ProofServiceImpl implements ProofService {
                     .currentPage(page)
                     .proofs(proofs)
                     .build();
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
     }
