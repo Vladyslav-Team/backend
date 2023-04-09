@@ -18,4 +18,9 @@ public class ProofController {
     public FullProof showFullProof(@PathVariable("proof-id") Long proofId) {
         return proofService.getFullProof(proofId);
     }
+
+    @GetMapping
+    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, boolean newest){
+        return proofService.getAllProofByPage(page, newest);
+    }
 }

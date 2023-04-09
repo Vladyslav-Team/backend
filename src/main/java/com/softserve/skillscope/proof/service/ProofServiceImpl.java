@@ -20,6 +20,34 @@ public class ProofServiceImpl implements ProofService {
         return proofMapper.toFullProof(findProofById(proofId));
     }
 
+    @Override
+    public GeneralProofResponse getAllProofByPage(int page, boolean newest) {
+        try {
+            Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
+
+            Page<Proof> pageProofs = proofRepo.findAll(PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
+            int totalPages = pageProofs.getTotalPages();
+
+            if (page > totalPages) {
+                throw new BadRequestException("Page index must not be bigger than expected");
+            }
+
+            List<GeneralProof> proofs = pageProofs.stream()
+                    .map(proofMapper::toGeneralProof)
+                    .toList();
+
+            return GeneralProofResponse.builder()
+                    .totalItems(pageProofs.getTotalElements())
+                    .totalPage(totalPages)
+                    .currentPage(page)
+                    .proofs(proofs)
+                    .build();
+
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
+    }
+
     public ProofStatus setProofStatus(ProofStatus status) {
         for (ProofStatus validProofStatus : ProofStatus.values()) {
             if (validProofStatus == status) {
