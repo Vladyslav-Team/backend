@@ -1,19 +1,29 @@
 package com.softserve.skillscope.proof.service;
 
+import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
+import com.softserve.skillscope.proof.model.dto.GeneralProof;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.proof.model.entity.ProofProperties;
+import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
     private ProofRepository proofRepo;
     private ProofMapper proofMapper;
+    private ProofProperties proofProp;
 
     @Override
     public FullProof getFullProof(Long proofId) {
