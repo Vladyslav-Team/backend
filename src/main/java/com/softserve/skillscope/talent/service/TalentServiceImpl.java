@@ -42,9 +42,9 @@ public class TalentServiceImpl implements TalentService {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralTalent> talents = pageTalents.stream()
+            List<GeneralTalent> talents = new java.util.ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
-                    .toList();
+                    .toList());
 
             return GeneralTalentResponse.builder()
                     .totalItems(pageTalents.getTotalElements())
