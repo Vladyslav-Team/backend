@@ -18,7 +18,7 @@ public class ProofController {
     }
 
     @GetMapping
-    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, boolean sortByNewest){
-        return proofService.getAllProofByPage(page, sortByNewest);
+    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, boolean newest){
+        return proofService.getAllProofByPage(page, newest);
     }
 }

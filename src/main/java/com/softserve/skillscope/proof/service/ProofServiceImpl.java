@@ -33,7 +33,7 @@ public class ProofServiceImpl implements ProofService {
     @Override
     public GeneralProofResponse getAllProofByPage(int page, boolean newest) {
         try {
-            Sort sort = newest ? Sort.by("publicationDate").descending() : Sort.by("publicationDate").ascending();
+            Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
 
             Page<Proof> pageProofs = proofRepo.findAll(PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             int totalPages = pageProofs.getTotalPages();
@@ -42,9 +42,9 @@ public class ProofServiceImpl implements ProofService {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralProof> proofs = new java.util.ArrayList<>(pageProofs.stream()
+            List<GeneralProof> proofs = pageProofs.stream()
                     .map(proofMapper::toGeneralProof)
-                    .toList());
+                    .toList();
 
             return GeneralProofResponse.builder()
                     .totalItems(pageProofs.getTotalElements())
