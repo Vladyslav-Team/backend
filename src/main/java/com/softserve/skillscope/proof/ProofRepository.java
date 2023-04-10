@@ -13,6 +13,6 @@ public interface ProofRepository extends JpaRepository<Proof, Long>{
     List<Proof> findByTalentId(Long talentId);
 
     @Modifying
-    @Query("DELETE FROM Proof WHERE id = :proof_id")
-    void deleteById(@Param("proof_id") Long proofId);
+    @Query("DELETE FROM Proof WHERE id = ?1")
+    void deleteById(Long proofId);
 }
