@@ -51,14 +51,9 @@ public class SecurityConfiguration {
                 .requestMatchers(antMatcher("/h2/**")).permitAll() //works only for testing
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
-                .requestMatchers(HttpMethod.GET, "/talents/{talent-id}").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/talents/{talent-id}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/talent/image/{talent-id}").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/talents/{talent-id}").authenticated()
                 .requestMatchers(HttpMethod.GET, "/proofs").permitAll()
-                .requestMatchers(HttpMethod.GET, "/proofs/{proof-id}").authenticated()
                 .anyRequest().authenticated());
 
         //HTTP session state management
