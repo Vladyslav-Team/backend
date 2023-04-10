@@ -4,10 +4,8 @@ import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
-import com.softserve.skillscope.talent.model.entity.Talent;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -40,10 +38,5 @@ public class ProofController {
     public ProofResponse deleteProofById(@PathVariable("talent-id") Long talentId,
                                          @PathVariable("proof-id") Long proofId) {
         return proofService.deleteProofById(talentId, proofId);
-    }
-
-    private boolean isNotCurrentTalentHasProofWithId(Talent talent) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return !email.equalsIgnoreCase(talent.getEmail());
     }
 }

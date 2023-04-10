@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,13 +46,18 @@ public class ProofServiceImpl implements ProofService {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
             Page<Proof> pageProofs;
             if (talentIdWrapper.isEmpty()) {
-                pageProofs = proofRepo.findAllByStatus(proofProp.visible(), PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
+                pageProofs = proofRepo.findAllVisible(proofProp.visible(), PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             }
             else {
                 if (!talentRepo.existsById(talentIdWrapper.get())) {
                     throw new TalentNotFoundException();
                 }
-                pageProofs = proofRepo.findByTalentId(talentIdWrapper.get(), PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort));
+                Talent talent = talentIdWrapper.map(talentRepo::findById).orElse(null).get();
+                if (!securityConfig.isNotCurrentTalent(talent)) {
+                    pageProofs = proofRepo.findForCurrentTalent(talentIdWrapper.get(), PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort));
+                }else {
+                    pageProofs = proofRepo.findAllVisibleByTalentId(talentIdWrapper.get(), proofProp.visible(), PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort));
+                }
             }
             int totalPages = pageProofs.getTotalPages();
 
