@@ -18,6 +18,6 @@ public interface ProofRepository extends JpaRepository<Proof, Long>{
     void deleteById(Long proofId);
     Page<Proof> findAllByStatus(ProofStatus status, Pageable pageable);
     @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1")
-    Page<Proof> findByTalentIdAndStatus(Long id, ProofStatus status, Pageable pageable);
+    Page<Proof> findByTalentId(Long id, Pageable pageable);
 
 }
