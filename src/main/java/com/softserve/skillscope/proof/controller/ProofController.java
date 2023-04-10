@@ -7,7 +7,6 @@ import com.softserve.skillscope.proof.service.ProofService;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ public class ProofController {
 
     @GetMapping("/proofs")
     public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest){
-        return proofService.getAllProofByPage(Optional.ofNullable(null), page, newest.orElse(true));
+        return proofService.getAllProofByPage(Optional.empty(), page, newest.orElse(true));
     }
 
     @GetMapping("/talents/{talent-id}/proofs")

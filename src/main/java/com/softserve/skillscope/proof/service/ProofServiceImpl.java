@@ -43,16 +43,15 @@ public class ProofServiceImpl implements ProofService {
 
         try {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
-
-            Page<Proof> pageProofs = null;
+            Page<Proof> pageProofs;
             if (talentIdWrapper.isEmpty()) {
-                pageProofs = proofRepo.findAll(PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
+                pageProofs = proofRepo.findAllByStatus(proofProp.visible(), PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             }
             else {
                 if (!talentRepo.existsById(talentIdWrapper.get())) {
                     throw new TalentNotFoundException();
                 }
-                pageProofs = proofRepo.findByTalent_Id(talentIdWrapper.get() ,PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort));
+                pageProofs = proofRepo.findByTalentIdAndStatus(talentIdWrapper.get(), proofProp.visible(), PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort));
             }
             int totalPages = pageProofs.getTotalPages();
 
