@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talent.controller;
 
+import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;

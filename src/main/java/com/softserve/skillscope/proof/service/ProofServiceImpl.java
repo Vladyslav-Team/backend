@@ -16,7 +16,6 @@ import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,10 +23,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class ProofServiceImpl implements ProofService {
     private TalentRepository talentRepo;
     private ProofRepository proofRepo;
@@ -40,11 +39,21 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralProofResponse getAllProofByPage(int page, boolean newest) {
+    public GeneralProofResponse getAllProofByPage(Optional<Long> talentIdWrapper, int page, boolean newest) {
+
         try {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
 
-            Page<Proof> pageProofs = proofRepo.findAll(PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
+            Page<Proof> pageProofs = null;
+            if (talentIdWrapper.isEmpty()) {
+                pageProofs = proofRepo.findAll(PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
+            }
+            else {
+                if (!talentRepo.existsById(talentIdWrapper.get())) {
+                    throw new TalentNotFoundException();
+                }
+                pageProofs = proofRepo.findByTalent_Id(talentIdWrapper.get() ,PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort));
+            }
             int totalPages = pageProofs.getTotalPages();
 
             if (page > totalPages) {
@@ -61,8 +70,8 @@ public class ProofServiceImpl implements ProofService {
                     .currentPage(page)
                     .proofs(proofs)
                     .build();
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
     }

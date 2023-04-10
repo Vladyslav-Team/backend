@@ -11,6 +11,7 @@ public record GeneralProof(
         @NotBlank Long id,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         @NotBlank LocalDate publicationDate,
-        @NotBlank String title
+        @NotBlank String title,
+        @NotBlank String description
 ) {
 }
