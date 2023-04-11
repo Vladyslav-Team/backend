@@ -44,7 +44,7 @@ public class TalentController {
                                               @RequestBody @Valid TalentEditRequest talentProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(talentService.editTalentProfile(talentId, talentProfile));
     }
-
+    //S3 workflow
     @PostMapping(
             path = "/{talent_id}/image/upload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
