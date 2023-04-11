@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talent.service;
 
+import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
@@ -30,6 +31,7 @@ public class TalentServiceImpl implements TalentService {
     private TalentRepository talentRepo;
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
+    private SecurityConfiguration securityConfig;
 
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
@@ -66,7 +68,7 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public GeneralResponse delete(Long talentId) {
         Talent talent = findTalentById(talentId);
-        if (isNotCurrentTalent(talent)) {
+        if (securityConfig.isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
         }
         talentRepo.delete(talent);
@@ -77,7 +79,7 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
         Talent talent = findTalentById(talentId);
-        if (isNotCurrentTalent(talent)) {
+        if (securityConfig.isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
         }
         checkIfFieldsNotEmpty(talentToUpdate, talent);
@@ -136,10 +138,5 @@ public class TalentServiceImpl implements TalentService {
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
-    }
-
-    private boolean isNotCurrentTalent(Talent talent) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return !email.equalsIgnoreCase(talent.getEmail());
     }
 }

@@ -4,6 +4,7 @@ import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
+import com.softserve.skillscope.proof.model.response.ProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ public class ProofController {
 
     @GetMapping("/proofs")
     public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest){
-        return proofService.getAllProofByPage(Optional.ofNullable(null), page, newest.orElse(true));
+        return proofService.getAllProofByPage(Optional.empty(), page, newest.orElse(true));
     }
 
     @GetMapping("/talents/{talent-id}/proofs")
@@ -36,9 +37,17 @@ public class ProofController {
         return proofService.getAllProofByPage(Optional.of(talentId), page.orElse(1), newest.orElse(true));
     }
 
+
     @PostMapping("/talents/{talent-id}/proofs")
     public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
                                                     @RequestBody @Valid ProofCreationDto creationRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
+    }    
+
+    @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProofResponse deleteProofById(@PathVariable("talent-id") Long talentId,
+                                         @PathVariable("proof-id") Long proofId) {
+        return proofService.deleteProofById(talentId, proofId);
     }
 }

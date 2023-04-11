@@ -1,5 +1,7 @@
 # Project SkillScope
-This is backend part of educational SkillScope project that will help you build website. Instruction describes how to clone and run the project on your local machine.
+This is backend part of educational SkillScope project that will help you build website. Instruction describes how to clone and run the project on your local machine. 
+
+Current project version: `2.1.0`.
 ## Getting Started
 These instructions will help you get a copy of the project and running it on your local machine for development and testing purposes.
 
