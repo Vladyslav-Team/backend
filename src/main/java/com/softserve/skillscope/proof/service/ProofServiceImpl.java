@@ -101,14 +101,14 @@ public class ProofServiceImpl implements ProofService {
     }
     
      @Override
-    public ProofResponse deleteProofById(Long talentId, Long proofId) {
+    public GeneralResponse deleteProofById(Long talentId, Long proofId) {
         Talent sender = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
         if (securityConfig.isNotCurrentTalent(sender))
             throw new ForbiddenRequestException();
         if (!sender.getProofs().stream().map(Proof::getId).toList().contains(proofId))
             throw new ProofNotFoundException();
         proofRepo.deleteById(proofId);
-        return new ProofResponse(proofId, "Successfully deleted");
+        return new GeneralResponse(proofId, "Successfully deleted");
     }
 
     private Proof findProofById(Long proofId) {

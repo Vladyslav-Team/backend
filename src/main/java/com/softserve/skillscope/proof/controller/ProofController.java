@@ -4,7 +4,6 @@ import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
-import com.softserve.skillscope.proof.model.response.ProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -46,8 +45,8 @@ public class ProofController {
 
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProofResponse deleteProofById(@PathVariable("talent-id") Long talentId,
+    public ResponseEntity<GeneralResponse> deleteProofById(@PathVariable("talent-id") Long talentId,
                                          @PathVariable("proof-id") Long proofId) {
-        return proofService.deleteProofById(talentId, proofId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(proofService.deleteProofById(talentId, proofId));
     }
 }
