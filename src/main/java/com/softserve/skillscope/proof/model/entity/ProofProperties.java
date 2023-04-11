@@ -8,6 +8,7 @@ public record ProofProperties(
         int proofPageSize,
         int concreteTalentProofPageSize,
         ProofStatus defaultType,
-        String sortBy
+        String sortBy,
+        ProofStatus visible
 ) {
 }
