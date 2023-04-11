@@ -1,6 +1,7 @@
 package com.softserve.skillscope.proof.service;
 
 import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
+import com.softserve.skillscope.proof.model.ProofEditRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
@@ -14,4 +15,5 @@ public interface ProofService {
     GeneralProofResponse getAllProofByPage(Optional<Long> talentIdWrapper, int page, boolean newest);
     GeneralResponse addProof(Long talentId, ProofCreationDto creationRequest);
     GeneralResponse deleteProofById(Long talentId, Long proofId);
+    GeneralResponse editProof(Long talentId, Long proofId, ProofEditRequest proofToUpdate);
 }

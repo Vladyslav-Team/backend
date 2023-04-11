@@ -1,6 +1,7 @@
 package com.softserve.skillscope.proof.controller;
 
 import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
+import com.softserve.skillscope.proof.model.ProofEditRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
@@ -46,7 +47,14 @@ public class ProofController {
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GeneralResponse> deleteProofById(@PathVariable("talent-id") Long talentId,
-                                         @PathVariable("proof-id") Long proofId) {
+                                                           @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.deleteProofById(talentId, proofId));
+    }
+
+    @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
+    ResponseEntity<GeneralResponse> editProof(@PathVariable("talent-id") Long talentId,
+                                              @PathVariable("proof-id") Long proofId,
+                                              @RequestBody @Valid ProofEditRequest proofToUpdate){
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.editProof(talentId, proofId, proofToUpdate));
     }
 }

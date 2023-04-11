@@ -3,11 +3,13 @@ package com.softserve.skillscope.proof.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.proofException.ProofAlreadyPublished;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
+import com.softserve.skillscope.proof.model.ProofEditRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
@@ -16,6 +18,7 @@ import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -84,7 +87,7 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public GeneralResponse addProof(Long talentId, ProofCreationDto creationRequest) {
-        Talent creator = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+        Talent creator = findTalentById(talentId);
         if (securityConfig.isNotCurrentTalent(creator)) {
             throw new ForbiddenRequestException();
         }
@@ -102,17 +105,49 @@ public class ProofServiceImpl implements ProofService {
     
      @Override
     public GeneralResponse deleteProofById(Long talentId, Long proofId) {
-        Talent sender = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+        Talent sender = findTalentById(talentId);
+        findProofById(proofId);
         if (securityConfig.isNotCurrentTalent(sender))
             throw new ForbiddenRequestException();
-        if (!sender.getProofs().stream().map(Proof::getId).toList().contains(proofId))
-            throw new ProofNotFoundException();
         proofRepo.deleteById(proofId);
         return new GeneralResponse(proofId, "Successfully deleted");
+    }
+
+    @Transactional
+    @Override
+    public GeneralResponse editProof(Long talentId, Long proofId, ProofEditRequest proofToUpdate) {
+        Talent talent = findTalentById(talentId);
+        Proof proof = findProofById(proofId);
+        if (securityConfig.isNotCurrentTalent(talent)) {
+            throw new ForbiddenRequestException();
+        }
+        if (proof.getStatus() != proofProp.defaultType()){
+            throw new ProofAlreadyPublished();
+        }
+        checkForChanges(proofToUpdate, proof);
+
+        proofRepo.save(proof);
+
+        return new GeneralResponse(proofId, "Edited successfully!");
+    }
+
+    private void checkForChanges(ProofEditRequest proofToUpdate, Proof proof){
+        if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
+            proof.setTitle(proofToUpdate.title());
+            proof.setPublicationDate(LocalDate.now());
+        }
+        if (proofToUpdate.description() != null && !proofToUpdate.description().equals(proof.getDescription())) {
+            proof.setDescription(proofToUpdate.description());
+            proof.setPublicationDate(LocalDate.now());
+        }
     }
 
     private Proof findProofById(Long proofId) {
         return proofRepo.findById(proofId)
                 .orElseThrow(ProofNotFoundException::new);
+    }
+    private Talent findTalentById(Long id) {
+        return talentRepo.findById(id)
+                .orElseThrow(TalentNotFoundException::new);
     }
 }
