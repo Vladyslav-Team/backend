@@ -5,17 +5,17 @@ import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
+import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
-import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -78,7 +78,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public Proof addProof(Long talentId, String title, String description) {
+    public GeneralResponse addProof(Long talentId, ProofCreationDto creationRequest) {
         Talent creator = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
         if (securityConfig.isNotCurrentTalent(creator)) {
             throw new ForbiddenRequestException();
@@ -87,20 +87,12 @@ public class ProofServiceImpl implements ProofService {
         Proof proof = Proof.builder()
                 .publicationDate(date)
                 .talent(creator)
-                .title(title)
-                .description(description)
-                .status(ProofStatus.DRAFT)
+                .title(creationRequest.title())
+                .description(creationRequest.description())
+                .status(proofProp.defaultType())
                 .build();
-        return proofRepo.save(proof);
-    }
-
-    public ProofStatus setProofStatus(ProofStatus status) {
-        for (ProofStatus validProofStatus : ProofStatus.values()) {
-            if (validProofStatus == status) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("Invalid status: " + status);
+        proofRepo.save(proof);
+        return new GeneralResponse(talentId, "Created successfully!");
     }
 
     private Proof findProofById(Long proofId) {
