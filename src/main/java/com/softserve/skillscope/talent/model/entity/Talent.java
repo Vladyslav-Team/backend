@@ -27,7 +27,7 @@ public class Talent {
     private String email;
 
     @NotEmpty
-    @Size(min = 5, max = 64)
+    @Size(min = 8, max = 64)
     private String password;
 
     @NotEmpty

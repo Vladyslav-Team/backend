@@ -4,6 +4,7 @@ import com.softserve.skillscope.exception.ErrorDTO;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
+import com.softserve.skillscope.exception.generalException.ValidationException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,12 @@ public class GeneralExceptionsControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseStatusException pageNotFoundExceptionHandler(BadRequestException exception) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorDTO> validationException(ValidationException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler({TalentNotFoundException.class, ProofNotFoundException.class})

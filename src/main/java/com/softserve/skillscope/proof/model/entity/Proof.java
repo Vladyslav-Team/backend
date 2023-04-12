@@ -38,6 +38,7 @@ public class Proof {
     private String title;
 
     @NotEmpty
+    @Size(max = 1024)
     private String description;
 
     @Enumerated(EnumType.STRING)
