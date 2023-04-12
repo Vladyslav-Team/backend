@@ -7,7 +7,6 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @Component
 public class ProofMapperImpl implements ProofMapper {
@@ -42,6 +41,7 @@ public class ProofMapperImpl implements ProofMapper {
                 .publicationDate(proof.getPublicationDate())
                 .title(title)
                 .description(description)
+                .status(proof.getStatus())
                 .build();
     }
 }
