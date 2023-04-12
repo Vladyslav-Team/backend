@@ -38,7 +38,7 @@ public class Proof {
     private String title;
 
     @NotEmpty
-    @Size(max = 1024)
+    @Size(max = 1000)
     private String description;
 
     @Enumerated(EnumType.STRING)
