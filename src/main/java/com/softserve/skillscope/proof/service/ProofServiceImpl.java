@@ -5,15 +5,15 @@ import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
+import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
-import com.softserve.skillscope.proof.model.response.ProofResponse;
-import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import lombok.AllArgsConstructor;
@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,23 +83,32 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public ProofResponse deleteProofById(Long talentId, Long proofId) {
+    public GeneralResponse addProof(Long talentId, ProofCreationDto creationRequest) {
+        Talent creator = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+        if (securityConfig.isNotCurrentTalent(creator)) {
+            throw new ForbiddenRequestException();
+        }
+        LocalDate date = LocalDate.now();
+        Proof proof = Proof.builder()
+                .publicationDate(date)
+                .talent(creator)
+                .title(creationRequest.title())
+                .description(creationRequest.description())
+                .status(proofProp.defaultType())
+                .build();
+        proofRepo.save(proof);
+        return new GeneralResponse(talentId, "Created successfully!");
+    }
+    
+     @Override
+    public GeneralResponse deleteProofById(Long talentId, Long proofId) {
         Talent sender = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
         if (securityConfig.isNotCurrentTalent(sender))
             throw new ForbiddenRequestException();
         if (!sender.getProofs().stream().map(Proof::getId).toList().contains(proofId))
             throw new ProofNotFoundException();
         proofRepo.deleteById(proofId);
-        return new ProofResponse(proofId, "Successfully deleted");
-    }
-
-    public ProofStatus setProofStatus(ProofStatus status) {
-        for (ProofStatus validProofStatus : ProofStatus.values()) {
-            if (validProofStatus == status) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("Invalid status: " + status);
+        return new GeneralResponse(proofId, "Successfully deleted");
     }
 
     private Proof findProofById(Long proofId) {

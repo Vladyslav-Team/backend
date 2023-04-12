@@ -1,11 +1,10 @@
 package com.softserve.skillscope.talent.controller;
 
-import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
+import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentImageResponse;
-import com.softserve.skillscope.talent.model.response.TalentResponse;
 import com.softserve.skillscope.talent.service.TalentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -32,12 +31,12 @@ public class TalentController {
 
     @DeleteMapping("/talents/{talent-id}")
     @ResponseBody
-    TalentResponse delete(@PathVariable("talent-id") Long talentId) {
+    GeneralResponse delete(@PathVariable("talent-id") Long talentId) {
         return talentService.delete(talentId);
     }
 
     @PatchMapping("/talents/{talent-id}")
-    ResponseEntity<TalentResponse> editTalent(@PathVariable("talent-id") Long talentId,
+    ResponseEntity<GeneralResponse> editTalent(@PathVariable("talent-id") Long talentId,
                                               @RequestBody @Valid TalentEditRequest talentProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(talentService.editTalentProfile(talentId, talentProfile));
     }

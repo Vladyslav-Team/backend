@@ -1,11 +1,14 @@
 package com.softserve.skillscope.proof.controller;
 
+import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;
+import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
-import com.softserve.skillscope.proof.model.response.ProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -33,10 +36,17 @@ public class ProofController {
         return proofService.getAllProofByPage(Optional.of(talentId), page.orElse(1), newest.orElse(true));
     }
 
+
+    @PostMapping("/talents/{talent-id}/proofs")
+    public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
+                                                    @RequestBody @Valid ProofCreationDto creationRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
+    }    
+
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProofResponse deleteProofById(@PathVariable("talent-id") Long talentId,
+    public ResponseEntity<GeneralResponse> deleteProofById(@PathVariable("talent-id") Long talentId,
                                          @PathVariable("proof-id") Long proofId) {
-        return proofService.deleteProofById(talentId, proofId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(proofService.deleteProofById(talentId, proofId));
     }
 }
