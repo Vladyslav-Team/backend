@@ -25,7 +25,6 @@ public class Proof {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "talent_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

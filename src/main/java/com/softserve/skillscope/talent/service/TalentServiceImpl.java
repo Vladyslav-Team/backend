@@ -4,7 +4,7 @@ import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
-import com.softserve.skillscope.generalModel.generalResponse.GeneralResponse;
+import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
