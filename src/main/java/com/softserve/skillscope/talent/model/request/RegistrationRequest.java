@@ -31,7 +31,6 @@ public record RegistrationRequest(
         String location,
         @NotEmpty
         String image,
-        @NotEmpty
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         LocalDate birthday
 ) {}
