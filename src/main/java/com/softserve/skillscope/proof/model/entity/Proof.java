@@ -34,11 +34,9 @@ public class Proof {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate publicationDate;
 
-    @NotEmpty
     @Size(max = 100)
     private String title;
 
-    @NotEmpty
     private String description;
 
     @Enumerated(EnumType.STRING)

@@ -3,8 +3,7 @@ package com.softserve.skillscope.proof.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.proofException.ProofAlreadyPublishedException;
-import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
+import com.softserve.skillscope.exception.proofException.*;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
@@ -99,6 +98,7 @@ public class ProofServiceImpl implements ProofService {
                 .description(creationRequest.description())
                 .status(proofProp.defaultType())
                 .build();
+
         proofRepo.save(proof);
         return new GeneralResponse(proof.getId(), "Created successfully!");
     }
@@ -129,7 +129,7 @@ public class ProofServiceImpl implements ProofService {
     public GeneralResponse publishProofById(Long talentId, Long proofId){
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
-
+        checkNotNull(proof);
         if (proof.getStatus() == ProofStatus.HIDDEN || proof.getStatus() == proofProp.defaultType()) {
             proof.setStatus(ProofStatus.PUBLISHED);
             if (proof.getPublicationDate() == null) {
@@ -144,6 +144,7 @@ public class ProofServiceImpl implements ProofService {
     public GeneralResponse hideProofById(Long talentId, Long proofId){
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
+        checkNotNull(proof);
         if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED){
             proof.setStatus(ProofStatus.HIDDEN);
         }
@@ -177,5 +178,11 @@ public class ProofServiceImpl implements ProofService {
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
+    }
+
+    private void checkNotNull(Proof proof) {
+        if (proof.getTitle() == null || proof.getDescription() == null){
+            throw new ProofHasNullValue();
+        }
     }
 }

@@ -28,11 +28,11 @@ public class ProofMapperImpl implements ProofMapper {
     public GeneralProof toGeneralProof(Proof proof){
         String description;
         String title;
-        if (proof.getDescription().length() <= 200)
+        if (proof.getDescription() == null || proof.getDescription().length() <= 200)
             description = proof.getDescription();
         else
             description = proof.getDescription().substring(0,200).concat("...");
-        if (proof.getTitle().length() <= 20)
+        if (proof.getTitle() == null || proof.getTitle().length() <= 20)
             title = proof.getTitle();
         else
             title = proof.getTitle().substring(0,20).concat("...");
