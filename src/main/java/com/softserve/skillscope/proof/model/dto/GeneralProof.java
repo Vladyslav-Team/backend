@@ -11,9 +11,9 @@ import java.time.LocalDate;
 public record GeneralProof(
         @NotBlank Long id,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-        @NotBlank LocalDate publicationDate,
-        @NotBlank String title,
-        @NotBlank String description,
+        LocalDate publicationDate,
+        String title,
+        String description,
         @NotBlank ProofStatus status
 ) {
 }
