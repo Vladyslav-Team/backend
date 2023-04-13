@@ -51,6 +51,7 @@ public class SecurityConfiguration {
         //Routing security filter
         http.authorizeHttpRequests(req -> req
                 .requestMatchers(antMatcher("/h2/**")).permitAll() //works only for testing
+                .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
