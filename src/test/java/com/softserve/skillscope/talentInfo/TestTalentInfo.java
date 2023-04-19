@@ -1,4 +1,4 @@
-package com.softserve.skillscope.Talent;
+package com.softserve.skillscope.talentInfo;
 
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talentInfo.TalentInfoRepository;

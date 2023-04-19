@@ -1,4 +1,4 @@
-package com.softserve.skillscope.Talent;
+package com.softserve.skillscope.talent.repository;
 
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
-class TestTalent {
+class TalentRepoTest {
 
     @Autowired
     TalentRepository repository;
