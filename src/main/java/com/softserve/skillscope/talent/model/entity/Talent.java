@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talent.model.entity;
 
+import com.softserve.skillscope.kudos.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import jakarta.persistence.*;
@@ -40,4 +41,8 @@ public class Talent {
 
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     private List<Proof> proofs;
+
+
+    @OneToMany(mappedBy = "talent")
+    List<Kudos> kudos;
 }

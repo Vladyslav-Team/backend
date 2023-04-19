@@ -8,6 +8,8 @@ CREATE TABLE talent
     CONSTRAINT pk_talent PRIMARY KEY (id)
 );
 
+------------------------------------------------------------------------------------------------------------------------------
+
 CREATE TABLE talent_info
 (
     talent_id  BIGINT NOT NULL,
@@ -24,6 +26,7 @@ CREATE TABLE talent_info
 ALTER TABLE talent_info
     ADD CONSTRAINT FK_TALENTINFO_ON_TALENT FOREIGN KEY (talent_id) REFERENCES talent (id) ON DELETE CASCADE;
 
+------------------------------------------------------------------------------------------------------------------------------
 
 CREATE TABLE proof
 (
@@ -32,7 +35,7 @@ CREATE TABLE proof
     publication_date date,
     title            VARCHAR(100),
     description      VARCHAR(255),
-    status           VARCHAR(255)                            NOT NULL,
+    status           VARCHAR(20)                            NOT NULL,
     CONSTRAINT pk_proof PRIMARY KEY (id)
 );
 
@@ -40,3 +43,19 @@ ALTER TABLE proof
     ADD CONSTRAINT FK_PROOF_ON_TALENT FOREIGN KEY (talent_id) REFERENCES talent (id) ON DELETE CASCADE;
 
 CREATE DOMAIN ProofStatus AS VARCHAR(20) CHECK (VALUE IN ('DRAFT', 'HIDDEN', 'PUBLISHED'));
+
+------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE kudos
+(
+    time      TIMESTAMP WITHOUT TIME ZONE,
+    talent_id BIGINT NOT NULL,
+    proof_id  BIGINT NOT NULL,
+    CONSTRAINT pk_kudos PRIMARY KEY (talent_id, proof_id)
+);
+
+ALTER TABLE kudos
+    ADD CONSTRAINT FK_KUDOS_ON_PROOF FOREIGN KEY (proof_id) REFERENCES proof (id);
+
+ALTER TABLE kudos
+    ADD CONSTRAINT FK_KUDOS_ON_TALENT FOREIGN KEY (talent_id) REFERENCES talent (id);

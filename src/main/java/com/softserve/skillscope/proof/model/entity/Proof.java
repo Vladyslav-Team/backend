@@ -1,6 +1,7 @@
 package com.softserve.skillscope.proof.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.softserve.skillscope.kudos.Kudos;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
@@ -44,4 +46,7 @@ public class Proof {
     @Column(name = "status")
     @NotNull
     private ProofStatus status;
+
+    @OneToMany(mappedBy = "proof")
+    List<Kudos> kudos;
 }

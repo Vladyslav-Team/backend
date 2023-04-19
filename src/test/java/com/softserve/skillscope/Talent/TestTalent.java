@@ -1,5 +1,6 @@
 package com.softserve.skillscope.Talent;
 
+import com.softserve.skillscope.kudos.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
@@ -119,16 +120,18 @@ class TestTalent {
                 .name("talent")
                 .surname("talent")
                 .build();
+        //List<Talent> talentList = repository.findAll();
+        List<Kudos> kudos = null;
 
         Talent savedTalent = repository.save(talent);
 
-        Proof proof1 = new Proof(1L, talent, LocalDate.now(), "Proof 1", "Description of proof 1", ProofStatus.DRAFT);
+        Proof proof1 = new Proof(1L, talent, LocalDate.now(), "Proof 1", "Description of proof 1", ProofStatus.DRAFT, kudos);
         proofTestRepository.save(proof1);
 
-        Proof proof2 = new Proof(2L, talent, LocalDate.now(), "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED);
+        Proof proof2 = new Proof(2L, talent, LocalDate.now(), "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED, kudos);
         proofTestRepository.save(proof2);
 
-        Proof proof3 = new Proof(3L, talent, LocalDate.now(), "Proof 3", "Description of proof 3", ProofStatus.HIDDEN);
+        Proof proof3 = new Proof(3L, talent, LocalDate.now(), "Proof 3", "Description of proof 3", ProofStatus.HIDDEN, kudos);
         proofTestRepository.save(proof3);
 
         List<Proof> proofList = proofTestRepository.findByTalentId(talent.getId());
