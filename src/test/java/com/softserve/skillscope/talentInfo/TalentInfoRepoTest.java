@@ -1,9 +1,9 @@
 package com.softserve.skillscope.talentInfo;
 
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talentInfo.TalentInfoRepository;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,13 +16,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
-class TestTalentInfo {
+class TalentInfoRepoTest {
     @Autowired
-    TalentInfoRepository repository;
+    private TalentInfoRepository repository;
+    private TalentInfo talentInfo;
 
-    @Test
-    void createTalentInfo() {
-        TalentInfo talentInfo = TalentInfo.builder()
+    @BeforeEach
+    public void setUp() {
+        talentInfo = TalentInfo.builder()
                 .talent(Talent.builder()
                         .email("talent@talent.com")
                         .password("talent_password")
@@ -36,7 +37,10 @@ class TestTalentInfo {
                 .education("no education")
                 .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
                 .build();
+    }
 
+    @Test
+    void createTalentInfo() {
         TalentInfo savedTalentInfo = repository.save(talentInfo);
 
         assertThat(savedTalentInfo).isNotNull();
@@ -45,21 +49,6 @@ class TestTalentInfo {
 
     @Test
     void getTalentInfoById() {
-        TalentInfo talentInfo = TalentInfo.builder()
-                .talent(Talent.builder()
-                        .email("talent@talent.com")
-                        .password("talent_password")
-                        .name("talent")
-                        .surname("talent").build())
-                .image("image-path/1")
-                .experience("no experience")
-                .location("Kharkiv")
-                .phone("+380999479826")
-                .birthday(LocalDate.now())
-                .education("no education")
-                .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
-                .build();
-
         TalentInfo savedTalentInfo = repository.save(talentInfo);
 
         assertThat(savedTalentInfo).isNotNull();
@@ -73,21 +62,6 @@ class TestTalentInfo {
 
     @Test
     void updateTalentInfo() {
-        TalentInfo talentInfo = TalentInfo.builder()
-                .talent(Talent.builder()
-                        .email("talent@talent.com")
-                        .password("talent_password")
-                        .name("talent")
-                        .surname("talent").build())
-                .image("image-path/1")
-                .experience("no experience")
-                .location("Kharkiv")
-                .phone("+380999479826")
-                .birthday(LocalDate.now())
-                .education("no education")
-                .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
-                .build();
-
         TalentInfo savedTalentInfo = repository.save(talentInfo);
 
         savedTalentInfo.setPhone("+380979453144");
@@ -98,21 +72,6 @@ class TestTalentInfo {
 
     @Test
     void deleteTalentInfo() {
-        TalentInfo talentInfo = TalentInfo.builder()
-                .talent(Talent.builder()
-                        .email("talent@talent.com")
-                        .password("talent_password")
-                        .name("talent")
-                        .surname("talent").build())
-                .image("image-path/1")
-                .experience("no experience")
-                .location("Kharkiv")
-                .phone("+380999479826")
-                .birthday(LocalDate.now())
-                .education("no education")
-                .about("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin.")
-                .build();
-
         TalentInfo savedTalentInfo = repository.save(talentInfo);
 
         assertThat(savedTalentInfo).isNotNull();

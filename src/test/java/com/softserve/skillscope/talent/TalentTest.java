@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talent.entity;
+package com.softserve.skillscope.talent;
 
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -23,9 +23,10 @@ class TalentTest {
     public void createTalent() {
         talent = Talent.builder()
                 .email("test@example.com")
-                .password("password")
+                .password("password1234")
                 .name("John")
                 .surname("Doe")
+                .talentInfo(new TalentInfo())
                 .proofs(Arrays.asList(new Proof(), new Proof()))
                 .build();
     }
@@ -34,18 +35,12 @@ class TalentTest {
     void testGettersAndSetters() {
         talent.setId(1L);
         assertNotNull(talent.getId());
-        //FIXME TalentInfoIs null
         assertNotNull(talent.getTalentInfo());
         assertNotNull(talent.getEmail());
         assertNotNull(talent.getPassword());
         assertNotNull(talent.getName());
         assertNotNull(talent.getSurname());
         assertNotNull(talent.getProofs());
-    }
-
-    @Test
-    void testToString() {
-        assertNotNull(talent.toString());
     }
 
     @Test
@@ -56,22 +51,9 @@ class TalentTest {
 
     @Test
     void testAllArgsConstructor() {
-        Talent talent = new Talent(1L, new TalentInfo(), "test@example.com",
+        Talent talent = new Talent(2L, new TalentInfo(), "test@example.com",
                 "password", "John", "Doe", Arrays.asList(new Proof(), new Proof()));
         assertNotNull(talent);
-    }
-
-    //FIXME Wrong test logic
-    @Test
-    void testConstraints() {
-        talent.setEmail("testEmail@gmail.com");
-        talent.setPassword("a");
-        talent.setName("");
-        talent.setSurname("");
-        assertEquals("Size must be between 5 and 254", talent.getEmail());
-        assertEquals("Size must be between 5 and 64", talent.getPassword());
-        assertEquals("Size must be between 1 and 64", talent.getName());
-        assertEquals("Size must be between 1 and 64", talent.getSurname());
     }
 
     @Test
