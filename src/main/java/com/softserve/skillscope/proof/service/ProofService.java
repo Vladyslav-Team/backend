@@ -5,6 +5,7 @@ import com.softserve.skillscope.proof.model.ProofEditRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.util.Optional;
@@ -18,4 +19,5 @@ public interface ProofService {
     GeneralResponse editProofById(Long talentId, Long proofId, ProofEditRequest proofToUpdate);
     GeneralResponse publishProofById(Long talentId, Long proofId);
     GeneralResponse hideProofById(Long talentId, Long proofId);
+    GeneralResponse addKudosToProofByTalent(Long proofId, UserDetails userDetails);
 }

@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -25,7 +27,8 @@ public class ProofController {
     }
 
     @GetMapping("/proofs")
-    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest){
+    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page,
+                                              @RequestParam(name = "newest") Optional<Boolean> newest) {
         return proofService.getAllProofByPage(Optional.empty(), page, newest.orElse(true));
     }
 
@@ -42,7 +45,7 @@ public class ProofController {
     public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
                                                     @RequestBody @Valid ProofCreationDto creationRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
-    }    
+    }
 
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @ResponseStatus(HttpStatus.OK)
@@ -53,21 +56,28 @@ public class ProofController {
 
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
     ResponseEntity<GeneralResponse> editProofById(@PathVariable("talent-id") Long talentId,
-                                              @PathVariable("proof-id") Long proofId,
-                                              @RequestBody @Valid ProofEditRequest proofToUpdate){
+                                                  @PathVariable("proof-id") Long proofId,
+                                                  @RequestBody @Valid ProofEditRequest proofToUpdate) {
         return ResponseEntity.status(HttpStatus.OK).body(proofService.editProofById(talentId, proofId, proofToUpdate));
     }
 
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/publish")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GeneralResponse> publishProofById(@PathVariable("talent-id") Long talentId,
-                                                           @PathVariable("proof-id") Long proofId) {
+                                                            @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.publishProofById(talentId, proofId));
     }
+
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/hide")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GeneralResponse> hideProofById(@PathVariable("talent-id") Long talentId,
-                                                            @PathVariable("proof-id") Long proofId) {
+                                                         @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.hideProofById(talentId, proofId));
+    }
+
+    @PostMapping("/proofs/{proof-id}/kudos")
+    public ResponseEntity<GeneralResponse> addLikeToProof
+            (@PathVariable("proof-id") Long proofId, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofByTalent(proofId, userDetails));
     }
 }
