@@ -51,12 +51,12 @@ class TalentRepoTest {
 
     @Test
     void getTalent() {
-        talentRepo.save(talent);
-        Optional<Talent> optionalTalent = talentRepo.findByEmail(talent.getEmail());
-        assertTrue(optionalTalent.isPresent());
+        Talent savedTalent = talentRepo.save(talent);
 
-        Talent retrievedTalent = optionalTalent.get();
-        assertEquals(talent, retrievedTalent);
+        Talent foundTalent = talentRepo.findById(savedTalent.getId()).get();
+
+        assertThat(foundTalent).isNotNull();
+        assertThat(foundTalent).isEqualTo(savedTalent);
     }
 
     @Test
@@ -92,11 +92,11 @@ class TalentRepoTest {
 
     @Test
     void getTalentsByPage() {
+        int pageNum = 3;
         int pageSize = 3;
-        talentRepo.save(talent);
-        Page<Talent> talents = talentRepo.findAllByOrderByIdDesc(PageRequest.of(0, pageSize));
-        assertNotNull(talents);
-        assertEquals(talent.getEmail(), talents.getContent().get(0).getEmail());
+        Page<Talent> page = talentRepo.findAll(PageRequest.of(pageNum - 1, pageSize));
+        List<Talent> talents = page.getContent();
+        assertThat(talents.size()).isEqualTo(pageSize);
     }
 
     @Test
