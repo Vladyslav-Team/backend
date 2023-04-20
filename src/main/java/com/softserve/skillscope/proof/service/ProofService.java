@@ -1,7 +1,7 @@
 package com.softserve.skillscope.proof.service;
 
 import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.proof.model.ProofEditRequest;
+import com.softserve.skillscope.proof.model.request.ProofEditRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
