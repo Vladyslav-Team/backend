@@ -12,14 +12,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ProofExceptionsControllerAdvice {
 
-    @ExceptionHandler(ProofAlreadyPublishedException.class)
+    @ExceptionHandler({ProofAlreadyPublishedException.class, ProofHasNullValue.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorDTO> proofAlreadyPublishedException(ProofAlreadyPublishedException exception) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
-    }
-    @ExceptionHandler(ProofHasNullValue.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorDTO> proofAlreadyPublishedException(ProofHasNullValue exception) {
+    public ResponseEntity<ErrorDTO> ProofExceptionsControllerAdvice(Exception exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
 }

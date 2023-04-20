@@ -1,4 +1,4 @@
-package com.softserve.skillscope.proof.model;
+package com.softserve.skillscope.proof.model.request;
 
 public record ProofEditRequest(
         String title,

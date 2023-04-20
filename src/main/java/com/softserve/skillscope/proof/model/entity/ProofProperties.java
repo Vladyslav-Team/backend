@@ -9,6 +9,8 @@ public record ProofProperties(
         int concreteTalentProofPageSize,
         ProofStatus defaultType,
         String sortBy,
-        ProofStatus visible
+        ProofStatus visible,
+        int titleLength,
+        int descriptionLength
 ) {
 }

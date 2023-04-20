@@ -8,7 +8,7 @@ import com.softserve.skillscope.exception.talentException.TalentNotFoundExceptio
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
-import com.softserve.skillscope.proof.model.ProofEditRequest;
+import com.softserve.skillscope.proof.model.request.ProofEditRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
 import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -129,7 +130,7 @@ public class ProofServiceImpl implements ProofService {
     public GeneralResponse publishProofById(Long talentId, Long proofId){
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
-        checkNotNull(proof);
+        isNotEmptyOrNull(proof);
         if (proof.getStatus() == ProofStatus.HIDDEN || proof.getStatus() == proofProp.defaultType()) {
             proof.setStatus(ProofStatus.PUBLISHED);
             if (proof.getPublicationDate() == null) {
@@ -144,7 +145,7 @@ public class ProofServiceImpl implements ProofService {
     public GeneralResponse hideProofById(Long talentId, Long proofId){
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
-        checkNotNull(proof);
+        isNotEmptyOrNull(proof);
         if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED){
             proof.setStatus(ProofStatus.HIDDEN);
         }
@@ -180,8 +181,8 @@ public class ProofServiceImpl implements ProofService {
                 .orElseThrow(TalentNotFoundException::new);
     }
 
-    private void checkNotNull(Proof proof) {
-        if (proof.getTitle() == null || proof.getDescription() == null){
+    private void isNotEmptyOrNull(Proof proof) {
+        if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())){
             throw new ProofHasNullValue();
         }
     }
