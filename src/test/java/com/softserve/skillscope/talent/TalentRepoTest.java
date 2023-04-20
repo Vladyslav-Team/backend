@@ -78,10 +78,16 @@ class TalentRepoTest {
 
     @Test
     void deleteTalent() {
-        talentRepo.save(talent);
-        assertTrue(talentRepo.existsByEmail(talent.getEmail()));
-        talentRepo.delete(talent);
-        assertFalse(talentRepo.existsByEmail(talent.getEmail()));
+        Talent savedTalent = talentRepo.save(talent);
+
+        assertThat(savedTalent).isNotNull();
+        assertThat(savedTalent).isEqualTo(talent);
+
+        talentRepo.delete(savedTalent);
+
+        Talent foundTalent = talentRepo.findById(savedTalent.getId()).orElse(null);
+
+        assertThat(foundTalent).isNull();
     }
 
     @Test
