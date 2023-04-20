@@ -24,10 +24,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -86,6 +88,23 @@ public class ProofServiceImpl implements ProofService {
             throw new BadRequestException(e.getMessage());
         }
     }
+
+    public GeneralResponse addKudosToProofByTalent(Long proofId, UserDetails userDetails) {
+        Talent creator = talentRepo.findByEmail(userDetails.getUsername()).orElseThrow(TalentNotFoundException::new);
+        Proof proof = findProofById(proofId);
+        if (proof.getTalentLikedId() != null)
+            throw new RuntimeException("Talent has already liked this post");
+        // Check if the Talent is trying to like their own post
+        if (Objects.equals(proof.getTalent().getId(), creator.getId())) {
+            throw new RuntimeException("Talent cannot like their own post");
+        }
+        proof.setTalentLikedId(creator.getId());
+        proof.setKudos((proof.getKudos() != null ? proof.getKudos() : 0) + 1);
+        proofRepo.save(proof);
+
+        return new GeneralResponse(proof.getId(), "Kudos was added successfully!");
+    }
+
     @Override
     public GeneralResponse addProof(Long talentId, ProofCreationDto creationRequest) {
         Talent creator = findTalentById(talentId);
@@ -102,8 +121,8 @@ public class ProofServiceImpl implements ProofService {
         proofRepo.save(proof);
         return new GeneralResponse(proof.getId(), "Created successfully!");
     }
-    
-     @Override
+
+    @Override
     public GeneralResponse deleteProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         proofRepo.deleteById(proofId);
@@ -115,7 +134,7 @@ public class ProofServiceImpl implements ProofService {
     public GeneralResponse editProofById(Long talentId, Long proofId, ProofEditRequest proofToUpdate) {
         Proof proof = findProofById(proofId);
         checkOwnProofs(talentId, proofId);
-        if (proof.getStatus() != proofProp.defaultType()){
+        if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
         }
         checkForChanges(proofToUpdate, proof);
@@ -126,7 +145,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse publishProofById(Long talentId, Long proofId){
+    public GeneralResponse publishProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
 
@@ -141,17 +160,17 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse hideProofById(Long talentId, Long proofId){
+    public GeneralResponse hideProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
-        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED){
+        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
             proof.setStatus(ProofStatus.HIDDEN);
         }
         proofRepo.save(proof);
         return new GeneralResponse(proofId, "Proof successfully hidden!");
     }
 
-    private void checkForChanges(ProofEditRequest proofToUpdate, Proof proof){
+    private void checkForChanges(ProofEditRequest proofToUpdate, Proof proof) {
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
         }
@@ -159,7 +178,8 @@ public class ProofServiceImpl implements ProofService {
             proof.setDescription(proofToUpdate.description());
         }
     }
-    private void checkOwnProofs(Long talentId, Long proofId){
+
+    private void checkOwnProofs(Long talentId, Long proofId) {
         Talent talent = findTalentById(talentId);
         Proof proof = findProofById(proofId);
         if (securityConfig.isNotCurrentTalent(talent))
@@ -174,6 +194,7 @@ public class ProofServiceImpl implements ProofService {
         return proofRepo.findById(proofId)
                 .orElseThrow(ProofNotFoundException::new);
     }
+
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);

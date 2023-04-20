@@ -1,7 +1,6 @@
 package com.softserve.skillscope.proof.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
@@ -45,4 +44,7 @@ public class Proof {
     @Column(name = "status")
     @NotNull
     private ProofStatus status;
+
+    private Integer kudos;
+    private Long talentLikedId;
 }
