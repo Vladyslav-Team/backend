@@ -6,12 +6,15 @@ import com.softserve.skillscope.proof.model.dto.GeneralProof;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
 @Component
 public class ProofMapperImpl implements ProofMapper {
-    ProofProperties proofProps;
+
+    @Autowired
+    private ProofProperties proofProps;
     @Override
     public FullProof toFullProof(Proof proof) {
         Talent talent = proof.getTalent();

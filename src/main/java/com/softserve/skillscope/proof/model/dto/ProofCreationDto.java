@@ -12,11 +12,10 @@ public record ProofCreationDto(
         this.title = title;
         this.description = description;
 
-        if (!title.matches("^[a-zA-Z0-9 !@#$%^&*()_+\\-=\\[\\]{};:\'\",.<>\\/?\\\\|]*$")) {
-            throw new ValidationException("Title must be written in Latin");
-        }
-        if (!description.matches("^[a-zA-Z0-9 !@#$%^&*()_+\\-=\\[\\]{};:\'\",.<>\\/?\\\\|]*$")) {
-            throw new ValidationException("Description must be written in Latin");
+        String regex = "^[a-zA-Z0-9 !@#$%^&*()_+\\-=\\[\\]{};:'\",.<>/?|]*$";
+
+        if (!title.matches(regex) || !description.matches(regex)) {
+            throw new ValidationException("Text must be written in Latin");
         }
 
     }
