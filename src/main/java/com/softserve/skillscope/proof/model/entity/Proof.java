@@ -47,6 +47,6 @@ public class Proof {
     @NotNull
     private ProofStatus status;
     //Remove all kudoses that connected to this proof.
-    @OneToMany(mappedBy = "proof", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "proof", cascade = CascadeType.ALL)
     private List<Kudos> kudosList;
 }

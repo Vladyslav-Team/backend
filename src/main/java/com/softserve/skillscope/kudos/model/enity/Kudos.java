@@ -4,6 +4,8 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Setter
 @Getter
@@ -17,12 +19,12 @@ public class Kudos {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "talent_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "talent_id")
     private Talent talent;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "proof_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Proof proof;
-
 }

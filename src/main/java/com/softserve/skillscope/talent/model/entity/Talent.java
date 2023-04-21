@@ -44,6 +44,12 @@ public class Talent {
     private List<Proof> proofs;
 
     //Set null key to kudos in talent_id when talent is deleted.
-    @OneToMany(mappedBy = "talent", orphanRemoval = true)
+    @OneToMany(mappedBy = "talent")
     private List<Kudos> kudosList;
+    //Set nulls to kudos table to talent_id key before deleting the talent
+    @PreRemove
+    private void removeKudos() {
+        kudosList.forEach(k -> k.setTalent(null));
+        kudosList.clear();
+    }
 }
