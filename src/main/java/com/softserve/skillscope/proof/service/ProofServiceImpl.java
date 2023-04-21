@@ -7,6 +7,8 @@ import com.softserve.skillscope.exception.proofException.ProofAlreadyPublishedEx
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.kudos.KudosRepository;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.ProofEditRequest;
@@ -24,12 +26,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -37,6 +38,7 @@ import java.util.Optional;
 public class ProofServiceImpl implements ProofService {
     private TalentRepository talentRepo;
     private ProofRepository proofRepo;
+    private KudosRepository kudosRepo;
     private ProofMapper proofMapper;
     private ProofProperties proofProp;
     private SecurityConfiguration securityConfig;
@@ -89,19 +91,22 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    public GeneralResponse addKudosToProofByTalent(Long proofId, UserDetails userDetails) {
-        Talent creator = talentRepo.findByEmail(userDetails.getUsername()).orElseThrow(TalentNotFoundException::new);
+    //TODO Re-write the method
+    public GeneralResponse addKudosToProofByTalent(Long proofId, Authentication authentication) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Talent talent = talentRepo.findByEmail(authentication.getName()).orElseThrow(TalentNotFoundException::new);
         Proof proof = findProofById(proofId);
-        if (proof.getTalentLikedId() != null)
-            throw new RuntimeException("Talent has already liked this post");
-        // Check if the Talent is trying to like their own post
-        if (Objects.equals(proof.getTalent().getId(), creator.getId())) {
+
+        if (talent.equals(proof.getTalent())) {
             throw new RuntimeException("Talent cannot like their own post");
         }
-        proof.setTalentLikedId(creator.getId());
-        proof.setKudos((proof.getKudos() != null ? proof.getKudos() : 0) + 1);
-        proofRepo.save(proof);
-
+        if (kudosRepo.findByTalentAndProof(talent, proof).isPresent()) {
+            throw new BadRequestException("Talent has already given kudos to this proof");
+        }
+        Kudos kudos = new Kudos();
+        kudos.setTalent(talent);
+        kudos.setProof(proof);
+        kudosRepo.save(kudos);
         return new GeneralResponse(proof.getId(), "Kudos was added successfully!");
     }
 

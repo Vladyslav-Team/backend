@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talent;
 
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
@@ -14,11 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -112,15 +115,18 @@ class TalentRepoTest {
         talentRepo.save(talent);
 
         Proof proof1 = new Proof(1L, talent, LocalDate.now(),
-                "Proof 1", "Description of proof 1", ProofStatus.DRAFT);
+                "Proof 1", "Description of proof 1",
+                ProofStatus.DRAFT, Arrays.asList(new Kudos(), new Kudos()));
         proofRepo.save(proof1);
 
         Proof proof2 = new Proof(2L, talent, LocalDate.now(),
-                "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED);
+                "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED,
+                Arrays.asList(new Kudos(), new Kudos()));
         proofRepo.save(proof2);
 
         Proof proof3 = new Proof(3L, talent, LocalDate.now(),
-                "Proof 3", "Description of proof 3", ProofStatus.HIDDEN);
+                "Proof 3", "Description of proof 3", ProofStatus.HIDDEN,
+                Arrays.asList(new Kudos(), new Kudos()));
         proofRepo.save(proof3);
 
         List<Proof> proofList = proofRepo.findByTalentId(talent.getId());
@@ -128,4 +134,3 @@ class TalentRepoTest {
         proofList.forEach(proof -> assertEquals(talent, proof.getTalent()));
     }
 }
-
