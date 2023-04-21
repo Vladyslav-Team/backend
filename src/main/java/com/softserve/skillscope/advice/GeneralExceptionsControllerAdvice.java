@@ -4,6 +4,7 @@ import com.softserve.skillscope.exception.ErrorDTO;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
+import com.softserve.skillscope.exception.generalException.ValidationException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -28,15 +29,21 @@ public class GeneralExceptionsControllerAdvice {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorDTO(exception.getMessage()));
     }
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseStatusException pageNotFoundExceptionHandler(BadRequestException exception) {
-        return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+    public ResponseEntity<ErrorDTO> badRequestExceptionHandler(BadRequestException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler({TalentNotFoundException.class, ProofNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(Exception exception) {
+    public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(TalentNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler({ValidationException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorDTO> validationException(ValidationException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
 }

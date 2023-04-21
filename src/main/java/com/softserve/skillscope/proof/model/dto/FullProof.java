@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import lombok.Builder;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 public record FullProof(
@@ -12,8 +12,8 @@ public record FullProof(
         Long talentId,
         String talentName,
         String talentSurname,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-        LocalDate publicationDate,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
+        LocalDateTime publicationDate,
         String title,
         String description,
         ProofStatus status
