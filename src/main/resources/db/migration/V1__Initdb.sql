@@ -33,8 +33,6 @@ CREATE TABLE proof
     title            VARCHAR(100),
     description      VARCHAR(255),
     status           VARCHAR(255)                            NOT NULL,
-    kudos            INTEGER,
-    talent_liked_id  BIGINT,
     CONSTRAINT pk_proof PRIMARY KEY (id)
 );
 
