@@ -1,9 +1,8 @@
 package com.softserve.skillscope.proof.controller;
 
 import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.proof.model.request.ProofEditRequest;
+import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
-import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
 import jakarta.validation.Valid;
@@ -40,7 +39,7 @@ public class ProofController {
 
     @PostMapping("/talents/{talent-id}/proofs")
     public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
-                                                    @RequestBody @Valid ProofCreationDto creationRequest) {
+                                                    @RequestBody ProofRequest creationRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
     }    
 
@@ -54,7 +53,7 @@ public class ProofController {
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
     ResponseEntity<GeneralResponse> editProofById(@PathVariable("talent-id") Long talentId,
                                               @PathVariable("proof-id") Long proofId,
-                                              @RequestBody @Valid ProofEditRequest proofToUpdate){
+                                              @RequestBody ProofRequest proofToUpdate){
         return ResponseEntity.status(HttpStatus.OK).body(proofService.editProofById(talentId, proofId, proofToUpdate));
     }
 
