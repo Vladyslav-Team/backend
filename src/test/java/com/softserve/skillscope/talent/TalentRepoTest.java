@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,15 +105,15 @@ class TalentRepoTest {
 
         talentRepo.save(talent);
 
-        Proof proof1 = new Proof(1L, talent, LocalDate.now(),
+        Proof proof1 = new Proof(1L, talent, LocalDateTime.now(),
                 "Proof 1", "Description of proof 1", ProofStatus.DRAFT);
         proofRepo.save(proof1);
 
-        Proof proof2 = new Proof(2L, talent, LocalDate.now(),
+        Proof proof2 = new Proof(2L, talent, LocalDateTime.now(),
                 "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED);
         proofRepo.save(proof2);
 
-        Proof proof3 = new Proof(3L, talent, LocalDate.now(),
+        Proof proof3 = new Proof(3L, talent, LocalDateTime.now(),
                 "Proof 3", "Description of proof 3", ProofStatus.HIDDEN);
         proofRepo.save(proof3);
 
