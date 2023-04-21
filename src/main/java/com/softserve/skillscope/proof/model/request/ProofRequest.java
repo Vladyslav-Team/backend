@@ -1,14 +1,14 @@
-package com.softserve.skillscope.proof.model.dto;
+package com.softserve.skillscope.proof.model.request;
 
 import com.softserve.skillscope.exception.generalException.ValidationException;
 import lombok.Builder;
 
 @Builder
-public record ProofCreationDto(
-    String title,
-    String description
-){
-    public ProofCreationDto(String title, String description) {
+public record ProofRequest(
+        String title,
+        String description
+) {
+    public ProofRequest(String title, String description) {
         this.title = title;
         this.description = description;
 

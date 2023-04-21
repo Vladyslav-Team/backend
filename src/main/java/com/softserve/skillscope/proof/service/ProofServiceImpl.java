@@ -8,10 +8,9 @@ import com.softserve.skillscope.exception.talentException.TalentNotFoundExceptio
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
-import com.softserve.skillscope.proof.model.request.ProofEditRequest;
+import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
-import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
@@ -87,7 +86,7 @@ public class ProofServiceImpl implements ProofService {
         }
     }
     @Override
-    public GeneralResponse addProof(Long talentId, ProofCreationDto creationRequest) {
+    public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
         Talent creator = findTalentById(talentId);
         if (securityConfig.isNotCurrentTalent(creator)) {
             throw new ForbiddenRequestException();
@@ -113,7 +112,7 @@ public class ProofServiceImpl implements ProofService {
 
     @Transactional
     @Override
-    public GeneralResponse editProofById(Long talentId, Long proofId, ProofEditRequest proofToUpdate) {
+    public GeneralResponse editProofById(Long talentId, Long proofId, ProofRequest proofToUpdate) {
         Proof proof = findProofById(proofId);
         checkOwnProofs(talentId, proofId);
         if (proof.getStatus() != proofProp.defaultType()){
@@ -153,7 +152,7 @@ public class ProofServiceImpl implements ProofService {
         return new GeneralResponse(proofId, "Proof successfully hidden!");
     }
 
-    private void checkForChanges(ProofEditRequest proofToUpdate, Proof proof){
+    private void checkForChanges(ProofRequest proofToUpdate, Proof proof){
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
         }
