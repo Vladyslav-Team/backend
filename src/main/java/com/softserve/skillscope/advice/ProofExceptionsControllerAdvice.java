@@ -14,7 +14,7 @@ public class ProofExceptionsControllerAdvice {
 
     @ExceptionHandler({ProofAlreadyPublishedException.class, ProofHasNullValue.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorDTO> ProofExceptionsControllerAdvice(Exception exception) {
+    public ResponseEntity<ErrorDTO> proofExceptionsControllerAdvice(Exception exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
 }
