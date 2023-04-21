@@ -1,6 +1,7 @@
 package com.softserve.skillscope.proof.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
@@ -44,7 +46,7 @@ public class Proof {
     @Column(name = "status")
     @NotNull
     private ProofStatus status;
-
-    private Integer kudos;
-    private Long talentLikedId;
+    //Remove all kudoses that connected to this proof.
+    @OneToMany(mappedBy = "proof", cascade = CascadeType.ALL)
+    private List<Kudos> kudosList;
 }
