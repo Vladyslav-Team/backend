@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDate;
-import java.util.Optional;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
@@ -38,7 +38,7 @@ class ProofRepoTest {
                 .build();
         proof = Proof.builder()
                 .talent(talent)
-                .publicationDate(LocalDate.now())
+                .publicationDate(LocalDateTime.now())
                 .title("Test Title")
                 .description("Test Description")
                 .status(ProofStatus.DRAFT)
