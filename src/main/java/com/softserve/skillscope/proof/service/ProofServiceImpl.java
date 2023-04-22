@@ -4,6 +4,7 @@ import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.proofException.ProofAlreadyPublishedException;
+import com.softserve.skillscope.exception.proofException.ProofHasNullValue;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
@@ -11,12 +12,11 @@ import com.softserve.skillscope.kudos.KudosRepository;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
-import com.softserve.skillscope.proof.model.ProofEditRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
-import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
+import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
@@ -30,7 +30,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -108,6 +107,7 @@ public class ProofServiceImpl implements ProofService {
         Kudos kudos = new Kudos();
         kudos.setTalent(talent);
         kudos.setAmount(1);
+        kudos.setKudosDate(LocalDateTime.now());
         kudos.setProof(proof);
         kudosRepo.save(kudos);
 
@@ -144,7 +144,7 @@ public class ProofServiceImpl implements ProofService {
     public GeneralResponse editProofById(Long talentId, Long proofId, ProofRequest proofToUpdate) {
         Proof proof = findProofById(proofId);
         checkOwnProofs(talentId, proofId);
-        if (proof.getStatus() != proofProp.defaultType()){
+        if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
         }
         checkForChanges(proofToUpdate, proof);
@@ -155,7 +155,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse publishProofById(Long talentId, Long proofId){
+    public GeneralResponse publishProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
@@ -170,18 +170,18 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse hideProofById(Long talentId, Long proofId){
+    public GeneralResponse hideProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
-        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED){
+        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
             proof.setStatus(ProofStatus.HIDDEN);
         }
         proofRepo.save(proof);
         return new GeneralResponse(proofId, "Proof successfully hidden!");
     }
 
-    private void checkForChanges(ProofRequest proofToUpdate, Proof proof){
+    private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
         }
@@ -217,7 +217,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void isNotEmptyOrNull(Proof proof) {
-        if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())){
+        if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())) {
             throw new ProofHasNullValue();
         }
     }
