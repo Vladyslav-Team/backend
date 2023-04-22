@@ -92,7 +92,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     public GeneralResponse addKudosToProofByTalent(Long proofId, Authentication authentication) {
-        Talent talent = talentRepo.findByEmail(authentication.getName()).orElseThrow(TalentNotFoundException::new);
+        Talent talent = findTalentByEmail(authentication.getName());
         Proof proof = findProofById(proofId);
 
         if (talent.equals(proof.getTalent())) {
@@ -197,6 +197,11 @@ public class ProofServiceImpl implements ProofService {
     private Proof findProofById(Long proofId) {
         return proofRepo.findById(proofId)
                 .orElseThrow(ProofNotFoundException::new);
+    }
+
+    private Talent findTalentByEmail(String name) {
+        return talentRepo.findByEmail(name)
+                .orElseThrow(TalentNotFoundException::new);
     }
 
     private Talent findTalentById(Long id) {
