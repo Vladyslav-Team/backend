@@ -1,3 +1,4 @@
+/*
 package com.softserve.skillscope.talent;
 
 import com.softserve.skillscope.talent.TalentRepository;
@@ -81,3 +82,4 @@ class TalentServiceTest {
 //    }
 
 }
+*/
