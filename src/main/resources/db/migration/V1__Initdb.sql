@@ -47,6 +47,7 @@ CREATE TABLE kudos
     talent_id BIGINT,
     proof_id  BIGINT                                  NOT NULL,
     amount      INTEGER,
+    kudos_date TIMESTAMP WITHOUT TIME ZONE,
     CONSTRAINT pk_kudos PRIMARY KEY (id)
 );
 

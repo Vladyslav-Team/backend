@@ -1,5 +1,6 @@
 package com.softserve.skillscope.proof;
 
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.entity.Talent;

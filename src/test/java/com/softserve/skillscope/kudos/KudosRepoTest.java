@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ class KudosRepoTest {
                 .build();
         proof = Proof.builder()
                 .talent(talent)
-                .publicationDate(LocalDate.now())
+                .publicationDate(LocalDateTime.now())
                 .title("Test test test")
                 .description("tes test ")
                 .status(ProofStatus.PUBLISHED)

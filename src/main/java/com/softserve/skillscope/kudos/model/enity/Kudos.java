@@ -1,11 +1,14 @@
 package com.softserve.skillscope.kudos.model.enity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -28,4 +31,7 @@ public class Kudos {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Proof proof;
     private Integer amount;
+    @Column(name = "kudos_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
+    private LocalDateTime kudosDate;
 }
