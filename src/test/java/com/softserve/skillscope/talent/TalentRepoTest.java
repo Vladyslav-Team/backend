@@ -1,5 +1,7 @@
 package com.softserve.skillscope.talent;
 
+import com.softserve.skillscope.kudos.KudosRepository;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
@@ -14,11 +16,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -29,6 +33,8 @@ class TalentRepoTest {
     private TalentRepository talentRepo;
     @Autowired
     private ProofRepository proofRepo;
+    @Autowired
+    private KudosRepository kudosRepository;
     private Talent talent;
 
     @BeforeEach
@@ -110,21 +116,39 @@ class TalentRepoTest {
                 .build();
 
         talentRepo.save(talent);
-
-        Proof proof1 = new Proof(1L, talent, LocalDate.now(),
-                "Proof 1", "Description of proof 1", ProofStatus.DRAFT);
+        Proof proof1 = Proof.builder()
+                .talent(talent)
+                .publicationDate(LocalDate.now())
+                .title("Proof 1")
+                .description("Desc 1")
+                .status(ProofStatus.DRAFT)
+                .build();
         proofRepo.save(proof1);
 
-        Proof proof2 = new Proof(2L, talent, LocalDate.now(),
-                "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED);
+        Proof proof2 = Proof.builder()
+                .talent(talent)
+                .publicationDate(LocalDate.now())
+                .title("Proof 2")
+                .description("Desc 2")
+                .status(ProofStatus.DRAFT)
+                .build();
+
         proofRepo.save(proof2);
 
-        Proof proof3 = new Proof(3L, talent, LocalDate.now(),
-                "Proof 3", "Description of proof 3", ProofStatus.HIDDEN);
-        proofRepo.save(proof3);
+        Kudos kudos1 = Kudos.builder()
+                .talent(talent)
+                .proof(proof1)
+                .build();
+        Kudos kudos2 = Kudos.builder()
+                .talent(talent)
+                .proof(proof2)
+                .build();
+        kudosRepository.saveAll(Arrays.asList(kudos1, kudos2));
+
+        talent.setProofs(Arrays.asList(proof1, proof2));
 
         List<Proof> proofList = proofRepo.findByTalentId(talent.getId());
-        assertEquals(3, proofList.size());
+        assertEquals(2, proofList.size());
         proofList.forEach(proof -> assertEquals(talent, proof.getTalent()));
     }
 }

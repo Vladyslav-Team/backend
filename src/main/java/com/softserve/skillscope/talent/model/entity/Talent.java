@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -45,11 +46,14 @@ public class Talent {
 
     //Set null key to kudos in talent_id when talent is deleted.
     @OneToMany(mappedBy = "talent")
-    private List<Kudos> kudosList;
+    private List<Kudos> kudos;
+
     //Set nulls to kudos table to talent_id key before deleting the talent
     @PreRemove
     private void removeKudos() {
-        kudosList.forEach(k -> k.setTalent(null));
-        kudosList.clear();
+        if (kudos != null) {
+            kudos.forEach(k -> k.setTalent(null));
+            kudos.clear();
+        }
     }
 }
