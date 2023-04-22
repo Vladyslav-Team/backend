@@ -27,4 +27,5 @@ public class Kudos {
     @JoinColumn(name = "proof_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Proof proof;
+    private Integer amount;
 }
