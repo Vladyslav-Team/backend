@@ -91,14 +91,12 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    //TODO Re-write the method
     public GeneralResponse addKudosToProofByTalent(Long proofId, Authentication authentication) {
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Talent talent = talentRepo.findByEmail(authentication.getName()).orElseThrow(TalentNotFoundException::new);
         Proof proof = findProofById(proofId);
 
         if (talent.equals(proof.getTalent())) {
-            throw new RuntimeException("Talent cannot like their own post");
+            throw new BadRequestException("Talent cannot like their own post");
         }
         if (kudosRepo.findByTalentAndProof(talent, proof).isPresent()) {
             throw new BadRequestException("Talent has already given kudos to this proof");
@@ -107,6 +105,7 @@ public class ProofServiceImpl implements ProofService {
         kudos.setTalent(talent);
         kudos.setProof(proof);
         kudosRepo.save(kudos);
+
         return new GeneralResponse(proof.getId(), "Kudos was added successfully!");
     }
 
