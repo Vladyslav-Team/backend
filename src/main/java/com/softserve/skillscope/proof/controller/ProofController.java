@@ -1,12 +1,10 @@
 package com.softserve.skillscope.proof.controller;
 
 import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.proof.model.ProofEditRequest;
+import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
-import com.softserve.skillscope.proof.model.dto.ProofCreationDto;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +23,7 @@ public class ProofController {
     }
 
     @GetMapping("/proofs")
-    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page,
-                                              @RequestParam(name = "newest") Optional<Boolean> newest) {
+    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest){
         return proofService.getAllProofByPage(Optional.empty(), page, newest.orElse(true));
     }
 
@@ -41,9 +38,9 @@ public class ProofController {
 
     @PostMapping("/talents/{talent-id}/proofs")
     public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
-                                                    @RequestBody @Valid ProofCreationDto creationRequest) {
+                                                    @RequestBody ProofRequest creationRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
-    }
+    }    
 
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @ResponseStatus(HttpStatus.OK)
@@ -54,8 +51,8 @@ public class ProofController {
 
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
     ResponseEntity<GeneralResponse> editProofById(@PathVariable("talent-id") Long talentId,
-                                                  @PathVariable("proof-id") Long proofId,
-                                                  @RequestBody @Valid ProofEditRequest proofToUpdate) {
+                                              @PathVariable("proof-id") Long proofId,
+                                              @RequestBody ProofRequest proofToUpdate){
         return ResponseEntity.status(HttpStatus.OK).body(proofService.editProofById(talentId, proofId, proofToUpdate));
     }
 
@@ -65,7 +62,6 @@ public class ProofController {
                                                             @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.publishProofById(talentId, proofId));
     }
-
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/hide")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GeneralResponse> hideProofById(@PathVariable("talent-id") Long talentId,

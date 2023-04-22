@@ -23,6 +23,7 @@ import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,7 +115,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse addProof(Long talentId, ProofCreationDto creationRequest) {
+    public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
         Talent creator = findTalentById(talentId);
         if (securityConfig.isNotCurrentTalent(creator)) {
             throw new ForbiddenRequestException();
@@ -125,6 +127,7 @@ public class ProofServiceImpl implements ProofService {
                 .description(creationRequest.description())
                 .status(proofProp.defaultType())
                 .build();
+
         proofRepo.save(proof);
         return new GeneralResponse(proof.getId(), "Created successfully!");
     }
@@ -138,10 +141,10 @@ public class ProofServiceImpl implements ProofService {
 
     @Transactional
     @Override
-    public GeneralResponse editProofById(Long talentId, Long proofId, ProofEditRequest proofToUpdate) {
+    public GeneralResponse editProofById(Long talentId, Long proofId, ProofRequest proofToUpdate) {
         Proof proof = findProofById(proofId);
         checkOwnProofs(talentId, proofId);
-        if (proof.getStatus() != proofProp.defaultType()) {
+        if (proof.getStatus() != proofProp.defaultType()){
             throw new ProofAlreadyPublishedException();
         }
         checkForChanges(proofToUpdate, proof);
@@ -152,14 +155,14 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse publishProofById(Long talentId, Long proofId) {
+    public GeneralResponse publishProofById(Long talentId, Long proofId){
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
-
+        isNotEmptyOrNull(proof);
         if (proof.getStatus() == ProofStatus.HIDDEN || proof.getStatus() == proofProp.defaultType()) {
             proof.setStatus(ProofStatus.PUBLISHED);
             if (proof.getPublicationDate() == null) {
-                proof.setPublicationDate(LocalDate.now());
+                proof.setPublicationDate(LocalDateTime.now());
             }
         }
         proofRepo.save(proof);
@@ -167,17 +170,18 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse hideProofById(Long talentId, Long proofId) {
+    public GeneralResponse hideProofById(Long talentId, Long proofId){
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
-        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
+        isNotEmptyOrNull(proof);
+        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED){
             proof.setStatus(ProofStatus.HIDDEN);
         }
         proofRepo.save(proof);
         return new GeneralResponse(proofId, "Proof successfully hidden!");
     }
 
-    private void checkForChanges(ProofEditRequest proofToUpdate, Proof proof) {
+    private void checkForChanges(ProofRequest proofToUpdate, Proof proof){
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
         }
@@ -210,5 +214,11 @@ public class ProofServiceImpl implements ProofService {
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
+    }
+
+    private void isNotEmptyOrNull(Proof proof) {
+        if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())){
+            throw new ProofHasNullValue();
+        }
     }
 }
