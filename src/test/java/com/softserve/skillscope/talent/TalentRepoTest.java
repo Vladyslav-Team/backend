@@ -15,14 +15,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -98,11 +97,11 @@ class TalentRepoTest {
 
     @Test
     void getTalentsByPage() {
-        int pageNum = 3;
         int pageSize = 3;
-        Page<Talent> page = talentRepo.findAll(PageRequest.of(pageNum - 1, pageSize));
-        List<Talent> talents = page.getContent();
-        assertThat(talents.size()).isEqualTo(pageSize);
+        talentRepo.save(talent);
+        Page<Talent> talents = talentRepo.findAllByOrderByIdDesc(PageRequest.of(0, pageSize));
+        assertNotNull(talents);
+        assertEquals(talent.getEmail(), talents.getContent().get(0).getEmail());
     }
 
     @Test
@@ -118,7 +117,7 @@ class TalentRepoTest {
         talentRepo.save(talent);
         Proof proof1 = Proof.builder()
                 .talent(talent)
-                .publicationDate(LocalDate.now())
+                .publicationDate(LocalDateTime.now())
                 .title("Proof 1")
                 .description("Desc 1")
                 .status(ProofStatus.DRAFT)
@@ -127,7 +126,7 @@ class TalentRepoTest {
 
         Proof proof2 = Proof.builder()
                 .talent(talent)
-                .publicationDate(LocalDate.now())
+                .publicationDate(LocalDateTime.now())
                 .title("Proof 2")
                 .description("Desc 2")
                 .status(ProofStatus.DRAFT)

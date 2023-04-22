@@ -12,7 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -32,14 +32,13 @@ public class Proof {
     private Talent talent;
 
     @Column(name = "publication_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate publicationDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
+    private LocalDateTime publicationDate;
 
-    @NotEmpty
     @Size(max = 100)
     private String title;
 
-    @NotEmpty
+    @Size(max = 2000)
     private String description;
 
     @Enumerated(EnumType.STRING)
