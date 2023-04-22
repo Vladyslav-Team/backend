@@ -1,14 +1,14 @@
 package com.softserve.skillscope.proof.controller;
 
+import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
-import com.softserve.skillscope.proof.model.response.ProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class ProofController {
 
     @GetMapping("/proofs")
     public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest){
-        return proofService.getAllProofByPage(Optional.ofNullable(null), page, newest.orElse(true));
+        return proofService.getAllProofByPage(Optional.empty(), page, newest.orElse(true));
     }
 
     @GetMapping("/talents/{talent-id}/proofs")
@@ -36,15 +36,37 @@ public class ProofController {
         return proofService.getAllProofByPage(Optional.of(talentId), page.orElse(1), newest.orElse(true));
     }
 
+
+    @PostMapping("/talents/{talent-id}/proofs")
+    public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
+                                                    @RequestBody ProofRequest creationRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
+    }    
+
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProofResponse deleteProofById(@PathVariable("talent-id") Long talentId,
-                                         @PathVariable("proof-id") Long proofId) {
-        return proofService.deleteProofById(talentId, proofId);
+    public ResponseEntity<GeneralResponse> deleteProofById(@PathVariable("talent-id") Long talentId,
+                                                           @PathVariable("proof-id") Long proofId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(proofService.deleteProofById(talentId, proofId));
     }
 
-    private boolean isNotCurrentTalentHasProofWithId(Talent talent) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return !email.equalsIgnoreCase(talent.getEmail());
+    @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
+    ResponseEntity<GeneralResponse> editProofById(@PathVariable("talent-id") Long talentId,
+                                              @PathVariable("proof-id") Long proofId,
+                                              @RequestBody ProofRequest proofToUpdate){
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.editProofById(talentId, proofId, proofToUpdate));
+    }
+
+    @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/publish")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<GeneralResponse> publishProofById(@PathVariable("talent-id") Long talentId,
+                                                           @PathVariable("proof-id") Long proofId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(proofService.publishProofById(talentId, proofId));
+    }
+    @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/hide")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<GeneralResponse> hideProofById(@PathVariable("talent-id") Long talentId,
+                                                            @PathVariable("proof-id") Long proofId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(proofService.hideProofById(talentId, proofId));
     }
 }
