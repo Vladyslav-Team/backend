@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -22,7 +22,7 @@ class ProofTest {
     public void createProof() {
         proof = Proof.builder()
                 .talent(new Talent())
-                .publicationDate(LocalDate.now())
+                .publicationDate(LocalDateTime.now())
                 .title("Test Title")
                 .description("Test Description")
                 .status(ProofStatus.DRAFT)
@@ -48,7 +48,7 @@ class ProofTest {
 
     @Test
     void testAllArgsConstructor() {
-        Proof proof1 = new Proof(2L, new Talent(), LocalDate.now(),
+        Proof proof1 = new Proof(2L, new Talent(), LocalDateTime.now(),
                 "Title", "Description", ProofStatus.DRAFT);
         assertNotNull(proof1);
     }

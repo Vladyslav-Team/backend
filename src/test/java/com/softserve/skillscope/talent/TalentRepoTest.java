@@ -13,7 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,12 +51,12 @@ class TalentRepoTest {
 
     @Test
     void getTalent() {
-        talentRepo.save(talent);
-        Optional<Talent> optionalTalent = talentRepo.findByEmail(talent.getEmail());
-        assertTrue(optionalTalent.isPresent());
+        Talent savedTalent = talentRepo.save(talent);
 
-        Talent retrievedTalent = optionalTalent.get();
-        assertEquals(talent, retrievedTalent);
+        Talent foundTalent = talentRepo.findById(savedTalent.getId()).get();
+
+        assertThat(foundTalent).isNotNull();
+        assertThat(foundTalent).isEqualTo(savedTalent);
     }
 
     @Test
@@ -78,10 +78,16 @@ class TalentRepoTest {
 
     @Test
     void deleteTalent() {
-        talentRepo.save(talent);
-        assertTrue(talentRepo.existsByEmail(talent.getEmail()));
-        talentRepo.delete(talent);
-        assertFalse(talentRepo.existsByEmail(talent.getEmail()));
+        Talent savedTalent = talentRepo.save(talent);
+
+        assertThat(savedTalent).isNotNull();
+        assertThat(savedTalent).isEqualTo(talent);
+
+        talentRepo.delete(savedTalent);
+
+        Talent foundTalent = talentRepo.findById(savedTalent.getId()).orElse(null);
+
+        assertThat(foundTalent).isNull();
     }
 
     @Test
@@ -105,15 +111,15 @@ class TalentRepoTest {
 
         talentRepo.save(talent);
 
-        Proof proof1 = new Proof(1L, talent, LocalDate.now(),
+        Proof proof1 = new Proof(1L, talent, LocalDateTime.now(),
                 "Proof 1", "Description of proof 1", ProofStatus.DRAFT);
         proofRepo.save(proof1);
 
-        Proof proof2 = new Proof(2L, talent, LocalDate.now(),
+        Proof proof2 = new Proof(2L, talent, LocalDateTime.now(),
                 "Proof 2", "Description of proof 2", ProofStatus.PUBLISHED);
         proofRepo.save(proof2);
 
-        Proof proof3 = new Proof(3L, talent, LocalDate.now(),
+        Proof proof3 = new Proof(3L, talent, LocalDateTime.now(),
                 "Proof 3", "Description of proof 3", ProofStatus.HIDDEN);
         proofRepo.save(proof3);
 

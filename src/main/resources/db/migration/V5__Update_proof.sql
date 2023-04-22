@@ -1,4 +1,5 @@
---UPDATE--
+--UPDATE VALUES IN publication_date--
+
 UPDATE proof SET publication_date = '2000-01-01' WHERE id = 1;
 UPDATE proof SET publication_date = '1995-02-14' WHERE id = 2;
 UPDATE proof SET publication_date = '1987-03-17' WHERE id = 3;
