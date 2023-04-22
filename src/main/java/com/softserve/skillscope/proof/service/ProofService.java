@@ -25,5 +25,5 @@ public interface ProofService {
 
     GeneralResponse hideProofById(Long talentId, Long proofId);
 
-    GeneralResponse addKudosToProofByTalent(Long proofId, Authentication authentication);
+    GeneralResponse addKudosToProofByTalent(Long proofId);
 }

@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -91,8 +91,10 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    public GeneralResponse addKudosToProofByTalent(Long proofId, Authentication authentication) {
-        Talent talent = findTalentByEmail(authentication.getName());
+    public GeneralResponse addKudosToProofByTalent(Long proofId) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Talent talent = findTalentByEmail(email);
         Proof proof = findProofById(proofId);
 
         if (talent.equals(proof.getTalent())) {
@@ -103,6 +105,7 @@ public class ProofServiceImpl implements ProofService {
         }
         Kudos kudos = new Kudos();
         kudos.setTalent(talent);
+        kudos.setAmount(1);
         kudos.setProof(proof);
         kudosRepo.save(kudos);
 

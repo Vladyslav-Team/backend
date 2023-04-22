@@ -4,6 +4,7 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -27,4 +28,6 @@ public class Kudos {
     @JoinColumn(name = "proof_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Proof proof;
+
+    private Integer amount;
 }
