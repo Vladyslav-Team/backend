@@ -2,7 +2,7 @@ package com.softserve.skillscope.kudos.model.enity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.proof.model.entity.Proof;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -22,9 +22,14 @@ public class Kudos {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    //TODO @SEM remove the code
+
+    //    @ManyToOne
+//    @JoinColumn(name = "talent_id")
+//    private Talent talent;
     @ManyToOne
-    @JoinColumn(name = "talent_id")
-    private Talent talent;
+    @JoinColumn(name = "sponsor_id")
+    private Sponsor sponsor;
 
     @ManyToOne
     @JoinColumn(name = "proof_id", nullable = false)

@@ -32,8 +32,6 @@ class TalentRepoTest {
     private TalentRepository talentRepo;
     @Autowired
     private ProofRepository proofRepo;
-    @Autowired
-    private KudosRepository kudosRepository;
     private Talent talent;
 
     @BeforeEach
@@ -133,16 +131,6 @@ class TalentRepoTest {
                 .build();
 
         proofRepo.save(proof2);
-
-        Kudos kudos1 = Kudos.builder()
-                .talent(talent)
-                .proof(proof1)
-                .build();
-        Kudos kudos2 = Kudos.builder()
-                .talent(talent)
-                .proof(proof2)
-                .build();
-        kudosRepository.saveAll(Arrays.asList(kudos1, kudos2));
 
         talent.setProofs(Arrays.asList(proof1, proof2));
 

@@ -3,7 +3,7 @@ package com.softserve.skillscope.talent;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.TalentInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -54,7 +54,7 @@ class TalentTest {
     void testAllArgsConstructor() {
         Talent talent = new Talent(2L, new TalentInfo(), "test@example.com",
                 "password", "John", "Doe", Arrays.asList(new Proof(),
-                new Proof()), List.of(new Kudos()));
+                new Proof()));
         assertNotNull(talent);
     }
 

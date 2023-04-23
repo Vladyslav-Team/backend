@@ -92,27 +92,28 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    public GeneralResponse addKudosToProofByTalent(Long proofId) {
-
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Talent talent = findTalentByEmail(email);
-        Proof proof = findProofById(proofId);
-
-        if (talent.equals(proof.getTalent())) {
-            throw new BadRequestException("Talent cannot like their own post");
-        }
-        if (kudosRepo.findByTalentAndProof(talent, proof).isPresent()) {
-            throw new BadRequestException("Talent has already given kudos to this proof");
-        }
-        Kudos kudos = new Kudos();
-        kudos.setTalent(talent);
-        kudos.setAmount(1);
-        kudos.setKudosDate(LocalDateTime.now());
-        kudos.setProof(proof);
-        kudosRepo.save(kudos);
-
-        return new GeneralResponse(proof.getId(), "Kudos was added successfully!");
-    }
+    //TODO @SEM re-write the code for sponsor
+//    public GeneralResponse addKudosToProofByTalent(Long proofId) {
+//
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        Talent talent = findTalentByEmail(email);
+//        Proof proof = findProofById(proofId);
+//
+//        if (talent.equals(proof.getTalent())) {
+//            throw new BadRequestException("Talent cannot like their own post");
+//        }
+////        if (kudosRepo.findByTalentAndProof(talent, proof).isPresent()) {
+////            throw new BadRequestException("Talent has already given kudos to this proof");
+////        }
+//        Kudos kudos = new Kudos();
+////        kudos.setTalent(talent);
+//        kudos.setAmount(1);
+//        kudos.setKudosDate(LocalDateTime.now());
+//        kudos.setProof(proof);
+//        kudosRepo.save(kudos);
+//
+//        return new GeneralResponse(proof.getId(), "Kudos was added successfully!");
+//    }
 
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {

@@ -1,7 +1,7 @@
-package com.softserve.skillscope.talentInfo;
+package com.softserve.skillscope.talent;
 
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.TalentInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

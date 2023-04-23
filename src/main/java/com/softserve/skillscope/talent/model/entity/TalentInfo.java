@@ -1,4 +1,4 @@
-package com.softserve.skillscope.talentInfo.model.entity;
+package com.softserve.skillscope.talent.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.talent.model.entity.Talent;

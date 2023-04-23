@@ -18,6 +18,6 @@ public interface ProofService {
     GeneralResponse publishProofById(Long talentId, Long proofId);
 
     GeneralResponse hideProofById(Long talentId, Long proofId);
-
-    GeneralResponse addKudosToProofByTalent(Long proofId);
+    //TODO @SEM re-write the code for sponsor
+//    GeneralResponse addKudosToProofByTalent(Long proofId);
 }
