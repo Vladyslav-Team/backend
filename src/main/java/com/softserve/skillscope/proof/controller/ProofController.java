@@ -5,7 +5,6 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,13 +59,18 @@ public class ProofController {
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/publish")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GeneralResponse> publishProofById(@PathVariable("talent-id") Long talentId,
-                                                           @PathVariable("proof-id") Long proofId) {
+                                                            @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.publishProofById(talentId, proofId));
     }
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/hide")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GeneralResponse> hideProofById(@PathVariable("talent-id") Long talentId,
-                                                            @PathVariable("proof-id") Long proofId) {
+                                                         @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.hideProofById(talentId, proofId));
+    }
+
+    @PostMapping("/proofs/{proof-id}/kudos")
+    public ResponseEntity<GeneralResponse> addLikeToProof(@PathVariable("proof-id") Long proofId) {
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofByTalent(proofId));
     }
 }

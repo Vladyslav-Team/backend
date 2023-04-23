@@ -37,7 +37,7 @@ public class GeneralExceptionsControllerAdvice {
 
     @ExceptionHandler({TalentNotFoundException.class, ProofNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(TalentNotFoundException exception) {
+    public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 

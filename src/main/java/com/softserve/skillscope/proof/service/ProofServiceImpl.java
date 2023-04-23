@@ -8,6 +8,8 @@ import com.softserve.skillscope.exception.proofException.ProofHasNullValue;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.kudos.KudosRepository;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
@@ -21,11 +23,12 @@ import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,6 +39,7 @@ import java.util.Optional;
 public class ProofServiceImpl implements ProofService {
     private TalentRepository talentRepo;
     private ProofRepository proofRepo;
+    private KudosRepository kudosRepo;
     private ProofMapper proofMapper;
     private ProofProperties proofProp;
     private SecurityConfiguration securityConfig;
@@ -87,6 +91,29 @@ public class ProofServiceImpl implements ProofService {
             throw new BadRequestException(e.getMessage());
         }
     }
+
+    public GeneralResponse addKudosToProofByTalent(Long proofId) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Talent talent = findTalentByEmail(email);
+        Proof proof = findProofById(proofId);
+
+        if (talent.equals(proof.getTalent())) {
+            throw new BadRequestException("Talent cannot like their own post");
+        }
+        if (kudosRepo.findByTalentAndProof(talent, proof).isPresent()) {
+            throw new BadRequestException("Talent has already given kudos to this proof");
+        }
+        Kudos kudos = new Kudos();
+        kudos.setTalent(talent);
+        kudos.setAmount(1);
+        kudos.setKudosDate(LocalDateTime.now());
+        kudos.setProof(proof);
+        kudosRepo.save(kudos);
+
+        return new GeneralResponse(proof.getId(), "Kudos was added successfully!");
+    }
+
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
         Talent creator = findTalentById(talentId);
@@ -104,8 +131,8 @@ public class ProofServiceImpl implements ProofService {
         proofRepo.save(proof);
         return new GeneralResponse(proof.getId(), "Created successfully!");
     }
-    
-     @Override
+
+    @Override
     public GeneralResponse deleteProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         proofRepo.deleteById(proofId);
@@ -117,7 +144,7 @@ public class ProofServiceImpl implements ProofService {
     public GeneralResponse editProofById(Long talentId, Long proofId, ProofRequest proofToUpdate) {
         Proof proof = findProofById(proofId);
         checkOwnProofs(talentId, proofId);
-        if (proof.getStatus() != proofProp.defaultType()){
+        if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
         }
         checkForChanges(proofToUpdate, proof);
@@ -128,7 +155,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse publishProofById(Long talentId, Long proofId){
+    public GeneralResponse publishProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
@@ -143,18 +170,18 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse hideProofById(Long talentId, Long proofId){
+    public GeneralResponse hideProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
-        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED){
+        if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
             proof.setStatus(ProofStatus.HIDDEN);
         }
         proofRepo.save(proof);
         return new GeneralResponse(proofId, "Proof successfully hidden!");
     }
 
-    private void checkForChanges(ProofRequest proofToUpdate, Proof proof){
+    private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
         }
@@ -162,7 +189,8 @@ public class ProofServiceImpl implements ProofService {
             proof.setDescription(proofToUpdate.description());
         }
     }
-    private void checkOwnProofs(Long talentId, Long proofId){
+
+    private void checkOwnProofs(Long talentId, Long proofId) {
         Talent talent = findTalentById(talentId);
         Proof proof = findProofById(proofId);
         if (securityConfig.isNotCurrentTalent(talent))
@@ -177,13 +205,19 @@ public class ProofServiceImpl implements ProofService {
         return proofRepo.findById(proofId)
                 .orElseThrow(ProofNotFoundException::new);
     }
+
+    private Talent findTalentByEmail(String name) {
+        return talentRepo.findByEmail(name)
+                .orElseThrow(TalentNotFoundException::new);
+    }
+
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
     }
 
     private void isNotEmptyOrNull(Proof proof) {
-        if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())){
+        if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())) {
             throw new ProofHasNullValue();
         }
     }

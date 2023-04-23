@@ -30,6 +30,7 @@ public class Kudos {
     @JoinColumn(name = "proof_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Proof proof;
+
     private Integer amount;
     @Column(name = "kudos_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
