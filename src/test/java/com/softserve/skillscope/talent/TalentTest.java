@@ -1,5 +1,6 @@
 package com.softserve.skillscope.talent;
 
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
@@ -52,7 +53,8 @@ class TalentTest {
     @Test
     void testAllArgsConstructor() {
         Talent talent = new Talent(2L, new TalentInfo(), "test@example.com",
-                "password", "John", "Doe", Arrays.asList(new Proof(), new Proof()));
+                "password", "John", "Doe", Arrays.asList(new Proof(),
+                new Proof()), List.of(new Kudos()));
         assertNotNull(talent);
     }
 

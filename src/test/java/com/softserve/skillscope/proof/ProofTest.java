@@ -1,5 +1,6 @@
 package com.softserve.skillscope.proof;
 
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -49,7 +51,7 @@ class ProofTest {
     @Test
     void testAllArgsConstructor() {
         Proof proof1 = new Proof(2L, new Talent(), LocalDateTime.now(),
-                "Title", "Description", ProofStatus.DRAFT);
+                "Title", "Description", ProofStatus.DRAFT, List.of(new Kudos()));
         assertNotNull(proof1);
     }
 }
