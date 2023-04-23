@@ -4,6 +4,7 @@ import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
@@ -13,12 +14,10 @@ import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentImageResponse;
-import com.softserve.skillscope.talent.model.response.TalentResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,18 +65,18 @@ public class TalentServiceImpl implements TalentService {
     }
 
     @Override
-    public TalentResponse delete(Long talentId) {
+    public GeneralResponse delete(Long talentId) {
         Talent talent = findTalentById(talentId);
         if (securityConfig.isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
         }
         talentRepo.delete(talent);
-        return new TalentResponse(talentId, "Deleted successfully!");
+        return new GeneralResponse(talentId, "Deleted successfully!");
     }
 
     @Transactional
     @Override
-    public TalentResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
+    public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
         Talent talent = findTalentById(talentId);
         if (securityConfig.isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
@@ -85,7 +84,7 @@ public class TalentServiceImpl implements TalentService {
         checkIfFieldsNotEmpty(talentToUpdate, talent);
         Talent saveTalent = talentRepo.save(talent);
 
-        return new TalentResponse(saveTalent.getId(), "Edited successfully!");
+        return new GeneralResponse(saveTalent.getId(), "Edited successfully!");
     }
 
     /*

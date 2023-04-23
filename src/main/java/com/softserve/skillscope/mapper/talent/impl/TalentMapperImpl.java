@@ -35,7 +35,7 @@ public class TalentMapperImpl implements TalentMapper {
                 .location(talent.getTalentInfo().getLocation())
                 .about(talent.getTalentInfo().getAbout())
                 .education(talent.getTalentInfo().getEducation())
-                .age(Period.between(talent.getTalentInfo().getBirthday(), LocalDate.now()).getYears())
+                .age(talent.getTalentInfo().getBirthday() != null ? Period.between(talent.getTalentInfo().getBirthday(), LocalDate.now()).getYears() : 0)
                 .email(talent.getEmail())
                 .phone(talent.getTalentInfo().getPhone())
                 .build();

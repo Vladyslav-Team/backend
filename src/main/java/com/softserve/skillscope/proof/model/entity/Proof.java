@@ -1,6 +1,7 @@
 package com.softserve.skillscope.proof.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
@@ -11,7 +12,8 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -30,19 +32,20 @@ public class Proof {
     private Talent talent;
 
     @Column(name = "publication_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate publicationDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
+    private LocalDateTime publicationDate;
 
-    @NotEmpty
     @Size(max = 100)
     private String title;
 
-    @NotEmpty
-    @Size(max = 1000)
+    @Size(max = 2000)
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     @NotNull
     private ProofStatus status;
+    //Remove all kudos that connected to this proof.
+    @OneToMany(mappedBy = "proof", cascade = CascadeType.ALL)
+    private List<Kudos> kudos;
 }

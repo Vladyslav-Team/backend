@@ -29,10 +29,10 @@ public class GeneralExceptionsControllerAdvice {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorDTO(exception.getMessage()));
     }
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseStatusException pageNotFoundExceptionHandler(BadRequestException exception) {
-        return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+    public ResponseEntity<ErrorDTO> badRequestExceptionHandler(BadRequestException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -45,5 +45,11 @@ public class GeneralExceptionsControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler({ValidationException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorDTO> validationException(ValidationException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
 }

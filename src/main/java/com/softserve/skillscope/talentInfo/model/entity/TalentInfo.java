@@ -25,7 +25,7 @@ public class TalentInfo {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "talent_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Talent talent;

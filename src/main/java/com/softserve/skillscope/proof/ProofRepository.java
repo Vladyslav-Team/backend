@@ -18,7 +18,7 @@ public interface ProofRepository extends JpaRepository<Proof, Long>{
     void deleteById(Long proofId);
     @Query("SELECT p FROM Proof p WHERE p.status = 'PUBLISHED'")
     Page<Proof> findAllVisible(ProofStatus status, Pageable pageable);
-    @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1")
+    @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1 and p.status = 'PUBLISHED'")
     Page<Proof> findAllVisibleByTalentId(Long id, ProofStatus status, Pageable pageable);
 
     @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1")
