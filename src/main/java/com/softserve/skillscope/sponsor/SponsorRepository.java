@@ -1,4 +1,7 @@
 package com.softserve.skillscope.sponsor;
 
-public interface SponsorRepository {
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SponsorRepository extends JpaRepository<Sponsor, Long> {
 }
