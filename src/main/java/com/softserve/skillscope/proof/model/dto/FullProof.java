@@ -12,7 +12,7 @@ public record FullProof(
         Long talentId,
         String talentName,
         String talentSurname,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd-MM-yyyy")
         LocalDateTime publicationDate,
         String title,
         String description,
