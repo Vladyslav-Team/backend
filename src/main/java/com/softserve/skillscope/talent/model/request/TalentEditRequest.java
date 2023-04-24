@@ -1,6 +1,8 @@
 package com.softserve.skillscope.talent.model.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.softserve.skillscope.exception.generalException.ValidationException;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import org.hibernate.validator.constraints.URL;
@@ -30,4 +32,30 @@ public record TalentEditRequest(
         @Size(max = 16, message = "Phone must be less than 16 characters")
         String phone
 ) {
+        public TalentEditRequest(String password,
+                                 String name,
+                                 String surname,
+                                 String image,
+                                 String experience,
+                                 String location,
+                                 String about,
+                                 String education,
+                                 LocalDate birthday,
+                                 String phone) {
+                this.password = password;
+                this.name = name;
+                this.surname = surname;
+                this.image = image;
+                this.experience = experience;
+                this.location = location;
+                this.about = about;
+                this.education = education;
+                this.birthday = birthday;
+                this.phone = phone;
+
+                String namePattern = "^[A-Za-z]+$";
+                if (!name.matches(namePattern) || !surname.matches(namePattern)) {
+                        throw new ValidationException("Name and surname both must be written in Latin");
+                }
+        }
 }
