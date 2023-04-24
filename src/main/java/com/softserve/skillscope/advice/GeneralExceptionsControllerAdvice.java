@@ -1,16 +1,14 @@
 package com.softserve.skillscope.advice;
 
 import com.softserve.skillscope.exception.ErrorDTO;
-import com.softserve.skillscope.exception.generalException.BadRequestException;
-import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.generalException.S3Exception;
-import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
+import com.softserve.skillscope.exception.generalException.*;
+import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
+import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 public class GeneralExceptionsControllerAdvice {
@@ -27,10 +25,22 @@ public class GeneralExceptionsControllerAdvice {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorDTO(exception.getMessage()));
     }
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseStatusException pageNotFoundExceptionHandler(BadRequestException exception) {
-        return new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+    public ResponseEntity<ErrorDTO> badRequestExceptionHandler(BadRequestException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler({TalentNotFoundException.class, ProofNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(Exception exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler({ValidationException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorDTO> validationException(ValidationException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(S3Exception.class)

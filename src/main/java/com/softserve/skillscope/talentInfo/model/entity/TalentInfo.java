@@ -24,7 +24,7 @@ public class TalentInfo {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "talent_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Talent talent;
@@ -43,7 +43,7 @@ public class TalentInfo {
     private String phone;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate age;
+    private LocalDate birthday;
 
     @Size(max = 64)
     private String education;

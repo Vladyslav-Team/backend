@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.talent.TalentRepository;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,13 +51,13 @@ public class SecurityConfiguration {
         //Routing security filter
         http.authorizeHttpRequests(req -> req
                 .requestMatchers(antMatcher("/h2/**")).permitAll() //works only for testing
+                .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
-                .requestMatchers(HttpMethod.GET, "/talents/{talent-id}").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/talents/{talent-id}").authenticated()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents/login").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/talents/{talent-id}").authenticated()
+                .requestMatchers(HttpMethod.GET, "/proofs").permitAll()
+                .requestMatchers(antMatcher("/proofs/**/kudos")).permitAll()
                 .anyRequest().authenticated());
 
         //HTTP session state management
@@ -128,5 +130,10 @@ public class SecurityConfiguration {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    public boolean isNotCurrentTalent(Talent talent) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return !email.equalsIgnoreCase(talent.getEmail());
     }
 }

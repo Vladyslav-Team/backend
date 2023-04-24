@@ -33,7 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TalentProperties talentProps;
     private final PasswordEncoder passwordEncoder;
 
-    private Map<String, String> verifiedTokens = new HashMap<>();
+    private Map<String, String> verifiedTokens;
 
     @Override
     public JwtToken registration(RegistrationRequest request) {
@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         TalentInfo talentInfo = TalentInfo.builder()
                 .location(request.location())
-                .age(request.birthday())
+                .birthday(request.birthday())
                 .image(checkEmptyImage(request))
                 .experience("Experience is not mention")
                 .build();
