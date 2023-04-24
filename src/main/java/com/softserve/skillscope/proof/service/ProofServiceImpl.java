@@ -18,6 +18,7 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
+import com.softserve.skillscope.proof.model.response.KudosResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -179,6 +180,12 @@ public class ProofServiceImpl implements ProofService {
         }
         proofRepo.save(proof);
         return new GeneralResponse(proofId, "Proof successfully hidden!");
+    }
+
+    @Override
+    public KudosResponse showAmountKudosOfProof(Long proofId){
+        Proof proof = findProofById(proofId);
+        return new KudosResponse(proofId, proof.getKudos().size());
     }
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
