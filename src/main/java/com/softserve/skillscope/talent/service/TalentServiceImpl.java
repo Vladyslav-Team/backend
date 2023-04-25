@@ -9,11 +9,13 @@ import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.entity.TalentInfo;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentImageResponse;
+import com.softserve.skillscope.user.UserRepository;
+import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +31,7 @@ import java.util.List;
 public class TalentServiceImpl implements TalentService {
     private TalentProperties talentProp;
     private TalentRepository talentRepo;
+    private UserRepository userRepo;
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
     private SecurityConfiguration securityConfig;
@@ -35,7 +39,7 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
         try {
-            Page<Talent> pageTalents =
+            Page<TalentInfo> pageTalents =
                     talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
             int totalPages = pageTalents.getTotalPages();
 
@@ -43,7 +47,7 @@ public class TalentServiceImpl implements TalentService {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralTalent> talents = new java.util.ArrayList<>(pageTalents.stream()
+            List<GeneralTalent> talents = new ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
                     .toList());
 
@@ -64,25 +68,26 @@ public class TalentServiceImpl implements TalentService {
         return talentMapper.toTalentProfile(findTalentById(talentId));
     }
 
+    //FIXME @SEM check the code
     @Override
     public GeneralResponse delete(Long talentId) {
-        Talent talent = findTalentById(talentId);
-        if (securityConfig.isNotCurrentTalent(talent)) {
+        User talent = findUserById(talentId);
+        if (securityConfig.isNotCurrentUser(talent)) {
             throw new ForbiddenRequestException();
         }
-        talentRepo.delete(talent);
+        userRepo.delete(talent);
         return new GeneralResponse(talentId, "Deleted successfully!");
     }
 
     @Transactional
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
-        Talent talent = findTalentById(talentId);
-        if (securityConfig.isNotCurrentTalent(talent)) {
+        TalentInfo talent = findTalentById(talentId);
+        if (securityConfig.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
         checkIfFieldsNotEmpty(talentToUpdate, talent);
-        Talent saveTalent = talentRepo.save(talent);
+        TalentInfo saveTalent = talentRepo.save(talent);
 
         return new GeneralResponse(saveTalent.getId(), "Edited successfully!");
     }
@@ -99,43 +104,48 @@ public class TalentServiceImpl implements TalentService {
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
-    private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
+    private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, TalentInfo talent) {
         if (talentToUpdate.name() != null)
-            talent.setName(talentToUpdate.name());
+            talent.getUser().setName(talentToUpdate.name());
 
         if (talentToUpdate.surname() != null)
-            talent.setSurname(talentToUpdate.surname());
+            talent.getUser().setName(talentToUpdate.surname());
 
         if (talentToUpdate.location() != null)
-            talent.getTalentInfo().setLocation(talentToUpdate.location());
+            talent.setLocation(talentToUpdate.location());
 
         if (talentToUpdate.birthday() != null)
-            talent.getTalentInfo().setBirthday(talentToUpdate.birthday());
+            talent.setBirthday(talentToUpdate.birthday());
 
         if (talentToUpdate.password() != null) {
-            boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
+            boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getUser().getPassword());
             if (!isSamePassword) {
-                talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
+                talent.getUser().setPassword(passwordEncoder.encode(talentToUpdate.password()));
             }
         }
         if (talentToUpdate.image() != null)
-            talent.getTalentInfo().setImage(talentToUpdate.image());
+            talent.setImage(talentToUpdate.image());
 
         if (talentToUpdate.about() != null)
-            talent.getTalentInfo().setAbout(talentToUpdate.about());
+            talent.setAbout(talentToUpdate.about());
 
         if (talentToUpdate.phone() != null)
-            talent.getTalentInfo().setPhone(talentToUpdate.phone());
+            talent.setPhone(talentToUpdate.phone());
 
         if (talentToUpdate.experience() != null)
-            talent.getTalentInfo().setExperience(talentToUpdate.experience());
+            talent.setExperience(talentToUpdate.experience());
 
         if (talentToUpdate.education() != null)
-            talent.getTalentInfo().setEducation(talentToUpdate.education());
+            talent.setEducation(talentToUpdate.education());
     }
 
-    private Talent findTalentById(Long id) {
+    private TalentInfo findTalentById(Long id) {
         return talentRepo.findById(id)
+                .orElseThrow(TalentNotFoundException::new);
+    }
+
+    private User findUserById(Long id) {
+        return userRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
     }
 }
