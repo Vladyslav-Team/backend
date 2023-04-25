@@ -4,8 +4,7 @@ import com.softserve.skillscope.config.AuthenticationService;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
-import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.response.JwtToken;
@@ -50,14 +49,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(request.password()))
                 .build();
 
-        TalentInfo talentInfo = TalentInfo.builder()
+        Talent talentInfo = Talent.builder()
                 .location(request.location())
                 .birthday(request.birthday())
                 .image(checkEmptyImage(request))
                 .experience("Experience is not mention")
                 .build();
         talentInfo.setUser(user);
-        user.setTalentInfo(talentInfo);
+        user.setTalent(talentInfo);
 
         User saveUser = userRepo.save(user);
 

@@ -1,4 +1,4 @@
-package com.softserve.skillscope.user.controller;
+package com.softserve.skillscope.config;
 
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.response.JwtToken;

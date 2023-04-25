@@ -19,7 +19,7 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -55,14 +55,12 @@ public class ProofServiceImpl implements ProofService {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
             Page<Proof> pageProofs;
             PageRequest pageRequest = PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort);
-
             if (talentIdWrapper.isEmpty()) {
                 pageProofs = proofRepo.findAllVisible(proofProp.visible(),
                         PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             } else {
                 Long talentId = talentIdWrapper.get();
-                TalentInfo talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
-                //TODO @SEM check the method
+                Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
                 if (securityConfig.isNotCurrentUser(talent.getUser())) {
                     pageProofs = proofRepo.findAllVisibleByTalentId(talentIdWrapper.get(),
                             proofProp.visible(), pageRequest);
@@ -70,7 +68,10 @@ public class ProofServiceImpl implements ProofService {
                     pageProofs = proofRepo.findForCurrentTalent(talentIdWrapper.get(), pageRequest);
                 }
             }
+            if (pageProofs.isEmpty()) throw new ProofNotFoundException("No proofs was found");
+
             int totalPages = pageProofs.getTotalPages();
+
 
             if (page > totalPages) {
                 throw new BadRequestException("Page index must not be bigger than expected");
@@ -117,7 +118,7 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
-        TalentInfo creator = findTalentById(talentId);
+        Talent creator = findTalentById(talentId);
         if (securityConfig.isNotCurrentUser(creator.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -192,7 +193,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void checkOwnProofs(Long talentId, Long proofId) {
-        TalentInfo talent = findTalentById(talentId);
+        Talent talent = findTalentById(talentId);
         Proof proof = findProofById(proofId);
         User user = talent.getUser();
 
@@ -214,7 +215,7 @@ public class ProofServiceImpl implements ProofService {
 //                .orElseThrow(TalentNotFoundException::new);
 //    }
 
-    private TalentInfo findTalentById(Long id) {
+    private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
     }

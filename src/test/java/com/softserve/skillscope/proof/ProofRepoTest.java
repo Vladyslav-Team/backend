@@ -3,7 +3,7 @@ package com.softserve.skillscope.proof;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ class ProofRepoTest {
     @Autowired
     TalentRepository talentRepo;
     private Proof proof;
-    private TalentInfo talent;
+    private Talent talent;
     private User user;
 
     @BeforeEach
@@ -38,11 +38,11 @@ class ProofRepoTest {
                 .name("talent")
                 .surname("talent")
                 .build();
-        talent = TalentInfo.builder().
+        talent = Talent.builder().
                 image("testImage")
                 .experience("Java - 2 years")
                 .build();
-        user.setTalentInfo(talent);
+        user.setTalent(talent);
         proof = Proof.builder()
                 .talent(talent)
                 .publicationDate(LocalDateTime.now())

@@ -3,13 +3,14 @@ package com.softserve.skillscope.talent.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
-import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
@@ -39,8 +40,10 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
         try {
-            Page<TalentInfo> pageTalents =
+            Page<Talent> pageTalents =
                     talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
+            if (pageTalents.isEmpty()) throw new TalentNotFoundException("No talents was found");
+
             int totalPages = pageTalents.getTotalPages();
 
             if (page > totalPages) {
@@ -82,12 +85,12 @@ public class TalentServiceImpl implements TalentService {
     @Transactional
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
-        TalentInfo talent = findTalentById(talentId);
+        Talent talent = findTalentById(talentId);
         if (securityConfig.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
         checkIfFieldsNotEmpty(talentToUpdate, talent);
-        TalentInfo saveTalent = talentRepo.save(talent);
+        Talent saveTalent = talentRepo.save(talent);
 
         return new GeneralResponse(saveTalent.getId(), "Edited successfully!");
     }
@@ -104,7 +107,7 @@ public class TalentServiceImpl implements TalentService {
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
-    private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, TalentInfo talent) {
+    private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
         if (talentToUpdate.name() != null)
             talent.getUser().setName(talentToUpdate.name());
 
@@ -139,7 +142,7 @@ public class TalentServiceImpl implements TalentService {
             talent.setEducation(talentToUpdate.education());
     }
 
-    private TalentInfo findTalentById(Long id) {
+    private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
     }

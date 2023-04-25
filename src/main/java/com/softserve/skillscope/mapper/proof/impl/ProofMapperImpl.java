@@ -5,7 +5,7 @@ import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.entity.ProofProperties;
-import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ public class ProofMapperImpl implements ProofMapper {
     private ProofProperties proofProps;
     @Override
     public FullProof toFullProof(Proof proof) {
-        TalentInfo talent = proof.getTalent();
+        Talent talent = proof.getTalent();
         return FullProof.builder()
                 .id(proof.getId())
                 .talentId(talent.getId())

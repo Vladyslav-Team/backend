@@ -1,7 +1,7 @@
 package com.softserve.skillscope.user.model;
 
-import com.softserve.skillscope.sponsor.model.entity.SponsorInfo;
-import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.user.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -22,10 +22,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private TalentInfo talentInfo;
+    private Talent talent;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private SponsorInfo sponsorInfo;
+    private Sponsor sponsor;
     @NotEmpty
     @Size(min = 5, max = 254)
     private String email;

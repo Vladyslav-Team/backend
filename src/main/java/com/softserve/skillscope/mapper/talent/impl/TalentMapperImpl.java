@@ -3,7 +3,7 @@ package com.softserve.skillscope.mapper.talent.impl;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
-import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.response.TalentImageResponse;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import java.time.Period;
 @Component
 public class TalentMapperImpl implements TalentMapper {
     @Override
-    public GeneralTalent toGeneralTalent(TalentInfo talent) {
+    public GeneralTalent toGeneralTalent(Talent talent) {
         return GeneralTalent.builder()
                 .id(talent.getId())
                 .image(talent.getImage())
@@ -25,7 +25,7 @@ public class TalentMapperImpl implements TalentMapper {
     }
 
     @Override
-    public TalentProfile toTalentProfile(TalentInfo talent) {
+    public TalentProfile toTalentProfile(Talent talent) {
         return TalentProfile.builder()
                 .id(talent.getId())
                 .image(talent.getImage())
@@ -42,7 +42,7 @@ public class TalentMapperImpl implements TalentMapper {
     }
 
     @Override
-    public TalentImageResponse toTalentImage(TalentInfo talent) {
+    public TalentImageResponse toTalentImage(Talent talent) {
         return new TalentImageResponse(talent.getImage());
     }
 }
