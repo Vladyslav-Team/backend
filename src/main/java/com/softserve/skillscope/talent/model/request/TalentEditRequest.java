@@ -53,7 +53,7 @@ public record TalentEditRequest(
                 this.birthday = birthday;
                 this.phone = phone;
 
-                String namePattern = "^[A-Za-z]+$";
+                String namePattern = "^[A-Za-z0-9]+$";
                 if (!name.matches(namePattern) || !surname.matches(namePattern)) {
                         throw new ValidationException("Name and surname both must be written in Latin");
                 }

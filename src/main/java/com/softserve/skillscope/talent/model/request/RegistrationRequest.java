@@ -43,7 +43,7 @@ public record RegistrationRequest(
                 this.birthday = birthday;
 
                 String emailPattern = "^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,3})+$";
-                String namePattern = "^[A-Za-z]+$";
+                String namePattern = "^[A-Za-z0-9]+$";
 
                 if (!name.matches(namePattern) || !surname.matches(namePattern)) {
                         throw new ValidationException("Name and surname both must be written in Latin");
