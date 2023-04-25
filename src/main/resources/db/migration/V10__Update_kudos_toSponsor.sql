@@ -8,4 +8,4 @@ ALTER TABLE kudos RENAME COLUMN talent_id TO sponsor_id;
 
 -- 3. Add new foreign key
 ALTER TABLE kudos
-    ADD CONSTRAINT FK_KUDOS_ON_SPONSOR FOREIGN KEY (sponsor_id) REFERENCES sponsor (id);
+    ADD CONSTRAINT FK_KUDOS_ON_SPONSOR FOREIGN KEY (sponsor_id) REFERENCES sponsor (sponsor_id);
