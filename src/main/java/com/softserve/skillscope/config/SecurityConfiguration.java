@@ -3,7 +3,8 @@ package com.softserve.skillscope.config;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import com.softserve.skillscope.user.service.impl.UserDetailsImpl;
@@ -57,6 +58,11 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents/login").permitAll()
+
+                .requestMatchers(HttpMethod.GET, "/sponsors").permitAll()
+                .requestMatchers(HttpMethod.POST, "/sponsors").permitAll()
+                .requestMatchers(HttpMethod.POST, "/sponsors/login").permitAll()
+
                 .requestMatchers(HttpMethod.GET, "/proofs").permitAll()
                 .requestMatchers(antMatcher("/proofs/**/kudos")).permitAll()
                 .anyRequest().authenticated());
@@ -83,7 +89,7 @@ public class SecurityConfiguration {
     UserDetailsService userDetailsService(UserRepository repository) {
         return email -> repository.findByEmail(email)
                 .map(UserDetailsImpl::new)
-                .orElseThrow(TalentNotFoundException::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 
     @Bean

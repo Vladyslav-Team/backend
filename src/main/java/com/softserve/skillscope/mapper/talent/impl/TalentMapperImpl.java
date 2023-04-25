@@ -42,7 +42,7 @@ public class TalentMapperImpl implements TalentMapper {
     }
 
     @Override
-    public TalentImageResponse toTalentImage(Talent talent) {
-        return new TalentImageResponse(talent.getImage());
+    public UserImageResponse toTalentImage(Talent talent) {
+        return new UserImageResponse(talent.getImage());
     }
 }

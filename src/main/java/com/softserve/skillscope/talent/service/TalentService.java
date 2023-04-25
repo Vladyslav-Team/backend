@@ -4,7 +4,7 @@ import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
-import com.softserve.skillscope.talent.model.response.TalentImageResponse;
+import com.softserve.skillscope.generalModel.UserImageResponse;
 
 
 public interface TalentService {
@@ -14,5 +14,5 @@ public interface TalentService {
 
     GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate);
 
-    TalentImageResponse getTalentImage(Long talentId);
+    UserImageResponse getTalentImage(Long talentId);
 }

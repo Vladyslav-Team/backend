@@ -4,7 +4,7 @@ import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
-import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
@@ -14,7 +14,7 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
-import com.softserve.skillscope.talent.model.response.TalentImageResponse;
+import com.softserve.skillscope.generalModel.UserImageResponse;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
@@ -100,7 +100,7 @@ public class TalentServiceImpl implements TalentService {
      * Check if it's the image of own talent, in another case forbidden to get it.
      */
     @Override
-    public TalentImageResponse getTalentImage(Long talentId) {
+    public UserImageResponse getTalentImage(Long talentId) {
         return talentMapper.toTalentImage(findTalentById(talentId));
     }
 
@@ -144,7 +144,7 @@ public class TalentServiceImpl implements TalentService {
 
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
-                .orElseThrow(TalentNotFoundException::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 
     private User findUserById(Long id) {
