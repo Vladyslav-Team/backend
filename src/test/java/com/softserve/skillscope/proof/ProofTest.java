@@ -3,7 +3,7 @@ package com.softserve.skillscope.proof;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.entity.TalentInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,7 +23,7 @@ class ProofTest {
     @BeforeEach
     public void createProof() {
         proof = Proof.builder()
-                .talent(new Talent())
+                .talent(new TalentInfo())
                 .publicationDate(LocalDateTime.now())
                 .title("Test Title")
                 .description("Test Description")
@@ -50,7 +50,7 @@ class ProofTest {
 
     @Test
     void testAllArgsConstructor() {
-        Proof proof1 = new Proof(2L, new Talent(), LocalDateTime.now(),
+        Proof proof1 = new Proof(2L, new TalentInfo(), LocalDateTime.now(),
                 "Title", "Description", ProofStatus.DRAFT, List.of(new Kudos()));
         assertNotNull(proof1);
     }

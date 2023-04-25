@@ -4,8 +4,9 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
-import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.user.UserRepository;
+import com.softserve.skillscope.user.model.User;
+import com.softserve.skillscope.user.service.impl.UserDetailsImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -51,7 +52,7 @@ public class SecurityConfiguration {
         //Routing security filter
         http.authorizeHttpRequests(req -> req
                 .requestMatchers(antMatcher("/h2/**")).permitAll() //works only for testing
-                .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers(antMatcher("/error")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/talents").permitAll()
                 .requestMatchers(HttpMethod.POST, "/talents").permitAll()
@@ -79,9 +80,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    UserDetailsService userDetailsService(TalentRepository repository) {
+    UserDetailsService userDetailsService(UserRepository repository) {
         return email -> repository.findByEmail(email)
-                .map(user -> new TalentDetailsImpl(user.getEmail(), user.getPassword()))
+                .map(UserDetailsImpl::new)
                 .orElseThrow(TalentNotFoundException::new);
     }
 
@@ -132,8 +133,8 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    public boolean isNotCurrentTalent(Talent talent) {
+    public boolean isNotCurrentUser(User user) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return !email.equalsIgnoreCase(talent.getEmail());
+        return !email.equalsIgnoreCase(user.getEmail());
     }
 }

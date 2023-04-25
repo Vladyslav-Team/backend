@@ -9,7 +9,6 @@ import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.kudos.KudosRepository;
-import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
@@ -20,14 +19,14 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -62,8 +61,9 @@ public class ProofServiceImpl implements ProofService {
                         PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             } else {
                 Long talentId = talentIdWrapper.get();
-                Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
-                if (securityConfig.isNotCurrentTalent(talent)) {
+                TalentInfo talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+                //TODO @SEM check the method
+                if (securityConfig.isNotCurrentUser(talent.getUser())) {
                     pageProofs = proofRepo.findAllVisibleByTalentId(talentIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else {
@@ -117,8 +117,8 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
-        Talent creator = findTalentById(talentId);
-        if (securityConfig.isNotCurrentTalent(creator)) {
+        TalentInfo creator = findTalentById(talentId);
+        if (securityConfig.isNotCurrentUser(creator.getUser())) {
             throw new ForbiddenRequestException();
         }
         Proof proof = Proof.builder()
@@ -192,12 +192,14 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void checkOwnProofs(Long talentId, Long proofId) {
-        Talent talent = findTalentById(talentId);
+        TalentInfo talent = findTalentById(talentId);
         Proof proof = findProofById(proofId);
-        if (securityConfig.isNotCurrentTalent(talent))
+        User user = talent.getUser();
+
+        if (securityConfig.isNotCurrentUser(user))
             throw new ForbiddenRequestException();
         List<Proof> proofList = proofRepo.findByTalentId(talentId);
-        if (securityConfig.isNotCurrentTalent(talent) || !proofList.contains(proof)) {
+        if (securityConfig.isNotCurrentUser(user) || !proofList.contains(proof)) {
             throw new ForbiddenRequestException();
         }
     }
@@ -207,12 +209,12 @@ public class ProofServiceImpl implements ProofService {
                 .orElseThrow(ProofNotFoundException::new);
     }
 
-    private Talent findTalentByEmail(String name) {
-        return talentRepo.findByEmail(name)
-                .orElseThrow(TalentNotFoundException::new);
-    }
+//    private Talent findTalentByEmail(String name) {
+//        return talentRepo.findByEmail(name)
+//                .orElseThrow(TalentNotFoundException::new);
+//    }
 
-    private Talent findTalentById(Long id) {
+    private TalentInfo findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
     }

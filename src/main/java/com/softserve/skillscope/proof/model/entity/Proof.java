@@ -3,9 +3,8 @@ package com.softserve.skillscope.proof.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.entity.TalentInfo;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -29,7 +28,7 @@ public class Proof {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "talent_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Talent talent;
+    private TalentInfo talent;
 
     @Column(name = "publication_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")

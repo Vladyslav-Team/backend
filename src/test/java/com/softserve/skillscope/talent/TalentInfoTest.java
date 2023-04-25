@@ -1,7 +1,7 @@
 package com.softserve.skillscope.talent;
 
-import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentInfo;
+import com.softserve.skillscope.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,7 +17,7 @@ class TalentInfoTest {
     @BeforeEach
     public void createTalent() {
         talentInfo = TalentInfo.builder()
-                .talent(new Talent())
+                .user(new User())
                 .image("image-path/1")
                 .experience("no experience")
                 .location("Kharkiv")
@@ -32,7 +32,7 @@ class TalentInfoTest {
     void testGettersAndSetters() {
         talentInfo.setId(1L);
         assertNotNull(talentInfo.getId());
-        assertNotNull(talentInfo.getTalent());
+        assertNotNull(talentInfo.getUser());
         assertNotNull(talentInfo.getImage());
         assertNotNull(talentInfo.getExperience());
         assertNotNull(talentInfo.getLocation());
