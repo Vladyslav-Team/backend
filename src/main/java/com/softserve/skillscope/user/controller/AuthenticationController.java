@@ -1,7 +1,8 @@
-package com.softserve.skillscope.authentication;
+package com.softserve.skillscope.user.controller;
 
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.response.JwtToken;
+import com.softserve.skillscope.config.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
