@@ -8,6 +8,7 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.talent.model.response.JwtToken;
+import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -47,6 +49,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .surname(request.surname())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
+                //FIXME re-write to use several roles and talent/sponsor role
+                .roles(Set.of(Role.TALENT))
                 .build();
 
         Talent talentInfo = Talent.builder()
@@ -59,7 +63,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setTalent(talentInfo);
 
         User saveUser = userRepo.save(user);
-
+        //FIXME duplicate of code
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")
@@ -78,6 +82,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (user == null) {
             throw new TalentNotFoundException();
         }
+        //FIXME duplicate of code
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")

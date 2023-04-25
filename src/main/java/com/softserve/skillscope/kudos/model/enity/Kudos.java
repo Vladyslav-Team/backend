@@ -22,11 +22,6 @@ public class Kudos {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    //TODO @SEM remove the code
-
-    //    @ManyToOne
-//    @JoinColumn(name = "talent_id")
-//    private Talent talent;
     @ManyToOne
     @JoinColumn(name = "sponsor_id")
     private Sponsor sponsor;
@@ -37,6 +32,8 @@ public class Kudos {
     private Proof proof;
 
     private Integer amount;
+    //FIXME talk with frontend, if it's necessary
+//    private boolean isClicked;
     @Column(name = "kudos_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
     private LocalDateTime kudosDate;
