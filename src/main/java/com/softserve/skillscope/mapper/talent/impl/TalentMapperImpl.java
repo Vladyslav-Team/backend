@@ -3,7 +3,7 @@ package com.softserve.skillscope.mapper.talent.impl;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.talent.model.entity.TalentInfo;
 import com.softserve.skillscope.talent.model.response.TalentImageResponse;
 import org.springframework.stereotype.Component;
 
@@ -13,36 +13,36 @@ import java.time.Period;
 @Component
 public class TalentMapperImpl implements TalentMapper {
     @Override
-    public GeneralTalent toGeneralTalent(Talent talent) {
+    public GeneralTalent toGeneralTalent(TalentInfo talent) {
         return GeneralTalent.builder()
                 .id(talent.getId())
-                .image(talent.getTalentInfo().getImage())
-                .name(talent.getName())
-                .surname(talent.getSurname())
-                .location(talent.getTalentInfo().getLocation())
-                .experience(talent.getTalentInfo().getExperience())
+                .image(talent.getImage())
+                .name(talent.getUser().getName())
+                .surname(talent.getUser().getSurname())
+                .location(talent.getLocation())
+                .experience(talent.getExperience())
                 .build();
     }
 
     @Override
-    public TalentProfile toTalentProfile(Talent talent) {
+    public TalentProfile toTalentProfile(TalentInfo talent) {
         return TalentProfile.builder()
                 .id(talent.getId())
-                .image(talent.getTalentInfo().getImage())
-                .name(talent.getName())
-                .surname(talent.getSurname())
-                .experience(talent.getTalentInfo().getExperience())
-                .location(talent.getTalentInfo().getLocation())
-                .about(talent.getTalentInfo().getAbout())
-                .education(talent.getTalentInfo().getEducation())
-                .age(talent.getTalentInfo().getBirthday() != null ? Period.between(talent.getTalentInfo().getBirthday(), LocalDate.now()).getYears() : 0)
-                .email(talent.getEmail())
-                .phone(talent.getTalentInfo().getPhone())
+                .image(talent.getImage())
+                .name(talent.getUser().getName())
+                .surname(talent.getUser().getSurname())
+                .experience(talent.getExperience())
+                .location(talent.getLocation())
+                .about(talent.getAbout())
+                .education(talent.getEducation())
+                .age(talent.getBirthday() != null ? Period.between(talent.getBirthday(), LocalDate.now()).getYears() : 0)
+                .email(talent.getUser().getEmail())
+                .phone(talent.getPhone())
                 .build();
     }
 
     @Override
-    public TalentImageResponse toTalentImage(Talent talent) {
-        return new TalentImageResponse(talent.getTalentInfo().getImage());
+    public TalentImageResponse toTalentImage(TalentInfo talent) {
+        return new TalentImageResponse(talent.getImage());
     }
 }

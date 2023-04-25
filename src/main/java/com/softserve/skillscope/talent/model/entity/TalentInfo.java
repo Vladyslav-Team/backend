@@ -1,7 +1,8 @@
 package com.softserve.skillscope.talent.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
@@ -25,9 +27,9 @@ public class TalentInfo {
 
     @MapsId
     @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "talent_id", nullable = false)
+    @JoinColumn(name = "users_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Talent talent;
+    private User user;
 
     @NotEmpty
     @URL
@@ -51,4 +53,8 @@ public class TalentInfo {
 
     @Size(max = 1000)
     private String about;
+
+    //Delete all proofs that are connected with this talent.
+    @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
+    private List<Proof> proofs;
 }
