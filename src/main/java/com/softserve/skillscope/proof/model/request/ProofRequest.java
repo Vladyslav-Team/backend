@@ -14,7 +14,7 @@ public record ProofRequest(
 
         String regex = "^[a-zA-Z0-9 !@#$%^&*()_+\\-=\\[\\]{};:'\",.<>/?|]*$";
 
-        if (!title.matches(regex) || !description.matches(regex)) {
+        if (title != null && !title.matches(regex) || description != null && !description.matches(regex)) {
             throw new ValidationException("Text must be written in Latin");
         }
 

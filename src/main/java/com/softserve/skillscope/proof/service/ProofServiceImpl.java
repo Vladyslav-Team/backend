@@ -160,6 +160,9 @@ public class ProofServiceImpl implements ProofService {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
+        if (proof.getStatus() == ProofStatus.PUBLISHED){
+            throw new BadRequestException("Proof has already been published!");
+        }
         if (proof.getStatus() == ProofStatus.HIDDEN || proof.getStatus() == proofProp.defaultType()) {
             proof.setStatus(ProofStatus.PUBLISHED);
             if (proof.getPublicationDate() == null) {
@@ -175,6 +178,9 @@ public class ProofServiceImpl implements ProofService {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
+        if (proof.getStatus() == ProofStatus.HIDDEN){
+            throw new BadRequestException("Proof has already been hidden!");
+        }
         if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
             proof.setStatus(ProofStatus.HIDDEN);
         }
