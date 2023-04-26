@@ -161,6 +161,9 @@ public class ProofServiceImpl implements ProofService {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
+        if (proof.getStatus() == ProofStatus.PUBLISHED){
+            throw new BadRequestException("Proof already published!");
+        }
         if (proof.getStatus() == ProofStatus.HIDDEN || proof.getStatus() == proofProp.defaultType()) {
             proof.setStatus(ProofStatus.PUBLISHED);
             if (proof.getPublicationDate() == null) {
@@ -176,6 +179,9 @@ public class ProofServiceImpl implements ProofService {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
+        if (proof.getStatus() == ProofStatus.HIDDEN){
+            throw new BadRequestException("Proof already hidden!");
+        }
         if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
             proof.setStatus(ProofStatus.HIDDEN);
         }
@@ -197,8 +203,6 @@ public class ProofServiceImpl implements ProofService {
         Proof proof = findProofById(proofId);
         User user = talent.getUser();
 
-        if (securityConfig.isNotCurrentUser(user))
-            throw new ForbiddenRequestException();
         List<Proof> proofList = proofRepo.findByTalentId(talentId);
         if (securityConfig.isNotCurrentUser(user) || !proofList.contains(proof)) {
             throw new ForbiddenRequestException();
