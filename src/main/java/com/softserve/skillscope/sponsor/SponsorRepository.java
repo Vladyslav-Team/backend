@@ -6,9 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SponsorRepository extends JpaRepository<Sponsor, Long> {
-    /*boolean existsByEmail(String email);
-
-    Optional<Sponsor> findByEmail(String email);*/
-
     Page<Sponsor> findAllByOrderByIdDesc(Pageable pageable);
 }

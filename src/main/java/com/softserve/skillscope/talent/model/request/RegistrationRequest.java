@@ -15,7 +15,7 @@ public record RegistrationRequest(
         String image,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         LocalDate birthday,
-        Set<Role> role
+        Set<Role> roles
 ) {
 }
 

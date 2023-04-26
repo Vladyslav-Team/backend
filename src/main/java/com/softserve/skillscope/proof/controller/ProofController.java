@@ -1,6 +1,8 @@
 package com.softserve.skillscope.proof.controller;
 
 import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.kudos.model.request.KudosAmountRequest;
+import com.softserve.skillscope.kudos.model.response.KudosResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
@@ -69,9 +71,15 @@ public class ProofController {
                                                          @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.hideProofById(talentId, proofId));
     }
-    //TODO @SEM re-write the code for sponsor
-//    @PostMapping("/proofs/{proof-id}/kudos")
-//    public ResponseEntity<GeneralResponse> addLikeToProof(@PathVariable("proof-id") Long proofId) {
-//        return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofByTalent(proofId));
-//    }
+
+    @GetMapping("/proofs/{proof-id}/kudos")
+    public ResponseEntity<KudosResponse> showAmountKudosOfProof(@PathVariable("proof-id") Long proofId){
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.showAmountKudosOfProof(proofId));
+    }
+
+    @PostMapping("/proofs/{proof-id}/kudos")
+    public ResponseEntity<GeneralResponse> addLikeToProof(@PathVariable("proof-id") Long proofId,
+                                                          @RequestBody KudosAmountRequest amount) {
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofBySponsor(proofId, amount));
+    }
 }

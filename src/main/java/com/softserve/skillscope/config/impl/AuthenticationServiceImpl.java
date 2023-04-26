@@ -52,9 +52,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 //FIXME re-write to use several roles and talent/sponsor role
-                .roles(request.role()/*Set.of(Role.TALENT)*/)
+                .roles(request.roles()/*Set.of(Role.TALENT)*/)
                 .build();
-        if (request.role().contains(Role.TALENT)) {
+        if (request.roles().contains(Role.TALENT)) {
             Talent talentInfo = Talent.builder()
                     .location(request.location())
                     .birthday(request.birthday())
@@ -64,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             talentInfo.setUser(user);
             user.setTalent(talentInfo);
         }
-        else if (request.role().contains(Role.SPONSOR)) {
+        if (request.roles().contains(Role.SPONSOR)) {
             Sponsor sponsorInfo = Sponsor.builder()
                     .location(request.location())
                     .birthday(request.birthday())

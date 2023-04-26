@@ -5,7 +5,6 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.user.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -43,12 +42,12 @@ public class User {
     @Size(min = 1, max = 64)
     private String surname;
 
-    @ElementCollection(targetClass = Role.class)
+//    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(fetch = FetchType.EAGER,targetClass = Role.class)
     @CollectionTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    @NotNull
     private Set<Role> roles;
 }
