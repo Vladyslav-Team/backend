@@ -3,13 +3,12 @@ package com.softserve.skillscope.proof.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.exception.proofException.ProofAlreadyPublishedException;
 import com.softserve.skillscope.exception.proofException.ProofHasNullValue;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
-import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.kudos.KudosRepository;
-import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
@@ -55,17 +54,15 @@ public class ProofServiceImpl implements ProofService {
         try {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
             Page<Proof> pageProofs;
-            PageRequest pageRequest = PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort);
+            PageRequest pageRequest = PageRequest.of(page - 1, proofProp.concreteUserProofPageSize(), sort);
 
             if (talentIdWrapper.isEmpty()) {
                 pageProofs = proofRepo.findAllVisible(proofProp.visible(),
                         PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             } else {
                 Long talentId = talentIdWrapper.get();
-                Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
-                if (securityConfig.isNotCurrentUser(talent.getUser())) {
                 Talent talent = talentRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
-                if (securityConfig.isNotCurrentTalent(talent)) {
+                if (securityConfig.isNotCurrentUser(talent.getUser())) {
                     pageProofs = proofRepo.findAllVisibleByTalentId(talentIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else {
@@ -222,10 +219,6 @@ public class ProofServiceImpl implements ProofService {
 //        return talentRepo.findByEmail(name)
 //                .orElseThrow(TalentNotFoundException::new);
 //    }
-    private Talent findTalentByEmail(String name) {
-        return talentRepo.findByEmail(name)
-                .orElseThrow(UserNotFoundException::new);
-    }
 
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)

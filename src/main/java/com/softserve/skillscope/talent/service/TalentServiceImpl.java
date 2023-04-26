@@ -3,9 +3,9 @@ package com.softserve.skillscope.talent.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.generalModel.UserImageResponse;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
@@ -14,7 +14,6 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
-import com.softserve.skillscope.generalModel.UserImageResponse;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
@@ -42,7 +41,7 @@ public class TalentServiceImpl implements TalentService {
         try {
             Page<Talent> pageTalents =
                     talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
-            if (pageTalents.isEmpty()) throw new TalentNotFoundException("No talents was found");
+            if (pageTalents.isEmpty()) throw new UserNotFoundException();
 
             int totalPages = pageTalents.getTotalPages();
 
@@ -149,6 +148,6 @@ public class TalentServiceImpl implements TalentService {
 
     private User findUserById(Long id) {
         return userRepo.findById(id)
-                .orElseThrow(TalentNotFoundException::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 }

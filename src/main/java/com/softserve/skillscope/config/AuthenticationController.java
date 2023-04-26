@@ -1,8 +1,6 @@
-package com.softserve.skillscope.authentication;
+package com.softserve.skillscope.config;
 
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
-import com.softserve.skillscope.talent.model.response.JwtToken;
-import com.softserve.skillscope.config.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/talents")
+@RequestMapping({"/talents", "/sponsors"})
 public class AuthenticationController {
     AuthenticationService authenticationService;
 

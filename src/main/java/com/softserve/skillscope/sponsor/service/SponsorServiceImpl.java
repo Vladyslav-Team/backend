@@ -14,6 +14,8 @@ import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
+import com.softserve.skillscope.user.UserRepository;
+import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +31,7 @@ import java.util.List;
 public class SponsorServiceImpl implements SponsorService {
     private SponsorProperties sponsorProp;
     private SponsorRepository sponsorRepo;
+    private UserRepository userRepo;
     private SponsorMapper sponsorMapper;
     private PasswordEncoder passwordEncoder;
     private SecurityConfiguration securityConfig;
@@ -37,13 +41,15 @@ public class SponsorServiceImpl implements SponsorService {
         try {
             Page<Sponsor> pageSponsors =
                     sponsorRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, sponsorProp.sponsorPageSize()));
+            if (pageSponsors.isEmpty()) throw new UserNotFoundException();
+
             int totalPages = pageSponsors.getTotalPages();
 
             if (page > totalPages) {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralSponsor> sponsors = new java.util.ArrayList<>(pageSponsors.stream()
+            List<GeneralSponsor> sponsors = new ArrayList<>(pageSponsors.stream()
                     .map(sponsorMapper::toGeneralSponsor)
                     .toList());
 
@@ -66,11 +72,11 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Override
     public GeneralResponse deleteSponsor(Long sponsorId) {
-        Sponsor sponsor = findSponsorById(sponsorId);
-        if (securityConfig.isNotCurrentSponsor(sponsor)){
+        User sponsor = findUserById(sponsorId);
+        if (securityConfig.isNotCurrentUser(sponsor)){
             throw new ForbiddenRequestException();
         }
-        sponsorRepo.delete(sponsor);
+        userRepo.delete(sponsor);
         return new GeneralResponse(sponsorId, "Deleted successfully!");
     }
 
@@ -83,7 +89,7 @@ public class SponsorServiceImpl implements SponsorService {
     @Override
     public GeneralResponse editSponsorProfile(Long sponsorId, SponsorEditRequest sponsorToUpdate) {
         Sponsor sponsor = findSponsorById(sponsorId);
-        if (securityConfig.isNotCurrentSponsor(sponsor)){
+        if (securityConfig.isNotCurrentUser(sponsor.getUser())){
             throw new ForbiddenRequestException();
         }
         checkIfFieldsNotEmpty(sponsorToUpdate, sponsor);
@@ -93,32 +99,37 @@ public class SponsorServiceImpl implements SponsorService {
 
     private void checkIfFieldsNotEmpty(SponsorEditRequest sponsorToUpdate, Sponsor sponsor) {
         if (sponsorToUpdate.name() != null)
-            sponsor.setName(sponsorToUpdate.name());
+            sponsor.getUser().setName(sponsorToUpdate.name());
 
         if (sponsorToUpdate.surname() != null)
-            sponsor.setSurname(sponsorToUpdate.surname());
+            sponsor.getUser().setSurname(sponsorToUpdate.surname());
 
         if (sponsorToUpdate.location() != null)
-            sponsor.getSponsorInfo().setLocation(sponsorToUpdate.location());
+            sponsor.setLocation(sponsorToUpdate.location());
 
         if (sponsorToUpdate.birthday() != null)
-            sponsor.getSponsorInfo().setBirthday(sponsorToUpdate.birthday());
+            sponsor.setBirthday(sponsorToUpdate.birthday());
 
         if (sponsorToUpdate.password() != null) {
-            boolean isSamePassword = passwordEncoder.matches(sponsorToUpdate.password(), sponsor.getPassword());
+            boolean isSamePassword = passwordEncoder.matches(sponsorToUpdate.password(), sponsor.getUser().getPassword());
             if (!isSamePassword) {
-                sponsor.setPassword(passwordEncoder.encode(sponsorToUpdate.password()));
+                sponsor.getUser().setPassword(passwordEncoder.encode(sponsorToUpdate.password()));
             }
         }
         if (sponsorToUpdate.image() != null)
-            sponsor.getSponsorInfo().setImage(sponsorToUpdate.image());
+            sponsor.setImage(sponsorToUpdate.image());
 
         if (sponsorToUpdate.phone() != null)
-            sponsor.getSponsorInfo().setPhone(sponsorToUpdate.phone());
+            sponsor.setPhone(sponsorToUpdate.phone());
     }
 
     private Sponsor findSponsorById(Long id) {
         return sponsorRepo.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    private User findUserById(Long id) {
+        return userRepo.findById(id)
                 .orElseThrow(UserNotFoundException::new);
     }
 }

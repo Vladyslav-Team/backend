@@ -1,13 +1,15 @@
-package com.softserve.skillscope.authentication;
+package com.softserve.skillscope.config.impl;
 
 import com.softserve.skillscope.config.AuthenticationService;
+import com.softserve.skillscope.config.JwtToken;
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
-import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
-import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.exception.generalException.UserAlreadyExistsException;
+import com.softserve.skillscope.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
-import com.softserve.skillscope.talent.model.response.JwtToken;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
@@ -23,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -35,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //    private final TalentRepository talentRepo;
     private final UserRepository userRepo;
     private final TalentProperties talentProps;
+    private final SponsorProperties sponsorProps;
     private final PasswordEncoder passwordEncoder;
 
     private Map<String, String> verifiedTokens;
@@ -42,7 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public JwtToken registration(RegistrationRequest request) {
         if (userRepo.existsByEmail(request.email())) {
-            throw new TalentAlreadyExistsException();
+            throw new UserAlreadyExistsException();
         }
         User user = User.builder()
                 .name(request.name())
@@ -50,17 +52,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 //FIXME re-write to use several roles and talent/sponsor role
-                .roles(Set.of(Role.TALENT))
+                .roles(request.role()/*Set.of(Role.TALENT)*/)
                 .build();
+        if (request.role().contains(Role.TALENT)) {
+            Talent talentInfo = Talent.builder()
+                    .location(request.location())
+                    .birthday(request.birthday())
+                    .image(checkEmptyTalentImage(request))
+                    .experience("Experience is not mention")
+                    .build();
+            talentInfo.setUser(user);
+            user.setTalent(talentInfo);
+        }
+        else if (request.role().contains(Role.SPONSOR)) {
+            Sponsor sponsorInfo = Sponsor.builder()
+                    .location(request.location())
+                    .birthday(request.birthday())
+                    .image(checkEmptySponsorImage(request))
+                    .build();
+            sponsorInfo.setUser(user);
+            user.setSponsor(sponsorInfo);
+        }
 
-        Talent talentInfo = Talent.builder()
-                .location(request.location())
-                .birthday(request.birthday())
-                .image(checkEmptyImage(request))
-                .experience("Experience is not mention")
-                .build();
-        talentInfo.setUser(user);
-        user.setTalent(talentInfo);
 
         User saveUser = userRepo.save(user);
         //FIXME duplicate of code
@@ -80,7 +93,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public JwtToken signIn(String username) {
         User user = userRepo.findByEmail(username).orElse(null);
         if (user == null) {
-            throw new TalentNotFoundException();
+            throw new UserNotFoundException();
         }
         //FIXME duplicate of code
         Instant now = Instant.now();
@@ -104,8 +117,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private String checkEmptyImage(RegistrationRequest request) {
+    private String checkEmptyTalentImage(RegistrationRequest request) {
         return request.image() == null
                 ? talentProps.defaultImage() : request.image();
+    }
+    private String checkEmptySponsorImage(RegistrationRequest request) {
+        return request.image() == null
+                ? sponsorProps.defaultImage() : request.image();
     }
 }

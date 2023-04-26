@@ -5,6 +5,7 @@ import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.user.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -48,5 +49,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Set<Role> roles;
 }

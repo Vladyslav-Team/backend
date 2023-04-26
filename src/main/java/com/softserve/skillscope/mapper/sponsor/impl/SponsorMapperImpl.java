@@ -16,10 +16,10 @@ public class SponsorMapperImpl implements SponsorMapper {
     public GeneralSponsor toGeneralSponsor(Sponsor sponsor) {
         return GeneralSponsor.builder()
                 .id(sponsor.getId())
-                .image(sponsor.getSponsorInfo().getImage())
-                .name(sponsor.getName())
-                .surname(sponsor.getSurname())
-                .location(sponsor.getSponsorInfo().getLocation())
+                .image(sponsor.getImage())
+                .name(sponsor.getUser().getName())
+                .surname(sponsor.getUser().getSurname())
+                .location(sponsor.getLocation())
                 .build();
     }
 
@@ -27,18 +27,18 @@ public class SponsorMapperImpl implements SponsorMapper {
     public SponsorProfile toSponsorProfile(Sponsor sponsor) {
         return SponsorProfile.builder()
                 .id(sponsor.getId())
-                .image(sponsor.getSponsorInfo().getImage())
-                .name(sponsor.getName())
-                .surname(sponsor.getSurname())
-                .location(sponsor.getSponsorInfo().getLocation())
-                .age(sponsor.getSponsorInfo().getBirthday() != null ? Period.between(sponsor.getSponsorInfo().getBirthday(), LocalDate.now()).getYears() : 0)
-                .email(sponsor.getEmail())
-                .phone(sponsor.getSponsorInfo().getPhone())
+                .image(sponsor.getImage())
+                .name(sponsor.getUser().getName())
+                .surname(sponsor.getUser().getSurname())
+                .location(sponsor.getLocation())
+                .age(sponsor.getBirthday() != null ? Period.between(sponsor.getBirthday(), LocalDate.now()).getYears() : 0)
+                .email(sponsor.getUser().getEmail())
+                .phone(sponsor.getPhone())
                 .build();
     }
 
     @Override
     public UserImageResponse toSponsorImage(Sponsor sponsor) {
-        return new UserImageResponse(sponsor.getSponsorInfo().getImage());
+        return new UserImageResponse(sponsor.getImage());
     }
 }
