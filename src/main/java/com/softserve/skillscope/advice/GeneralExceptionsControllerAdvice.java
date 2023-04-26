@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 public class GeneralExceptionsControllerAdvice {
@@ -45,11 +44,5 @@ public class GeneralExceptionsControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
-    }
-
-    @ExceptionHandler({ValidationException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorDTO> validationException(ValidationException exception) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
 }
