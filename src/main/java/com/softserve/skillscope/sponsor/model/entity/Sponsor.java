@@ -25,7 +25,7 @@ public class Sponsor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @MapsId
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "sponsor_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;

@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Set;
 
@@ -42,11 +45,13 @@ public class User {
     @Size(min = 1, max = 64)
     private String surname;
 
-    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = Role.class)
     @CollectionTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"))
+            name = "user_roles")
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id") // add this line
+//    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<Role> roles;
 }

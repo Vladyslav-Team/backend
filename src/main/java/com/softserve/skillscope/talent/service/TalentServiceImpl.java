@@ -32,7 +32,6 @@ import java.util.List;
 public class TalentServiceImpl implements TalentService {
     private TalentProperties talentProp;
     private TalentRepository talentRepo;
-    private UserRepository userRepo;
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
     private SecurityConfiguration securityConfig;
@@ -71,14 +70,13 @@ public class TalentServiceImpl implements TalentService {
         return talentMapper.toTalentProfile(findTalentById(talentId));
     }
 
-    //FIXME @SEM check the code
     @Override
     public GeneralResponse delete(Long talentId) {
-        User talent = findUserById(talentId);
-        if (securityConfig.isNotCurrentUser(talent)) {
+        Talent talent = findTalentById(talentId);
+        if (securityConfig.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
-        userRepo.delete(talent);
+        talentRepo.delete(talent);
         return new GeneralResponse(talentId, "Deleted successfully!");
     }
 
@@ -144,11 +142,6 @@ public class TalentServiceImpl implements TalentService {
 
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
-                .orElseThrow(TalentNotFoundException::new);
-    }
-
-    private User findUserById(Long id) {
-        return userRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
     }
 }

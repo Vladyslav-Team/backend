@@ -26,8 +26,8 @@ public class Talent {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "talent_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "talent_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
