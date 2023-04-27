@@ -191,7 +191,7 @@ public class ProofServiceImpl implements ProofService {
     @Override
     public KudosResponse showAmountKudosOfProof(Long proofId){
         Proof proof = findProofById(proofId);
-        return new KudosResponse(proofId, proof.getKudos().size());
+        return new KudosResponse(proofId, isClicked(proofId), proof.getKudos().size());
     }
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
@@ -233,5 +233,15 @@ public class ProofServiceImpl implements ProofService {
         if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())) {
             throw new ProofHasNullValue();
         }
+    }
+
+    private boolean isClicked(Long proofId){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (email.equals("anonymousUser"))
+            return false;
+        Talent talent = findTalentByEmail(email);
+        Proof proof = findProofById(proofId);
+
+        return kudosRepo.findByTalentAndProof(talent, proof).isPresent();
     }
 }
