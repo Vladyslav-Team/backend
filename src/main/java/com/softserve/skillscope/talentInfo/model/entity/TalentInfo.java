@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -30,7 +31,6 @@ public class TalentInfo {
     private Talent talent;
 
     @NotEmpty
-    @URL
     private String image;
 
     @Size(max = 254)
@@ -41,6 +41,8 @@ public class TalentInfo {
     private String location;
 
     @Size(max = 16)
+    @Pattern(regexp = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$",
+             message = "Invalid phone number!")
     private String phone;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")

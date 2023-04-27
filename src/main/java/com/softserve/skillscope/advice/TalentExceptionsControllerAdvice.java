@@ -2,7 +2,6 @@ package com.softserve.skillscope.advice;
 
 import com.softserve.skillscope.exception.ErrorDTO;
 import com.softserve.skillscope.exception.talentException.TalentAlreadyExistsException;
-import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
