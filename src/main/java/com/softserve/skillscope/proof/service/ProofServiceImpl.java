@@ -24,6 +24,7 @@ import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
@@ -101,10 +102,10 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    //TODO by Denys: change logic for this method
+    //TODO by Denys: change logic for this method (add check balance)
     @Override
     public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest amount) {
-        if (amount == null || amount.amount() < 1) {
+        if (amount.amount() == null || amount.amount() < 1) {
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
 
@@ -129,7 +130,7 @@ public class ProofServiceImpl implements ProofService {
         for (Kudos kudos: proof.getKudos()){
             amount += kudos.getAmount();
         }
-        return new KudosResponse(proofId, amount);
+        return new KudosResponse(proofId, isClicked(proofId),  amount);
     }
 
     @Override
@@ -244,5 +245,22 @@ public class ProofServiceImpl implements ProofService {
         if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())) {
             throw new ProofHasNullValue();
         }
+    }
+
+    private User getCurrentUser(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (email.equals("anonymousUser"))
+            return null;
+        return findUserByEmail(email);
+    }
+
+
+    private boolean isClicked(Long proofId){
+        User user = getCurrentUser();
+        if (user == null || user.getRoles().contains(Role.TALENT)) {
+            return false;
+        }
+        Proof proof = findProofById(proofId);
+        return kudosRepo.findBySponsorAndProof(user.getSponsor(), proof).isPresent();
     }
 }

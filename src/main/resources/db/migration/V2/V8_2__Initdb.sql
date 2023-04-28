@@ -57,6 +57,7 @@ CREATE TABLE sponsor
     phone      VARCHAR(16),
     image      VARCHAR(255),
     birthday   date,
+    balance    INTEGER NOT NULL,
     CONSTRAINT pk_sponsor PRIMARY KEY (sponsor_id)
 );
 

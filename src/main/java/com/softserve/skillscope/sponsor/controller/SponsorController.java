@@ -46,4 +46,9 @@ public class SponsorController {
     public UserImageResponse showSponsorImage(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.getSponsorImage(sponsorId);
     }
+
+    @PostMapping("/sponsors/{sponsor-id}/kudos")
+    public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsporId) {
+        return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsporId));
+    }
 }

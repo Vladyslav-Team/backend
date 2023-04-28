@@ -41,6 +41,8 @@ public class Sponsor /*extends User*/{
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate birthday;
 
+    private int balance;
+
 
     //Set null key to kudos in sponsor_id when sponsor is deleted.
     @OneToMany(mappedBy = "sponsor")

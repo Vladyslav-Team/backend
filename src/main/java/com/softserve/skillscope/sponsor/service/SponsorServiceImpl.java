@@ -14,12 +14,14 @@ import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
+import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +69,10 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Override
     public SponsorProfile getSponsorProfile(Long sponsorId) {
+        User sponsor = findUserById(sponsorId);
+        if (securityConfig.isNotCurrentUser(sponsor)){
+            throw new ForbiddenRequestException();
+        }
         return sponsorMapper.toSponsorProfile(findSponsorById(sponsorId));
     }
 
@@ -95,6 +101,17 @@ public class SponsorServiceImpl implements SponsorService {
         checkIfFieldsNotEmpty(sponsorToUpdate, sponsor);
         Sponsor saveSponsor = sponsorRepo.save(sponsor);
         return new GeneralResponse(saveSponsor.getId(), "Edit successfully!");
+    }
+
+    @Override
+    public GeneralResponse buyKudos(Long sponsorId){
+        Sponsor sponsor = findSponsorById(sponsorId);
+        if (securityConfig.isNotCurrentUser(sponsor.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+        sponsor.setBalance(sponsor.getBalance() + 1);
+        sponsorRepo.save(sponsor);
+        return new GeneralResponse(sponsorId, "Kudos has been purchased successfully!");
     }
 
     private void checkIfFieldsNotEmpty(SponsorEditRequest sponsorToUpdate, Sponsor sponsor) {
@@ -131,5 +148,19 @@ public class SponsorServiceImpl implements SponsorService {
     private User findUserById(Long id) {
         return userRepo.findById(id)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    private User findUserByEmail(String name) {
+        return userRepo.findByEmail(name)
+                .orElseThrow(UserNotFoundException::new);
+    }
+    private User getCurrentUser(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user;
+        user = findUserByEmail(email);
+        if (email.equals("anonymousUser") || user.getRoles().contains(Role.TALENT)) {
+            return null;
+        }
+        return user;
     }
 }

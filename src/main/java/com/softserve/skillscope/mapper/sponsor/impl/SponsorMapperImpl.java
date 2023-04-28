@@ -34,6 +34,7 @@ public class SponsorMapperImpl implements SponsorMapper {
                 .age(sponsor.getBirthday() != null ? Period.between(sponsor.getBirthday(), LocalDate.now()).getYears() : 0)
                 .email(sponsor.getUser().getEmail())
                 .phone(sponsor.getPhone())
+                .balance(sponsor.getBalance())
                 .build();
     }
 
