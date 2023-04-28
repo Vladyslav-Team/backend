@@ -81,6 +81,10 @@ public class TalentServiceImpl implements TalentService {
         if (securityConfig.isNotCurrentTalent(talent)) {
             throw new ForbiddenRequestException();
         }
+        //FIXME (Denys)
+        if (talentToUpdate == null){
+            throw new BadRequestException("No changes");
+        }
         checkIfFieldsNotEmpty(talentToUpdate, talent);
         Talent saveTalent = talentRepo.save(talent);
 
@@ -100,38 +104,41 @@ public class TalentServiceImpl implements TalentService {
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
     private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
-        if (talentToUpdate.name() != null)
-            talent.setName(talentToUpdate.name());
+        //FIXME (Denys)
+        if (talentToUpdate != null){
+            if (talentToUpdate.name() != null)
+                talent.setName(talentToUpdate.name());
 
-        if (talentToUpdate.surname() != null)
-            talent.setSurname(talentToUpdate.surname());
+            if (talentToUpdate.surname() != null)
+                talent.setSurname(talentToUpdate.surname());
 
-        if (talentToUpdate.location() != null)
-            talent.getTalentInfo().setLocation(talentToUpdate.location());
+            if (talentToUpdate.location() != null)
+                talent.getTalentInfo().setLocation(talentToUpdate.location());
 
-        if (talentToUpdate.birthday() != null)
-            talent.getTalentInfo().setBirthday(talentToUpdate.birthday());
+            if (talentToUpdate.birthday() != null)
+                talent.getTalentInfo().setBirthday(talentToUpdate.birthday());
 
-        if (talentToUpdate.password() != null) {
-            boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
-            if (!isSamePassword) {
-                talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
+            if (talentToUpdate.password() != null) {
+                boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
+                if (!isSamePassword) {
+                    talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
+                }
             }
+            if (talentToUpdate.image() != null)
+                talent.getTalentInfo().setImage(talentToUpdate.image());
+
+            if (talentToUpdate.about() != null)
+                talent.getTalentInfo().setAbout(talentToUpdate.about());
+
+            if (talentToUpdate.phone() != null)
+                talent.getTalentInfo().setPhone(talentToUpdate.phone());
+
+            if (talentToUpdate.experience() != null)
+                talent.getTalentInfo().setExperience(talentToUpdate.experience());
+
+            if (talentToUpdate.education() != null)
+                talent.getTalentInfo().setEducation(talentToUpdate.education());
         }
-        if (talentToUpdate.image() != null)
-            talent.getTalentInfo().setImage(talentToUpdate.image());
-
-        if (talentToUpdate.about() != null)
-            talent.getTalentInfo().setAbout(talentToUpdate.about());
-
-        if (talentToUpdate.phone() != null)
-            talent.getTalentInfo().setPhone(talentToUpdate.phone());
-
-        if (talentToUpdate.experience() != null)
-            talent.getTalentInfo().setExperience(talentToUpdate.experience());
-
-        if (talentToUpdate.education() != null)
-            talent.getTalentInfo().setEducation(talentToUpdate.education());
     }
 
     private Talent findTalentById(Long id) {
