@@ -1,6 +1,8 @@
 package com.softserve.skillscope.talent.model.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.softserve.skillscope.validation.annotation.LatinName;
+import com.softserve.skillscope.validation.annotation.LatinSurname;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import org.hibernate.validator.constraints.URL;
@@ -11,8 +13,10 @@ import java.time.LocalDate;
 public record TalentEditRequest(
         @Size(min = 5, max = 64, message = "Password must be less than 64 characters and more than 5")
         String password,
+        @LatinName
         @Size(min = 1, max = 64, message = "Name must be less than 64 characters and more than 1")
         String name,
+        @LatinSurname
         @Size(min = 1, max = 64, message = "Surname must be less than 64 characters and more than 1")
         String surname,
         @URL
