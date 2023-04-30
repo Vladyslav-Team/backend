@@ -77,10 +77,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtToken signIn(String username) {
-        User user = userRepo.findByEmail(username).orElse(null);
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
+        User user = userRepo.findByEmail(username).orElseThrow(UserNotFoundException::new);
         return generateJwtToken(username, user.getId());
     }
 
