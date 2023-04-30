@@ -3,7 +3,6 @@ package com.softserve.skillscope.talent.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
@@ -15,8 +14,6 @@ import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentImageResponse;
-import com.softserve.skillscope.user.UserRepository;
-import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -102,42 +99,31 @@ public class TalentServiceImpl implements TalentService {
         return talentMapper.toTalentImage(findTalentById(talentId));
     }
 
+    private String validateField(String requestField, String field) {
+        return requestField == null ? field : requestField;
+    }
+
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
     private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
-        if (talentToUpdate.name() != null)
-            talent.getUser().setName(talentToUpdate.name());
-
-        if (talentToUpdate.surname() != null)
-            talent.getUser().setName(talentToUpdate.surname());
-
-        if (talentToUpdate.location() != null)
-            talent.setLocation(talentToUpdate.location());
-
-        if (talentToUpdate.birthday() != null)
-            talent.setBirthday(talentToUpdate.birthday());
+        talent.getUser().setName(validateField(talentToUpdate.name(), talent.getUser().getName()));
+        talent.getUser().setSurname(validateField(talentToUpdate.surname(), talent.getUser().getSurname()));
+        talent.setLocation(validateField(talentToUpdate.location(), talent.getLocation()));
+        talent.setBirthday(talentToUpdate.birthday() != null ? talentToUpdate.birthday() : talent.getBirthday());
 
         if (talentToUpdate.password() != null) {
-            boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getUser().getPassword());
-            if (!isSamePassword) {
-                talent.getUser().setPassword(passwordEncoder.encode(talentToUpdate.password()));
-            }
+            talent.getUser().setPassword(
+                    passwordEncoder.matches(talentToUpdate.password(), talent.getUser().getPassword())
+                            ? talent.getUser().getPassword()
+                            : passwordEncoder.encode(talentToUpdate.password())
+            );
         }
-        if (talentToUpdate.image() != null)
-            talent.setImage(talentToUpdate.image());
-
-        if (talentToUpdate.about() != null)
-            talent.setAbout(talentToUpdate.about());
-
-        if (talentToUpdate.phone() != null)
-            talent.setPhone(talentToUpdate.phone());
-
-        if (talentToUpdate.experience() != null)
-            talent.setExperience(talentToUpdate.experience());
-
-        if (talentToUpdate.education() != null)
-            talent.setEducation(talentToUpdate.education());
+        talent.setImage(validateField(talentToUpdate.image(), talent.getImage()));
+        talent.setAbout(validateField(talentToUpdate.about(), talent.getAbout()));
+        talent.setPhone(validateField(talentToUpdate.phone(), talent.getPhone()));
+        talent.setExperience(validateField(talentToUpdate.experience(), talent.getExperience()));
+        talent.setEducation(validateField(talentToUpdate.education(), talent.getEducation()));
     }
 
     private Talent findTalentById(Long id) {
