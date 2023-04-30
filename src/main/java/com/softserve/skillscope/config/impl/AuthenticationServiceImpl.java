@@ -32,8 +32,6 @@ import java.util.Map;
 @Getter
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
-    //FIXME @SEM
-//    private final TalentRepository talentRepo;
     private final UserRepository userRepo;
     private final TalentProperties talentProps;
     private final SponsorProperties sponsorProps;
@@ -51,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .surname(request.surname())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                //FIXME re-write to use several roles and talent/sponsor role
+                //FIXME @SEM re-write to use several roles and talent/sponsor role
                 .roles(request.roles()/*Set.of(Role.TALENT)*/)
                 .build();
         if (request.roles().contains(Role.TALENT)) {
@@ -73,20 +71,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             sponsorInfo.setUser(user);
             user.setSponsor(sponsorInfo);
         }
-
-
         User saveUser = userRepo.save(user);
-        //FIXME duplicate of code
-        Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("SkillScope")
-                .issuedAt(now)
-                .expiresAt(now.plus(45, ChronoUnit.MINUTES))
-                .subject(request.email())
-                .claim("id", saveUser.getId())
-                .build();
-        verifiedTokens.put(request.email(), jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
-        return JwtToken.builder().token(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue()).build();
+        return generateJwtToken(request.email(), saveUser.getId());
     }
 
     @Override
@@ -95,17 +81,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (user == null) {
             throw new UserNotFoundException();
         }
-        //FIXME duplicate of code
-        Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("SkillScope")
-                .issuedAt(now)
-                .expiresAt(now.plus(45, ChronoUnit.MINUTES))
-                .subject(username)
-                .claim("id", user.getId())
-                .build();
-        verifiedTokens.put(username, jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
-        return new JwtToken(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
+        return generateJwtToken(username, user.getId());
     }
 
     @Override
@@ -117,10 +93,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
+    private JwtToken generateJwtToken(String subject, Long id) {
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("SkillScope")
+                .issuedAt(now)
+                .expiresAt(now.plus(45, ChronoUnit.MINUTES))
+                .subject(subject)
+                .claim("id", id)
+                .build();
+        String tokenValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        verifiedTokens.put(subject, tokenValue);
+        return JwtToken.builder().token(tokenValue).build();
+    }
+
+    //FIXME is there any sense to add 2 diff default images? and we can check the role, so no need in 1 more method.
     private String checkEmptyTalentImage(RegistrationRequest request) {
         return request.image() == null
                 ? talentProps.defaultImage() : request.image();
     }
+
     private String checkEmptySponsorImage(RegistrationRequest request) {
         return request.image() == null
                 ? sponsorProps.defaultImage() : request.image();
