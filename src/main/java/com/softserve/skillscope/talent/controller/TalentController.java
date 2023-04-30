@@ -4,7 +4,7 @@ import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
-import com.softserve.skillscope.talent.model.response.TalentImageResponse;
+import com.softserve.skillscope.generalModel.UserImageResponse;
 import com.softserve.skillscope.talent.service.TalentService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -43,7 +43,7 @@ public class TalentController {
 
     @GetMapping("/talent/image/{talent-id}")
     @ResponseStatus(HttpStatus.OK)
-    public TalentImageResponse showTalentImage(@PathVariable("talent-id") Long talentId) {
+    public UserImageResponse showTalentImage(@PathVariable("talent-id") Long talentId) {
         return talentService.getTalentImage(talentId);
     }
 }

@@ -3,12 +3,15 @@ package com.softserve.skillscope.proof.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.exception.proofException.ProofAlreadyPublishedException;
 import com.softserve.skillscope.exception.proofException.ProofHasNullValue;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
-import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.kudos.KudosRepository;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
+import com.softserve.skillscope.kudos.model.request.KudosAmountRequest;
+import com.softserve.skillscope.kudos.model.response.KudosResponse;
 import com.softserve.skillscope.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
@@ -18,8 +21,10 @@ import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -27,6 +32,7 @@ import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,6 +45,7 @@ public class ProofServiceImpl implements ProofService {
     private TalentRepository talentRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
+    private UserRepository userRepo;
     private ProofMapper proofMapper;
     private ProofProperties proofProp;
     private SecurityConfiguration securityConfig;
@@ -54,13 +61,14 @@ public class ProofServiceImpl implements ProofService {
         try {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
             Page<Proof> pageProofs;
-            PageRequest pageRequest = PageRequest.of(page - 1, proofProp.concreteTalentProofPageSize(), sort);
+            PageRequest pageRequest = PageRequest.of(page - 1, proofProp.concreteUserProofPageSize(), sort);
+
             if (talentIdWrapper.isEmpty()) {
                 pageProofs = proofRepo.findAllVisible(proofProp.visible(),
                         PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             } else {
                 Long talentId = talentIdWrapper.get();
-                Talent talent = talentRepo.findById(talentId).orElseThrow(TalentNotFoundException::new);
+                Talent talent = talentRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
                 if (securityConfig.isNotCurrentUser(talent.getUser())) {
                     pageProofs = proofRepo.findAllVisibleByTalentId(talentIdWrapper.get(),
                             proofProp.visible(), pageRequest);
@@ -93,28 +101,36 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    //TODO @SEM re-write the code for sponsor
-//    public GeneralResponse addKudosToProofByTalent(Long proofId) {
-//
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Talent talent = findTalentByEmail(email);
-//        Proof proof = findProofById(proofId);
-//
-//        if (talent.equals(proof.getTalent())) {
-//            throw new BadRequestException("Talent cannot like their own post");
-//        }
-////        if (kudosRepo.findByTalentAndProof(talent, proof).isPresent()) {
-////            throw new BadRequestException("Talent has already given kudos to this proof");
-////        }
-//        Kudos kudos = new Kudos();
-////        kudos.setTalent(talent);
-//        kudos.setAmount(1);
-//        kudos.setKudosDate(LocalDateTime.now());
-//        kudos.setProof(proof);
-//        kudosRepo.save(kudos);
-//
-//        return new GeneralResponse(proof.getId(), "Kudos was added successfully!");
-//    }
+    //TODO by Denys: change logic for this method
+    @Override
+    public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest amount) {
+        if (amount == null || amount.amount() < 1) {
+            throw new BadRequestException("Amount of Kudos must not be less than 1!");
+        }
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Sponsor sponsor = findUserByEmail(email).getSponsor();
+        Proof proof = findProofById(proofId);
+        Kudos kudos = new Kudos();
+        kudos.setSponsor(sponsor);
+        kudos.setAmount(amount.amount());
+        kudos.setKudosDate(LocalDateTime.now());
+        kudos.setProof(proof);
+
+        kudosRepo.save(kudos);
+
+        return new GeneralResponse(proof.getId(), amount.amount() + " kudos was added successfully!");
+    }
+
+    @Override
+    public KudosResponse showAmountKudosOfProof(Long proofId){
+        Proof proof = findProofById(proofId);
+        Integer amount = 0;
+        for (Kudos kudos: proof.getKudos()){
+            amount += kudos.getAmount();
+        }
+        return new KudosResponse(proofId, amount);
+    }
 
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
@@ -161,6 +177,9 @@ public class ProofServiceImpl implements ProofService {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
+        if (proof.getStatus() == ProofStatus.PUBLISHED){
+            throw new BadRequestException("Proof has already been published!");
+        }
         if (proof.getStatus() == ProofStatus.HIDDEN || proof.getStatus() == proofProp.defaultType()) {
             proof.setStatus(ProofStatus.PUBLISHED);
             if (proof.getPublicationDate() == null) {
@@ -176,6 +195,9 @@ public class ProofServiceImpl implements ProofService {
         checkOwnProofs(talentId, proofId);
         Proof proof = findProofById(proofId);
         isNotEmptyOrNull(proof);
+        if (proof.getStatus() == ProofStatus.HIDDEN){
+            throw new BadRequestException("Proof has already been hidden!");
+        }
         if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
             proof.setStatus(ProofStatus.HIDDEN);
         }
@@ -197,8 +219,6 @@ public class ProofServiceImpl implements ProofService {
         Proof proof = findProofById(proofId);
         User user = talent.getUser();
 
-        if (securityConfig.isNotCurrentUser(user))
-            throw new ForbiddenRequestException();
         List<Proof> proofList = proofRepo.findByTalentId(talentId);
         if (securityConfig.isNotCurrentUser(user) || !proofList.contains(proof)) {
             throw new ForbiddenRequestException();
@@ -210,14 +230,14 @@ public class ProofServiceImpl implements ProofService {
                 .orElseThrow(ProofNotFoundException::new);
     }
 
-//    private Talent findTalentByEmail(String name) {
-//        return talentRepo.findByEmail(name)
-//                .orElseThrow(TalentNotFoundException::new);
-//    }
+    private User findUserByEmail(String name) {
+        return userRepo.findByEmail(name)
+                .orElseThrow(UserNotFoundException::new);
+    }
 
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
-                .orElseThrow(TalentNotFoundException::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 
     private void isNotEmptyOrNull(Proof proof) {

@@ -1,6 +1,6 @@
 package com.softserve.skillscope.config;
 
-import com.softserve.skillscope.talent.model.response.JwtToken;
+import com.softserve.skillscope.config.JwtToken;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 
 public interface AuthenticationService {

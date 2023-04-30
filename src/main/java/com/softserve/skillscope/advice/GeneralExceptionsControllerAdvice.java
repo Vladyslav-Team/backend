@@ -6,13 +6,12 @@ import com.softserve.skillscope.exception.generalException.ForbiddenRequestExcep
 import com.softserve.skillscope.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.exception.generalException.ValidationException;
 import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
-import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
+import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 public class GeneralExceptionsControllerAdvice {
@@ -35,7 +34,7 @@ public class GeneralExceptionsControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(exception.getMessage()));
     }
 
-    @ExceptionHandler({TalentNotFoundException.class, ProofNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ProofNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));

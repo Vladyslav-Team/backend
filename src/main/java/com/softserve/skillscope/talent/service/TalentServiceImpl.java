@@ -3,6 +3,7 @@ package com.softserve.skillscope.talent.service;
 import com.softserve.skillscope.config.SecurityConfiguration;
 import com.softserve.skillscope.exception.generalException.BadRequestException;
 import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
 import com.softserve.skillscope.generalModel.GeneralResponse;
 import com.softserve.skillscope.mapper.talent.TalentMapper;
@@ -14,6 +15,8 @@ import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentImageResponse;
+import com.softserve.skillscope.user.UserRepository;
+import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +32,7 @@ import java.util.List;
 public class TalentServiceImpl implements TalentService {
     private TalentProperties talentProp;
     private TalentRepository talentRepo;
+    private UserRepository userRepo;
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
     private SecurityConfiguration securityConfig;
@@ -38,7 +42,7 @@ public class TalentServiceImpl implements TalentService {
         try {
             Page<Talent> pageTalents =
                     talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
-            if (pageTalents.isEmpty()) throw new TalentNotFoundException("No talents was found");
+            if (pageTalents.isEmpty()) throw new UserNotFoundException();
 
             int totalPages = pageTalents.getTotalPages();
 
@@ -67,6 +71,7 @@ public class TalentServiceImpl implements TalentService {
         return talentMapper.toTalentProfile(findTalentById(talentId));
     }
 
+    //FIXME @SEM check the code
     @Override
     public GeneralResponse delete(Long talentId) {
         Talent talent = findTalentById(talentId);
@@ -95,7 +100,7 @@ public class TalentServiceImpl implements TalentService {
      * Check if it's the image of own talent, in another case forbidden to get it.
      */
     @Override
-    public TalentImageResponse getTalentImage(Long talentId) {
+    public UserImageResponse getTalentImage(Long talentId) {
         return talentMapper.toTalentImage(findTalentById(talentId));
     }
 
@@ -129,5 +134,9 @@ public class TalentServiceImpl implements TalentService {
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
                 .orElseThrow(TalentNotFoundException::new);
+    }
+    private User findUserById(Long id) {
+        return userRepo.findById(id)
+                .orElseThrow(UserNotFoundException::new);
     }
 }
