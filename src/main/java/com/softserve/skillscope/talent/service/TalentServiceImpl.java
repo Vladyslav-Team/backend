@@ -107,6 +107,9 @@ public class TalentServiceImpl implements TalentService {
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
     private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
+        if (talentToUpdate == null){
+            throw new BadRequestException("Changes not found");
+        }
         if (talentToUpdate.name() != null)
             talent.getUser().setName(talentToUpdate.name());
 

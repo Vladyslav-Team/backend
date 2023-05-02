@@ -37,7 +37,7 @@ public class SponsorController {
 
     @PatchMapping("/sponsors/{sponsor-id}")
     ResponseEntity<GeneralResponse> editSponsor(@PathVariable("sponsor-id") Long sponsorId,
-                                               @RequestBody @Valid SponsorEditRequest sponsorProfile) {
+                                               @RequestBody(required = false) @Valid SponsorEditRequest sponsorProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.editSponsorProfile(sponsorId, sponsorProfile));
     }
 

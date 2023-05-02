@@ -21,6 +21,7 @@ import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
+import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -44,6 +45,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
     private TalentRepository talentRepo;
+    private SponsorRepository sponsorRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
     private UserRepository userRepo;
@@ -102,23 +104,27 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    //TODO by Denys: change logic for this method (add check balance)
     @Override
     public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest amount) {
-        if (amount.amount() == null || amount.amount() < 1) {
+        if (amount == null || amount.amount() == null || amount.amount() < 1) {
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Sponsor sponsor = findUserByEmail(email).getSponsor();
+        if (sponsor.getBalance() < amount.amount()){
+            throw new BadRequestException("Not enough kudos on the balance sheet");
+        }
         Proof proof = findProofById(proofId);
         Kudos kudos = new Kudos();
         kudos.setSponsor(sponsor);
         kudos.setAmount(amount.amount());
         kudos.setKudosDate(LocalDateTime.now());
         kudos.setProof(proof);
+        sponsor.setBalance(sponsor.getBalance() - amount.amount());
 
         kudosRepo.save(kudos);
+        sponsorRepo.save(sponsor);
 
         return new GeneralResponse(proof.getId(), amount.amount() + " kudos was added successfully!");
     }
@@ -207,6 +213,9 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
+        if (proofToUpdate == null){
+            throw new BadRequestException("Changes not found");
+        }
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
         }
