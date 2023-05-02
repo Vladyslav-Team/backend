@@ -5,9 +5,8 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.Set;
 
 public interface KudosRepository extends JpaRepository<Kudos, Long> {
-        //TODO @SEM rewrite the code for sponsor
-    Optional<Kudos> findBySponsorAndProof(Sponsor sponsor, Proof proof);
+    Set<Kudos> findBySponsorAndProof(Sponsor sponsor, Proof proof);
 }

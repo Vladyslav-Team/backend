@@ -11,7 +11,7 @@ import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talent.model.entity.TalentProperties;
+import com.softserve.skillscope.user.model.UserProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.user.UserRepository;
@@ -29,7 +29,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class TalentServiceImpl implements TalentService {
-    private TalentProperties talentProp;
+    private UserProperties userProp;
     private TalentRepository talentRepo;
     private UserRepository userRepo;
     private TalentMapper talentMapper;
@@ -40,7 +40,7 @@ public class TalentServiceImpl implements TalentService {
     public GeneralTalentResponse getAllTalentsByPage(int page) {
         try {
             Page<Talent> pageTalents =
-                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
+                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, userProp.userPageSize()));
             if (pageTalents.isEmpty()) throw new UserNotFoundException();
 
             int totalPages = pageTalents.getTotalPages();
@@ -108,7 +108,7 @@ public class TalentServiceImpl implements TalentService {
      */
     private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
         if (talentToUpdate == null){
-            throw new BadRequestException("Changes not found");
+            throw new BadRequestException("No changes were applied");
         }
         if (talentToUpdate.name() != null)
             talent.getUser().setName(talentToUpdate.name());

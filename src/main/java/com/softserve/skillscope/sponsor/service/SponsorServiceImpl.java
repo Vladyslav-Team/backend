@@ -11,11 +11,11 @@ import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
-import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
+import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class SponsorServiceImpl implements SponsorService {
-    private SponsorProperties sponsorProp;
+    private UserProperties userProp;
     private SponsorRepository sponsorRepo;
     private UserRepository userRepo;
     private SponsorMapper sponsorMapper;
@@ -40,7 +40,7 @@ public class SponsorServiceImpl implements SponsorService {
     public GeneralSponsorResponse getAllSponsorsByPage(int page) {
         try {
             Page<Sponsor> pageSponsors =
-                    sponsorRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, sponsorProp.sponsorPageSize()));
+                    sponsorRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, userProp.userPageSize()));
             if (pageSponsors.isEmpty()) throw new UserNotFoundException();
 
             int totalPages = pageSponsors.getTotalPages();
@@ -114,7 +114,7 @@ public class SponsorServiceImpl implements SponsorService {
 
     private void checkIfFieldsNotEmpty(SponsorEditRequest sponsorToUpdate, Sponsor sponsor) {
         if (sponsorToUpdate == null){
-            throw new BadRequestException("Changes not found");
+            throw new BadRequestException("No changes were applied");
         }
         if (sponsorToUpdate.name() != null)
             sponsor.getUser().setName(sponsorToUpdate.name());

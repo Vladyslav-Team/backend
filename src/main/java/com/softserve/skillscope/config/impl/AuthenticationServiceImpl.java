@@ -6,13 +6,12 @@ import com.softserve.skillscope.exception.generalException.UnauthorizedUserExcep
 import com.softserve.skillscope.exception.generalException.UserAlreadyExistsException;
 import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
-import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
+import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,11 +31,8 @@ import java.util.Map;
 @Getter
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
-    //FIXME @SEM
-//    private final TalentRepository talentRepo;
     private final UserRepository userRepo;
-    private final TalentProperties talentProps;
-    private final SponsorProperties sponsorProps;
+    private final UserProperties userProps;
     private final PasswordEncoder passwordEncoder;
 
     private Map<String, String> verifiedTokens;
@@ -51,14 +47,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .surname(request.surname())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                //FIXME re-write to use several roles and talent/sponsor role
-                .roles(request.roles()/*Set.of(Role.TALENT)*/)
+                .roles(request.roles())
                 .build();
         if (request.roles().contains(Role.TALENT)) {
             Talent talentInfo = Talent.builder()
                     .location(request.location())
                     .birthday(request.birthday())
-                    .image(checkEmptyTalentImage(request))
+                    .image(checkEmptyUserImage(request))
                     .experience("Experience is not mention")
                     .build();
             talentInfo.setUser(user);
@@ -68,7 +63,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Sponsor sponsorInfo = Sponsor.builder()
                     .location(request.location())
                     .birthday(request.birthday())
-                    .image(checkEmptySponsorImage(request))
+                    .image(checkEmptyUserImage(request))
                     .build();
             sponsorInfo.setUser(user);
             user.setSponsor(sponsorInfo);
@@ -76,17 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
         User saveUser = userRepo.save(user);
-        //FIXME duplicate of code
-        Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("SkillScope")
-                .issuedAt(now)
-                .expiresAt(now.plus(45, ChronoUnit.MINUTES))
-                .subject(request.email())
-                .claim("id", saveUser.getId())
-                .build();
-        verifiedTokens.put(request.email(), jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
-        return JwtToken.builder().token(jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue()).build();
+        return signIn(saveUser.getEmail());
     }
 
     @Override
@@ -95,13 +80,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (user == null) {
             throw new UserNotFoundException();
         }
-        //FIXME duplicate of code
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")
                 .issuedAt(now)
                 .expiresAt(now.plus(45, ChronoUnit.MINUTES))
-                .subject(username)
+                .subject(user.getEmail())
                 .claim("id", user.getId())
                 .build();
         verifiedTokens.put(username, jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
@@ -117,12 +101,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private String checkEmptyTalentImage(RegistrationRequest request) {
+    private String checkEmptyUserImage(RegistrationRequest request) {
         return request.image() == null
-                ? talentProps.defaultImage() : request.image();
+                ? userProps.defaultImage() : request.image();
     }
-    private String checkEmptySponsorImage(RegistrationRequest request) {
-        return request.image() == null
-                ? sponsorProps.defaultImage() : request.image();
-    }
+
+
 }

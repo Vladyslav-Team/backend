@@ -82,4 +82,12 @@ public class ProofController {
                                                           @RequestBody(required = false) KudosAmountRequest amount) {
         return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofBySponsor(proofId, amount));
     }
+
+    @GetMapping("/sponsors/{sponsor-id}/proofs")
+    @ResponseStatus(HttpStatus.OK)
+    public GeneralProofResponse showAllProofsBySponsorId(@PathVariable("sponsor-id") Long sponsorId,
+                                                        @RequestParam(defaultValue = "1") Optional<Integer> page,
+                                                        @RequestParam(name = "newest") Optional<Boolean> newest) {
+        return proofService.getAllProofByPage(Optional.of(sponsorId), page.orElse(1), newest.orElse(true));
+    }
 }

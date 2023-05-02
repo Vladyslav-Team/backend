@@ -60,23 +60,27 @@ public class ProofServiceImpl implements ProofService {
 
 
     @Override
-    public GeneralProofResponse getAllProofByPage(Optional<Long> talentIdWrapper, int page, boolean newest) {
+    public GeneralProofResponse getAllProofByPage(Optional<Long> userIdWrapper, int page, boolean newest) {
         try {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
             Page<Proof> pageProofs;
             PageRequest pageRequest = PageRequest.of(page - 1, proofProp.concreteUserProofPageSize(), sort);
 
-            if (talentIdWrapper.isEmpty()) {
+            if (userIdWrapper.isEmpty()) {
                 pageProofs = proofRepo.findAllVisible(proofProp.visible(),
                         PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             } else {
-                Long talentId = talentIdWrapper.get();
-                Talent talent = talentRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
-                if (securityConfig.isNotCurrentUser(talent.getUser())) {
-                    pageProofs = proofRepo.findAllVisibleByTalentId(talentIdWrapper.get(),
+                Long talentId = userIdWrapper.get();
+                User user = userRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
+                if (user.getRoles().contains(Role.SPONSOR)){
+                    pageProofs = proofRepo.findAllVisibleBySponsorId(userIdWrapper.get(),
+                            proofProp.visible(), pageRequest);
+                }
+                else if (securityConfig.isNotCurrentUser(user)) {
+                    pageProofs = proofRepo.findAllVisibleByTalentId(userIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else {
-                    pageProofs = proofRepo.findForCurrentTalent(talentIdWrapper.get(), pageRequest);
+                    pageProofs = proofRepo.findForCurrentTalent(userIdWrapper.get(), pageRequest);
                 }
             }
             if (pageProofs.isEmpty()) throw new ProofNotFoundException("No proofs was found");
@@ -132,11 +136,16 @@ public class ProofServiceImpl implements ProofService {
     @Override
     public KudosResponse showAmountKudosOfProof(Long proofId){
         Proof proof = findProofById(proofId);
-        Integer amount = 0;
+        User user = getCurrentUser();
+        Integer amountOfKudos = 0;
+        Integer amountOfKudosCurrentUser = 0;
         for (Kudos kudos: proof.getKudos()){
-            amount += kudos.getAmount();
+            amountOfKudos += kudos.getAmount();
+            if (user != null && kudos.getSponsor().getId().equals(user.getId())) {
+                amountOfKudosCurrentUser += kudos.getAmount();
+            }
         }
-        return new KudosResponse(proofId, isClicked(proofId),  amount);
+        return new KudosResponse(proofId, isClicked(proofId),  amountOfKudos, amountOfKudosCurrentUser);
     }
 
     @Override
@@ -214,7 +223,7 @@ public class ProofServiceImpl implements ProofService {
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
         if (proofToUpdate == null){
-            throw new BadRequestException("Changes not found");
+            throw new BadRequestException("No changes were applied");
         }
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
@@ -270,6 +279,6 @@ public class ProofServiceImpl implements ProofService {
             return false;
         }
         Proof proof = findProofById(proofId);
-        return kudosRepo.findBySponsorAndProof(user.getSponsor(), proof).isPresent();
+        return !kudosRepo.findBySponsorAndProof(user.getSponsor(), proof).isEmpty();
     }
 }
