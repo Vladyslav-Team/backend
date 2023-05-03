@@ -1,10 +1,10 @@
 package com.softserve.skillscope.talent.service;
 
-import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
-import com.softserve.skillscope.generalModel.UserImageResponse;
+import com.softserve.skillscope.general.model.ImageResponse;
 
 
 public interface TalentService {
@@ -14,5 +14,5 @@ public interface TalentService {
 
     GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate);
 
-    UserImageResponse getTalentImage(Long talentId);
+    ImageResponse getTalentImage(Long talentId);
 }

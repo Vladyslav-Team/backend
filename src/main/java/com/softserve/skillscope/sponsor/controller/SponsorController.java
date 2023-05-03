@@ -1,7 +1,7 @@
 package com.softserve.skillscope.sponsor.controller;
 
-import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.generalModel.UserImageResponse;
+import com.softserve.skillscope.general.model.GeneralResponse;
+import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
@@ -43,7 +43,7 @@ public class SponsorController {
 
     @GetMapping("/sponsor/image/{sponsor-id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserImageResponse showSponsorImage(@PathVariable("sponsor-id") Long sponsorId) {
+    public ImageResponse showSponsorImage(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.getSponsorImage(sponsorId);
     }
 }

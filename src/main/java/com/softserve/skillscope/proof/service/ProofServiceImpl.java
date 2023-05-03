@@ -1,18 +1,18 @@
 package com.softserve.skillscope.proof.service;
 
-import com.softserve.skillscope.config.SecurityConfiguration;
-import com.softserve.skillscope.exception.generalException.BadRequestException;
-import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.generalException.UserNotFoundException;
-import com.softserve.skillscope.exception.proofException.ProofAlreadyPublishedException;
-import com.softserve.skillscope.exception.proofException.ProofHasNullValue;
-import com.softserve.skillscope.exception.proofException.ProofNotFoundException;
-import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.sercurity.config.SecurityConfiguration;
+import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.handler.exception.proofException.ProofAlreadyPublishedException;
+import com.softserve.skillscope.general.handler.exception.proofException.ProofHasNullValue;
+import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
+import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.kudos.KudosRepository;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.kudos.model.request.KudosAmountRequest;
 import com.softserve.skillscope.kudos.model.response.KudosResponse;
-import com.softserve.skillscope.mapper.proof.ProofMapper;
+import com.softserve.skillscope.general.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
@@ -225,6 +225,7 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
+    //FIXME @SEM maybe create util class and not duplicate the code in talent, sponsor etc?
     private Proof findProofById(Long proofId) {
         return proofRepo.findById(proofId)
                 .orElseThrow(ProofNotFoundException::new);

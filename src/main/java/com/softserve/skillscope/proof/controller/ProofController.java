@@ -1,6 +1,6 @@
 package com.softserve.skillscope.proof.controller;
 
-import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.kudos.model.request.KudosAmountRequest;
 import com.softserve.skillscope.kudos.model.response.KudosResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;

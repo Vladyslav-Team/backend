@@ -1,12 +1,12 @@
 package com.softserve.skillscope.sponsor.service;
 
-import com.softserve.skillscope.config.SecurityConfiguration;
-import com.softserve.skillscope.exception.generalException.BadRequestException;
-import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.generalException.UserNotFoundException;
-import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.generalModel.UserImageResponse;
-import com.softserve.skillscope.mapper.sponsor.SponsorMapper;
+import com.softserve.skillscope.sercurity.config.SecurityConfiguration;
+import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.model.GeneralResponse;
+import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
@@ -81,7 +81,7 @@ public class SponsorServiceImpl implements SponsorService {
     }
 
     @Override
-    public UserImageResponse getSponsorImage(Long sponsorId) {
+    public ImageResponse getSponsorImage(Long sponsorId) {
         return sponsorMapper.toSponsorImage(findSponsorById(sponsorId));
     }
 

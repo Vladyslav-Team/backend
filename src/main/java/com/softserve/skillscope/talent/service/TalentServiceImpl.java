@@ -1,12 +1,12 @@
 package com.softserve.skillscope.talent.service;
 
-import com.softserve.skillscope.config.SecurityConfiguration;
-import com.softserve.skillscope.exception.generalException.BadRequestException;
-import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.generalException.UserNotFoundException;
-import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.generalModel.UserImageResponse;
-import com.softserve.skillscope.mapper.talent.TalentMapper;
+import com.softserve.skillscope.sercurity.config.SecurityConfiguration;
+import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.model.GeneralResponse;
+import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
@@ -97,7 +97,7 @@ public class TalentServiceImpl implements TalentService {
      * Check if it's the image of own talent, in another case forbidden to get it.
      */
     @Override
-    public UserImageResponse getTalentImage(Long talentId) {
+    public ImageResponse getTalentImage(Long talentId) {
         return talentMapper.toTalentImage(findTalentById(talentId));
     }
 
