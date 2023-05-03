@@ -21,9 +21,11 @@ import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
+import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
@@ -43,6 +45,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
     private TalentRepository talentRepo;
+    private SponsorRepository sponsorRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
     private UserRepository userRepo;
@@ -57,23 +60,27 @@ public class ProofServiceImpl implements ProofService {
 
 
     @Override
-    public GeneralProofResponse getAllProofByPage(Optional<Long> talentIdWrapper, int page, boolean newest) {
+    public GeneralProofResponse getAllProofByPage(Optional<Long> userIdWrapper, int page, boolean newest) {
         try {
             Sort sort = newest ? Sort.by(proofProp.sortBy()).descending() : Sort.by(proofProp.sortBy()).ascending();
             Page<Proof> pageProofs;
             PageRequest pageRequest = PageRequest.of(page - 1, proofProp.concreteUserProofPageSize(), sort);
 
-            if (talentIdWrapper.isEmpty()) {
+            if (userIdWrapper.isEmpty()) {
                 pageProofs = proofRepo.findAllVisible(proofProp.visible(),
                         PageRequest.of(page - 1, proofProp.proofPageSize(), sort));
             } else {
-                Long talentId = talentIdWrapper.get();
-                Talent talent = talentRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
-                if (securityConfig.isNotCurrentUser(talent.getUser())) {
-                    pageProofs = proofRepo.findAllVisibleByTalentId(talentIdWrapper.get(),
+                Long talentId = userIdWrapper.get();
+                User user = userRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
+                if (user.getRoles().contains(Role.SPONSOR)){
+                    pageProofs = proofRepo.findAllVisibleBySponsorId(userIdWrapper.get(),
+                            proofProp.visible(), pageRequest);
+                }
+                else if (securityConfig.isNotCurrentUser(user)) {
+                    pageProofs = proofRepo.findAllVisibleByTalentId(userIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else {
-                    pageProofs = proofRepo.findForCurrentTalent(talentIdWrapper.get(), pageRequest);
+                    pageProofs = proofRepo.findForCurrentTalent(userIdWrapper.get(), pageRequest);
                 }
             }
             if (pageProofs.isEmpty()) throw new ProofNotFoundException("No proofs was found");
@@ -101,23 +108,27 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    //TODO by Denys: change logic for this method
     @Override
     public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest amount) {
-        if (amount == null || amount.amount() < 1) {
+        if (amount == null || amount.amount() == null || amount.amount() < 1) {
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Sponsor sponsor = findUserByEmail(email).getSponsor();
+        if (sponsor.getBalance() < amount.amount()){
+            throw new BadRequestException("Not enough kudos on the balance sheet");
+        }
         Proof proof = findProofById(proofId);
         Kudos kudos = new Kudos();
         kudos.setSponsor(sponsor);
         kudos.setAmount(amount.amount());
         kudos.setKudosDate(LocalDateTime.now());
         kudos.setProof(proof);
+        sponsor.setBalance(sponsor.getBalance() - amount.amount());
 
         kudosRepo.save(kudos);
+        sponsorRepo.save(sponsor);
 
         return new GeneralResponse(proof.getId(), amount.amount() + " kudos was added successfully!");
     }
@@ -125,11 +136,16 @@ public class ProofServiceImpl implements ProofService {
     @Override
     public KudosResponse showAmountKudosOfProof(Long proofId){
         Proof proof = findProofById(proofId);
-        Integer amount = 0;
+        User user = getCurrentUser();
+        Integer amountOfKudos = 0;
+        Integer amountOfKudosCurrentUser = 0;
         for (Kudos kudos: proof.getKudos()){
-            amount += kudos.getAmount();
+            amountOfKudos += kudos.getAmount();
+            if (user != null && kudos.getSponsor().getId().equals(user.getId())) {
+                amountOfKudosCurrentUser += kudos.getAmount();
+            }
         }
-        return new KudosResponse(proofId, amount);
+        return new KudosResponse(proofId, isClicked(proofId),  amountOfKudos, amountOfKudosCurrentUser);
     }
 
     @Override
@@ -206,6 +222,9 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
+        if (proofToUpdate == null){
+            throw new BadRequestException("No changes were applied");
+        }
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
             proof.setTitle(proofToUpdate.title());
         }
@@ -245,5 +264,22 @@ public class ProofServiceImpl implements ProofService {
         if (!StringUtils.hasText(proof.getTitle()) || !StringUtils.hasText(proof.getDescription())) {
             throw new ProofHasNullValue();
         }
+    }
+
+    private User getCurrentUser(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (email.equals("anonymousUser"))
+            return null;
+        return findUserByEmail(email);
+    }
+
+
+    private boolean isClicked(Long proofId){
+        User user = getCurrentUser();
+        if (user == null || user.getRoles().contains(Role.TALENT)) {
+            return false;
+        }
+        Proof proof = findProofById(proofId);
+        return !kudosRepo.findBySponsorAndProof(user.getSponsor(), proof).isEmpty();
     }
 }

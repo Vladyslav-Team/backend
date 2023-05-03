@@ -12,6 +12,7 @@ public record SponsorProfile(
         @NotBlank String location,
         @NotBlank int age,
         @NotBlank String email,
-        @NotBlank String phone
+        @NotBlank String phone,
+        @NotBlank int balance
 ) {
 }

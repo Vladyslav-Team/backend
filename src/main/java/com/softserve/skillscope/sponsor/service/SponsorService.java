@@ -8,8 +8,14 @@ import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
 
 public interface SponsorService {
     GeneralSponsorResponse getAllSponsorsByPage(int page);
+
     SponsorProfile getSponsorProfile(Long sponsorId);
+
     GeneralResponse deleteSponsor(Long sponsorId);
+
     GeneralResponse editSponsorProfile(Long sponsorId, SponsorEditRequest sponsorToUpdate);
+
     ImageResponse getSponsorImage(Long sponsorId);
+
+    GeneralResponse buyKudos(Long sponsorId);
 }

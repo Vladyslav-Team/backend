@@ -37,7 +37,7 @@ public class TalentController {
 
     @PatchMapping("/talents/{talent-id}")
     ResponseEntity<GeneralResponse> editTalent(@PathVariable("talent-id") Long talentId,
-                                              @RequestBody @Valid TalentEditRequest talentProfile) {
+                                              @RequestBody(required = false) @Valid TalentEditRequest talentProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(talentService.editTalentProfile(talentId, talentProfile));
     }
 

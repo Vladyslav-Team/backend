@@ -37,7 +37,7 @@ public class SponsorController {
 
     @PatchMapping("/sponsors/{sponsor-id}")
     ResponseEntity<GeneralResponse> editSponsor(@PathVariable("sponsor-id") Long sponsorId,
-                                               @RequestBody @Valid SponsorEditRequest sponsorProfile) {
+                                               @RequestBody(required = false) @Valid SponsorEditRequest sponsorProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.editSponsorProfile(sponsorId, sponsorProfile));
     }
 
@@ -45,5 +45,10 @@ public class SponsorController {
     @ResponseStatus(HttpStatus.OK)
     public ImageResponse showSponsorImage(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.getSponsorImage(sponsorId);
+    }
+
+    @PostMapping("/sponsors/{sponsor-id}/kudos")
+    public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsporId) {
+        return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsporId));
     }
 }

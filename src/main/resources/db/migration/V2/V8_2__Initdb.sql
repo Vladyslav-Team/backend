@@ -41,7 +41,7 @@ CREATE TABLE proof
     publication_date TIMESTAMP WITHOUT TIME ZONE,
     title            VARCHAR(100),
     description      VARCHAR(2000),
-    status           VARCHAR(255)                            NOT NULL,
+    status           VARCHAR(20)                            NOT NULL,
     CONSTRAINT pk_proof PRIMARY KEY (id)
 );
 
@@ -57,6 +57,7 @@ CREATE TABLE sponsor
     phone      VARCHAR(16),
     image      VARCHAR(255),
     birthday   date,
+    balance    INTEGER NOT NULL,
     CONSTRAINT pk_sponsor PRIMARY KEY (sponsor_id)
 );
 

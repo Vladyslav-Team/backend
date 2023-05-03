@@ -54,7 +54,7 @@ public class ProofController {
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
     ResponseEntity<GeneralResponse> editProofById(@PathVariable("talent-id") Long talentId,
                                                   @PathVariable("proof-id") Long proofId,
-                                                  @RequestBody ProofRequest proofToUpdate) {
+                                                  @RequestBody(required = false) ProofRequest proofToUpdate) {
         return ResponseEntity.status(HttpStatus.OK).body(proofService.editProofById(talentId, proofId, proofToUpdate));
     }
 
@@ -79,7 +79,15 @@ public class ProofController {
 
     @PostMapping("/proofs/{proof-id}/kudos")
     public ResponseEntity<GeneralResponse> addLikeToProof(@PathVariable("proof-id") Long proofId,
-                                                          @RequestBody KudosAmountRequest amount) {
+                                                          @RequestBody(required = false) KudosAmountRequest amount) {
         return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofBySponsor(proofId, amount));
+    }
+
+    @GetMapping("/sponsors/{sponsor-id}/proofs")
+    @ResponseStatus(HttpStatus.OK)
+    public GeneralProofResponse showAllProofsBySponsorId(@PathVariable("sponsor-id") Long sponsorId,
+                                                        @RequestParam(defaultValue = "1") Optional<Integer> page,
+                                                        @RequestParam(name = "newest") Optional<Boolean> newest) {
+        return proofService.getAllProofByPage(Optional.of(sponsorId), page.orElse(1), newest.orElse(true));
     }
 }

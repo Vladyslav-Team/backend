@@ -1,12 +1,14 @@
 package com.softserve.skillscope.talent.service;
 
-import com.softserve.skillscope.sercurity.config.SecurityConfiguration;
-import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.config.SecurityConfiguration;
+import com.softserve.skillscope.exception.generalException.BadRequestException;
+import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.model.GeneralResponse;
-import com.softserve.skillscope.general.model.ImageResponse;
-import com.softserve.skillscope.general.mapper.talent.TalentMapper;
+import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.generalModel.UserImageResponse;
+import com.softserve.skillscope.mapper.talent.TalentMapper;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
@@ -15,6 +17,7 @@ import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.user.UserRepository;
+import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +31,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class TalentServiceImpl implements TalentService {
-    private TalentProperties talentProp;
+    private UserProperties userProp;
     private TalentRepository talentRepo;
     private UserRepository userRepo;
     private TalentMapper talentMapper;
@@ -69,6 +72,7 @@ public class TalentServiceImpl implements TalentService {
         return talentMapper.toTalentProfile(findTalentById(talentId));
     }
 
+    //FIXME @SEM check the code
     @Override
     public GeneralResponse delete(Long talentId) {
         Talent talent = findTalentById(talentId);
@@ -109,6 +113,9 @@ public class TalentServiceImpl implements TalentService {
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
     private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
+        if (talentToUpdate == null){
+            throw new BadRequestException("No changes were applied");
+        }
         talent.getUser().setName(validateField(talentToUpdate.name(), talent.getUser().getName()));
         talent.getUser().setSurname(validateField(talentToUpdate.surname(), talent.getUser().getSurname()));
         talent.setLocation(validateField(talentToUpdate.location(), talent.getLocation()));
@@ -127,8 +134,14 @@ public class TalentServiceImpl implements TalentService {
         talent.setExperience(validateField(talentToUpdate.experience(), talent.getExperience()));
         talent.setEducation(validateField(talentToUpdate.education(), talent.getEducation()));
     }
+
     private Talent findTalentById(Long id) {
         return talentRepo.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    private User findUserById(Long id) {
+        return userRepo.findById(id)
                 .orElseThrow(UserNotFoundException::new);
     }
 }

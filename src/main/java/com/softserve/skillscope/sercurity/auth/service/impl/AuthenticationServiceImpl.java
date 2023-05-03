@@ -1,14 +1,9 @@
-package com.softserve.skillscope.sercurity.auth.service.impl;
+package com.softserve.skillscope.config.impl;
 
-import com.softserve.skillscope.sercurity.auth.JwtToken;
-import com.softserve.skillscope.sercurity.auth.service.AuthenticationService;
 import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserAlreadyExistsException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.sercurity.auth.JwtToken;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
-import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
@@ -32,9 +27,10 @@ import java.util.Map;
 @Getter
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
+    //FIXME @SEM
+//    private final TalentRepository talentRepo;
     private final UserRepository userRepo;
-    private final TalentProperties talentProps;
-    private final SponsorProperties sponsorProps;
+    private final UserProperties userProps;
     private final PasswordEncoder passwordEncoder;
 
     private Map<String, String> verifiedTokens;
@@ -49,13 +45,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .surname(request.surname())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .roles(request.roles())
+                //FIXME re-write to use several roles and talent/sponsor role
+                .roles(request.roles()/*Set.of(Role.TALENT)*/)
                 .build();
         if (request.roles().contains(Role.TALENT)) {
             Talent talentInfo = Talent.builder()
                     .location(request.location())
                     .birthday(request.birthday())
-                    .image(checkEmptyTalentImage(request))
+                    .image(checkEmptyUserImage(request))
                     .experience("Experience is not mentioned")
                     .build();
             talentInfo.setUser(user);
@@ -65,11 +62,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Sponsor sponsorInfo = Sponsor.builder()
                     .location(request.location())
                     .birthday(request.birthday())
-                    .image(checkEmptySponsorImage(request))
+                    .image(checkEmptyUserImage(request))
                     .build();
             sponsorInfo.setUser(user);
             user.setSponsor(sponsorInfo);
         }
+
+
         User saveUser = userRepo.save(user);
         return generateJwtToken(request.email(), saveUser.getId());
     }
@@ -102,15 +101,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         verifiedTokens.put(subject, tokenValue);
         return JwtToken.builder().token(tokenValue).build();
     }
-
-    //FIXME is there any sense to add 2 diff default images? and we can check the role, so no need in 1 more method.
-    private String checkEmptyTalentImage(RegistrationRequest request) {
+    private String checkEmptyUserImage(RegistrationRequest request) {
         return request.image() == null
-                ? talentProps.defaultImage() : request.image();
-    }
-
-    private String checkEmptySponsorImage(RegistrationRequest request) {
-        return request.image() == null
-                ? sponsorProps.defaultImage() : request.image();
+                ? userProps.defaultImage() : request.image();
     }
 }

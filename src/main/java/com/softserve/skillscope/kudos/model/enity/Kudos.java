@@ -32,8 +32,7 @@ public class Kudos {
     private Proof proof;
 
     private Integer amount;
-    //FIXME talk with frontend, if it's necessary
-//    private boolean isClicked;
+
     @Column(name = "kudos_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
     private LocalDateTime kudosDate;
