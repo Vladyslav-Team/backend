@@ -1,18 +1,18 @@
 package com.softserve.skillscope.proof.service;
 
-import com.softserve.skillscope.sercurity.config.SecurityConfiguration;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofAlreadyPublishedException;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofHasNullValue;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
+import com.softserve.skillscope.general.mapper.proof.ProofMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
+import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.kudos.KudosRepository;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.kudos.model.request.KudosAmountRequest;
 import com.softserve.skillscope.kudos.model.response.KudosResponse;
-import com.softserve.skillscope.general.mapper.proof.ProofMapper;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.dto.GeneralProof;
@@ -23,7 +23,6 @@ import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
-import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
@@ -34,7 +33,6 @@ import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,18 +42,17 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
-    private TalentRepository talentRepo;
     private SponsorRepository sponsorRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
     private UserRepository userRepo;
     private ProofMapper proofMapper;
     private ProofProperties proofProp;
-    private SecurityConfiguration securityConfig;
+    private UtilService utilService;
 
     @Override
     public FullProof getFullProof(Long proofId) {
-        return proofMapper.toFullProof(findProofById(proofId));
+        return proofMapper.toFullProof(utilService.findProofById(proofId));
     }
 
 
@@ -72,11 +69,10 @@ public class ProofServiceImpl implements ProofService {
             } else {
                 Long talentId = userIdWrapper.get();
                 User user = userRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
-                if (user.getRoles().contains(Role.SPONSOR)){
+                if (user.getRoles().contains(Role.SPONSOR)) {
                     pageProofs = proofRepo.findAllVisibleBySponsorId(userIdWrapper.get(),
                             proofProp.visible(), pageRequest);
-                }
-                else if (securityConfig.isNotCurrentUser(user)) {
+                } else if (utilService.isNotCurrentUser(user)) {
                     pageProofs = proofRepo.findAllVisibleByTalentId(userIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else {
@@ -109,49 +105,47 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest amount) {
-        if (amount == null || amount.amount() == null || amount.amount() < 1) {
+    public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest kudosAmountRequest) {
+        Integer amount = kudosAmountRequest.amount();
+        if (kudosAmountRequest == null || amount < 1) {
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
-
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Sponsor sponsor = findUserByEmail(email).getSponsor();
-        if (sponsor.getBalance() < amount.amount()){
+        Sponsor sponsor = utilService.getCurrentUser().getSponsor();
+        if (sponsor.getBalance() < amount) {
             throw new BadRequestException("Not enough kudos on the balance sheet");
         }
-        Proof proof = findProofById(proofId);
-        Kudos kudos = new Kudos();
-        kudos.setSponsor(sponsor);
-        kudos.setAmount(amount.amount());
-        kudos.setKudosDate(LocalDateTime.now());
-        kudos.setProof(proof);
-        sponsor.setBalance(sponsor.getBalance() - amount.amount());
-
+        Proof proof = utilService.findProofById(proofId);
+        Kudos kudos = Kudos.builder()
+                .sponsor(sponsor)
+                .amount(amount)
+                .kudosDate(LocalDateTime.now())
+                .proof(proof)
+                .build();
+        sponsor.setBalance(sponsor.getBalance() - amount);
         kudosRepo.save(kudos);
         sponsorRepo.save(sponsor);
-
-        return new GeneralResponse(proof.getId(), amount.amount() + " kudos was added successfully!");
+        return new GeneralResponse(proof.getId(), amount + " kudos was added successfully!");
     }
 
     @Override
-    public KudosResponse showAmountKudosOfProof(Long proofId){
-        Proof proof = findProofById(proofId);
-        User user = getCurrentUser();
+    public KudosResponse showAmountKudosOfProof(Long proofId) {
+        Proof proof = utilService.findProofById(proofId);
+        User user = utilService.getCurrentUser();
         Integer amountOfKudos = 0;
         Integer amountOfKudosCurrentUser = 0;
-        for (Kudos kudos: proof.getKudos()){
+        for (Kudos kudos : proof.getKudos()) {
             amountOfKudos += kudos.getAmount();
             if (user != null && kudos.getSponsor().getId().equals(user.getId())) {
                 amountOfKudosCurrentUser += kudos.getAmount();
             }
         }
-        return new KudosResponse(proofId, isClicked(proofId),  amountOfKudos, amountOfKudosCurrentUser);
+        return new KudosResponse(proofId, isClicked(proofId), amountOfKudos, amountOfKudosCurrentUser);
     }
 
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
-        Talent creator = findTalentById(talentId);
-        if (securityConfig.isNotCurrentUser(creator.getUser())) {
+        Talent creator = utilService.findUserById(talentId).getTalent();
+        if (utilService.isNotCurrentUser(creator.getUser())) {
             throw new ForbiddenRequestException();
         }
         Proof proof = Proof.builder()
@@ -176,7 +170,7 @@ public class ProofServiceImpl implements ProofService {
     @Transactional
     @Override
     public GeneralResponse editProofById(Long talentId, Long proofId, ProofRequest proofToUpdate) {
-        Proof proof = findProofById(proofId);
+        Proof proof = utilService.findProofById(proofId);
         checkOwnProofs(talentId, proofId);
         if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
@@ -191,9 +185,9 @@ public class ProofServiceImpl implements ProofService {
     @Override
     public GeneralResponse publishProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
-        Proof proof = findProofById(proofId);
+        Proof proof = utilService.findProofById(proofId);
         isNotEmptyOrNull(proof);
-        if (proof.getStatus() == ProofStatus.PUBLISHED){
+        if (proof.getStatus() == ProofStatus.PUBLISHED) {
             throw new BadRequestException("Proof has already been published!");
         }
         if (proof.getStatus() == ProofStatus.HIDDEN || proof.getStatus() == proofProp.defaultType()) {
@@ -209,9 +203,9 @@ public class ProofServiceImpl implements ProofService {
     @Override
     public GeneralResponse hideProofById(Long talentId, Long proofId) {
         checkOwnProofs(talentId, proofId);
-        Proof proof = findProofById(proofId);
+        Proof proof = utilService.findProofById(proofId);
         isNotEmptyOrNull(proof);
-        if (proof.getStatus() == ProofStatus.HIDDEN){
+        if (proof.getStatus() == ProofStatus.HIDDEN) {
             throw new BadRequestException("Proof has already been hidden!");
         }
         if (proof.getStatus() == proofProp.defaultType() || proof.getStatus() == ProofStatus.PUBLISHED) {
@@ -222,7 +216,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
-        if (proofToUpdate == null){
+        if (proofToUpdate == null) {
             throw new BadRequestException("No changes were applied");
         }
         if (proofToUpdate.title() != null && !proofToUpdate.title().equals(proof.getTitle())) {
@@ -234,30 +228,14 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void checkOwnProofs(Long talentId, Long proofId) {
-        Talent talent = findTalentById(talentId);
-        Proof proof = findProofById(proofId);
+        Talent talent = utilService.findUserById(talentId).getTalent();
+        Proof proof = utilService.findProofById(proofId);
         User user = talent.getUser();
 
         List<Proof> proofList = proofRepo.findByTalentId(talentId);
-        if (securityConfig.isNotCurrentUser(user) || !proofList.contains(proof)) {
+        if (utilService.isNotCurrentUser(user) || !proofList.contains(proof)) {
             throw new ForbiddenRequestException();
         }
-    }
-
-    //FIXME @SEM maybe create util class and not duplicate the code in talent, sponsor etc?
-    private Proof findProofById(Long proofId) {
-        return proofRepo.findById(proofId)
-                .orElseThrow(ProofNotFoundException::new);
-    }
-
-    private User findUserByEmail(String name) {
-        return userRepo.findByEmail(name)
-                .orElseThrow(UserNotFoundException::new);
-    }
-
-    private Talent findTalentById(Long id) {
-        return talentRepo.findById(id)
-                .orElseThrow(UserNotFoundException::new);
     }
 
     private void isNotEmptyOrNull(Proof proof) {
@@ -266,20 +244,12 @@ public class ProofServiceImpl implements ProofService {
         }
     }
 
-    private User getCurrentUser(){
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (email.equals("anonymousUser"))
-            return null;
-        return findUserByEmail(email);
-    }
-
-
-    private boolean isClicked(Long proofId){
-        User user = getCurrentUser();
+    private boolean isClicked(Long proofId) {
+        User user = utilService.getCurrentUser();
         if (user == null || user.getRoles().contains(Role.TALENT)) {
             return false;
         }
-        Proof proof = findProofById(proofId);
+        Proof proof = utilService.findProofById(proofId);
         return !kudosRepo.findBySponsorAndProof(user.getSponsor(), proof).isEmpty();
     }
 }

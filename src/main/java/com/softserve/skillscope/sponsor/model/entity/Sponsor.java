@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Sponsor /*extends User*/{
+public class Sponsor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

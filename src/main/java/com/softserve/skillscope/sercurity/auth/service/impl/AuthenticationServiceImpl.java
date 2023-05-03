@@ -1,13 +1,18 @@
-package com.softserve.skillscope.config.impl;
+package com.softserve.skillscope.sercurity.auth.service.impl;
 
 import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserAlreadyExistsException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.sercurity.auth.JwtToken;
+import com.softserve.skillscope.sercurity.auth.service.AuthenticationService;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
+import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,11 +32,10 @@ import java.util.Map;
 @Getter
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtEncoder jwtEncoder;
-    //FIXME @SEM
-//    private final TalentRepository talentRepo;
     private final UserRepository userRepo;
     private final UserProperties userProps;
     private final PasswordEncoder passwordEncoder;
+    private UtilService utilService;
 
     private Map<String, String> verifiedTokens;
 
@@ -45,14 +49,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .surname(request.surname())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                //FIXME re-write to use several roles and talent/sponsor role
-                .roles(request.roles()/*Set.of(Role.TALENT)*/)
+                .roles(request.roles())
                 .build();
         if (request.roles().contains(Role.TALENT)) {
             Talent talentInfo = Talent.builder()
                     .location(request.location())
                     .birthday(request.birthday())
-                    .image(checkEmptyUserImage(request))
+                    .image(utilService.checkEmptyUserImage(request))
                     .experience("Experience is not mentioned")
                     .build();
             talentInfo.setUser(user);
@@ -62,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Sponsor sponsorInfo = Sponsor.builder()
                     .location(request.location())
                     .birthday(request.birthday())
-                    .image(checkEmptyUserImage(request))
+                    .image(utilService.checkEmptyUserImage(request))
                     .build();
             sponsorInfo.setUser(user);
             user.setSponsor(sponsorInfo);
@@ -100,9 +103,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String tokenValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
         verifiedTokens.put(subject, tokenValue);
         return JwtToken.builder().token(tokenValue).build();
-    }
-    private String checkEmptyUserImage(RegistrationRequest request) {
-        return request.image() == null
-                ? userProps.defaultImage() : request.image();
     }
 }

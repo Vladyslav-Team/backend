@@ -9,7 +9,6 @@ import com.softserve.skillscope.general.model.ImageResponse;
 
 public interface TalentService {
     GeneralTalentResponse getAllTalentsByPage(int page);
-    GeneralResponse delete(Long talentId);
     TalentProfile getTalentProfile(Long talentId);
 
     GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate);

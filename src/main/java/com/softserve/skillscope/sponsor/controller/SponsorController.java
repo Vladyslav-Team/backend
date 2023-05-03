@@ -6,6 +6,7 @@ import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
 import com.softserve.skillscope.sponsor.service.SponsorService;
+import com.softserve.skillscope.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class SponsorController {
     private SponsorService sponsorService;
+    private UserService userService;
 
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
@@ -32,12 +34,12 @@ public class SponsorController {
     @DeleteMapping("/sponsors/{sponsor-id}")
     @ResponseBody
     GeneralResponse deleteSponsor(@PathVariable("sponsor-id") Long sponsorId) {
-        return sponsorService.deleteSponsor(sponsorId);
+        return userService.deleteUser(sponsorId);
     }
 
     @PatchMapping("/sponsors/{sponsor-id}")
     ResponseEntity<GeneralResponse> editSponsor(@PathVariable("sponsor-id") Long sponsorId,
-                                               @RequestBody(required = false) @Valid SponsorEditRequest sponsorProfile) {
+                                                @RequestBody(required = false) @Valid SponsorEditRequest sponsorProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.editSponsorProfile(sponsorId, sponsorProfile));
     }
 

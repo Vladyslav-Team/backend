@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Talent /*extends User*/{
+public class Talent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -11,8 +11,6 @@ public interface SponsorService {
 
     SponsorProfile getSponsorProfile(Long sponsorId);
 
-    GeneralResponse deleteSponsor(Long sponsorId);
-
     GeneralResponse editSponsorProfile(Long sponsorId, SponsorEditRequest sponsorToUpdate);
 
     ImageResponse getSponsorImage(Long sponsorId);

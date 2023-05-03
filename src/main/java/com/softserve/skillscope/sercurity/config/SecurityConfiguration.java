@@ -136,9 +136,4 @@ public class SecurityConfiguration {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    public boolean isNotCurrentUser(User user) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return !email.equalsIgnoreCase(user.getEmail());
-    }
 }

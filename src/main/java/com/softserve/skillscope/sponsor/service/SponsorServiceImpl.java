@@ -1,19 +1,18 @@
 package com.softserve.skillscope.sponsor.service;
 
-import com.softserve.skillscope.sercurity.config.SecurityConfiguration;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
-import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
+import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
-import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
@@ -31,10 +30,10 @@ import java.util.List;
 public class SponsorServiceImpl implements SponsorService {
     private UserProperties userProp;
     private SponsorRepository sponsorRepo;
-    private UserRepository userRepo;
     private SponsorMapper sponsorMapper;
     private PasswordEncoder passwordEncoder;
-    private SecurityConfiguration securityConfig;
+    private UtilService utilService;
+
 
     @Override
     public GeneralSponsorResponse getAllSponsorsByPage(int page) {
@@ -67,33 +66,23 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Override
     public SponsorProfile getSponsorProfile(Long sponsorId) {
-        User sponsor = findUserById(sponsorId);
-        if (securityConfig.isNotCurrentUser(sponsor)){
+        User sponsor = utilService.findUserById(sponsorId);
+        if (utilService.isNotCurrentUser(sponsor)) {
             throw new ForbiddenRequestException();
         }
-        return sponsorMapper.toSponsorProfile(findSponsorById(sponsorId));
-    }
-
-    @Override
-    public GeneralResponse deleteSponsor(Long sponsorId) {
-        User sponsor = findUserById(sponsorId);
-        if (securityConfig.isNotCurrentUser(sponsor)){
-            throw new ForbiddenRequestException();
-        }
-        userRepo.delete(sponsor);
-        return new GeneralResponse(sponsorId, "Deleted successfully!");
+        return sponsorMapper.toSponsorProfile(sponsor.getSponsor());
     }
 
     @Override
     public ImageResponse getSponsorImage(Long sponsorId) {
-        return sponsorMapper.toSponsorImage(findSponsorById(sponsorId));
+        return sponsorMapper.toSponsorImage(utilService.findUserById(sponsorId).getSponsor());
     }
 
     @Transactional
     @Override
     public GeneralResponse editSponsorProfile(Long sponsorId, SponsorEditRequest sponsorToUpdate) {
-        Sponsor sponsor = findSponsorById(sponsorId);
-        if (securityConfig.isNotCurrentUser(sponsor.getUser())){
+        Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
+        if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
         checkIfFieldsNotEmpty(sponsorToUpdate, sponsor);
@@ -102,9 +91,9 @@ public class SponsorServiceImpl implements SponsorService {
     }
 
     @Override
-    public GeneralResponse buyKudos(Long sponsorId){
-        Sponsor sponsor = findSponsorById(sponsorId);
-        if (securityConfig.isNotCurrentUser(sponsor.getUser())) {
+    public GeneralResponse buyKudos(Long sponsorId) {
+        Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
+        if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
         sponsor.setBalance(sponsor.getBalance() + 1);
@@ -113,46 +102,21 @@ public class SponsorServiceImpl implements SponsorService {
     }
 
     private void checkIfFieldsNotEmpty(SponsorEditRequest sponsorToUpdate, Sponsor sponsor) {
-        if (sponsorToUpdate == null){
+        if (sponsorToUpdate == null) {
             throw new BadRequestException("No changes were applied");
         }
-        if (sponsorToUpdate.name() != null)
-            sponsor.getUser().setName(sponsorToUpdate.name());
-
-        if (sponsorToUpdate.surname() != null)
-            sponsor.getUser().setSurname(sponsorToUpdate.surname());
-
-        if (sponsorToUpdate.location() != null)
-            sponsor.setLocation(sponsorToUpdate.location());
-
-        if (sponsorToUpdate.birthday() != null)
-            sponsor.setBirthday(sponsorToUpdate.birthday());
-
+        sponsor.getUser().setName(utilService.validateField(sponsorToUpdate.name(), sponsor.getUser().getName()));
+        sponsor.getUser().setSurname(utilService.validateField(sponsorToUpdate.surname(), sponsor.getUser().getSurname()));
+        sponsor.setLocation(utilService.validateField(sponsorToUpdate.location(), sponsor.getLocation()));
+        sponsor.setBirthday(sponsorToUpdate.birthday() != null ? sponsorToUpdate.birthday() : sponsor.getBirthday());
         if (sponsorToUpdate.password() != null) {
-            boolean isSamePassword = passwordEncoder.matches(sponsorToUpdate.password(), sponsor.getUser().getPassword());
-            if (!isSamePassword) {
-                sponsor.getUser().setPassword(passwordEncoder.encode(sponsorToUpdate.password()));
-            }
+            sponsor.getUser().setPassword(
+                    passwordEncoder.matches(sponsorToUpdate.password(), sponsor.getUser().getPassword())
+                            ? sponsor.getUser().getPassword()
+                            : passwordEncoder.encode(sponsorToUpdate.password())
+            );
         }
-        if (sponsorToUpdate.image() != null)
-            sponsor.setImage(sponsorToUpdate.image());
-
-        if (sponsorToUpdate.phone() != null)
-            sponsor.setPhone(sponsorToUpdate.phone());
-    }
-
-    private Sponsor findSponsorById(Long id) {
-        return sponsorRepo.findById(id)
-                .orElseThrow(UserNotFoundException::new);
-    }
-
-    private User findUserById(Long id) {
-        return userRepo.findById(id)
-                .orElseThrow(UserNotFoundException::new);
-    }
-
-    private User findUserByEmail(String name) {
-        return userRepo.findByEmail(name)
-                .orElseThrow(UserNotFoundException::new);
+        sponsor.setImage(utilService.validateField(sponsorToUpdate.image(), sponsor.getImage()));
+        sponsor.setPhone(utilService.validateField(sponsorToUpdate.phone(), sponsor.getPhone()));
     }
 }
