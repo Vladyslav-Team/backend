@@ -6,9 +6,11 @@ import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import com.softserve.skillscope.user.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private UserRepository userRepo;
     private UtilService utilService;

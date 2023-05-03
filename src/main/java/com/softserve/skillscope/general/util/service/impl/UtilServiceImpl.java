@@ -43,7 +43,8 @@ public class UtilServiceImpl implements UtilService {
 
     @Override
     public boolean isNotCurrentUser(User user) {
-        return !getCurrentUser().equals(user.getEmail());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return !email.equalsIgnoreCase(user.getEmail());
     }
 
     @Override

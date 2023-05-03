@@ -81,33 +81,33 @@ INSERT INTO users (email, password, name, surname)
 VALUES ('alexandercaripo631@gmail.com', '$2a$08$Pr0ll9mnfP4YkmpMrAOJReB9x.PMISDeS0nqO40FrRNJ6mYaX3pFK', 'Alexander', 'Caripo');
 
 --Insert into User_roles--
-INSERT INTO user_roles (user_id, role)VALUES (1,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (2,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (3,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (4,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (5,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (6,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (7,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (8,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (9,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (10,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (11,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (12,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (13,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (14,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (15,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (16,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (17,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (18,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (19,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (20,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (21,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (22,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (23,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (24,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (25,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (26,'ROLE_TALENT');
-INSERT INTO user_roles (user_id, role)VALUES (27,'ROLE_TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (1,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (2,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (3,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (4,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (5,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (6,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (7,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (8,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (9,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (10,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (11,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (12,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (13,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (14,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (15,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (16,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (17,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (18,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (19,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (20,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (21,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (22,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (23,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (24,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (25,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (26,'TALENT');
+INSERT INTO user_roles (user_id, role)VALUES (27,'TALENT');
 
 --Insert into Talent--
 INSERT INTO talent (talent_id, image, experience, location, phone, birthday, education, about)

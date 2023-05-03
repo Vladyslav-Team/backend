@@ -16,6 +16,7 @@ import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TalentServiceImpl implements TalentService {
     private UserProperties userProp;
     private TalentRepository talentRepo;
