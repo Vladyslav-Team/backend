@@ -106,10 +106,10 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest kudosAmountRequest) {
-        Integer amount = kudosAmountRequest.amount();
-        if (kudosAmountRequest == null || amount < 1) {
+        if (kudosAmountRequest == null || kudosAmountRequest.amount() < 1){
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
+        Integer amount = kudosAmountRequest.amount();
         Sponsor sponsor = utilService.getCurrentUser().getSponsor();
         if (sponsor.getBalance() < amount) {
             throw new BadRequestException("Not enough kudos on the balance sheet");

@@ -1,4 +1,4 @@
-package com.softserve.skillscope.sercurity.auth;
+package com.softserve.skillscope.security.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

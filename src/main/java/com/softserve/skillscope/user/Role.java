@@ -7,12 +7,20 @@ public enum Role implements GrantedAuthority {
     SPONSOR("ROLE_SPONSOR");
     private final String roleName;
 
-    Role(String role) {
-        this.roleName = role;
+    Role(String roleName) {
+        this.roleName = roleName;
     }
 
     @Override
     public String getAuthority() {
         return this.roleName;
+    }
+
+    public String getName() {
+        return name();
+    }
+
+    public String getRoleName() {
+        return roleName;
     }
 }

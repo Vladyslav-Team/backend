@@ -2,7 +2,6 @@ package com.softserve.skillscope.user.model;
 
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.user.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -44,7 +43,7 @@ public class User {
     @Size(min = 1, max = 64)
     private String surname;
 
-    @ElementCollection(fetch = FetchType.EAGER, targetClass = Role.class)
+    @ElementCollection(fetch = FetchType.EAGER/*, targetClass = Role.class*/)
     @CollectionTable(
             name = "user_roles")
     @Column(name = "role")
@@ -52,5 +51,5 @@ public class User {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id") // add this line
 //    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private Set<Role> roles;
+    private Set<String> roles;
 }

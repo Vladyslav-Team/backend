@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class SponsorController {
 
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('SPONSOR')")
     public GeneralSponsorResponse showAllSponsors(@RequestParam(defaultValue = "1") int page) {
         return sponsorService.getAllSponsorsByPage(page);
     }
@@ -50,6 +52,7 @@ public class SponsorController {
     }
 
     @PostMapping("/sponsors/{sponsor-id}/kudos")
+    @PreAuthorize("hasRole('SPONSOR')")
     public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsporId) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsporId));
     }
