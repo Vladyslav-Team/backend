@@ -31,7 +31,7 @@ public class Proof {
     private Talent talent;
 
     @Column(name = "publication_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm dd-MM-yyyy")
     private LocalDateTime publicationDate;
 
     @Size(max = 100)

@@ -1,4 +1,4 @@
-package com.softserve.skillscope.proof.service;
+package com.softserve.skillscope.proof.service.impl;
 
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
@@ -21,6 +21,7 @@ import com.softserve.skillscope.proof.model.entity.ProofProperties;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
+import com.softserve.skillscope.proof.service.ProofService;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -106,7 +107,7 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest kudosAmountRequest) {
-        if (kudosAmountRequest == null || kudosAmountRequest.amount() < 1){
+        if (kudosAmountRequest == null || kudosAmountRequest.amount() < 1) {
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
         Integer amount = kudosAmountRequest.amount();

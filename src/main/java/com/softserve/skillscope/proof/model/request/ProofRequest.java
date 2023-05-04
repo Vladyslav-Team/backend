@@ -17,6 +17,5 @@ public record ProofRequest(
         if (title != null && !title.matches(regex) || description != null && !description.matches(regex)) {
             throw new ValidationException("Text must be written in Latin");
         }
-
     }
 }
