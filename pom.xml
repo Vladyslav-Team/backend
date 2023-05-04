@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.softserve</groupId>
     <artifactId>skillscope</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>3.2.0-SNAPSHOT</version>
     <name>skillscope</name>
     <description>SkillScope project for Spring Boot</description>
     <properties>

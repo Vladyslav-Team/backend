@@ -47,7 +47,7 @@ public class User {
     @CollectionTable(
             name = "user_roles")
     @Column(name = "role")
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id") // add this line
 //    @Cascade(org.hibernate.annotations.CascadeType.ALL)

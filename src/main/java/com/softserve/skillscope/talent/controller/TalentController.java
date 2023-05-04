@@ -32,7 +32,6 @@ public class TalentController {
     }
 
     @DeleteMapping("/talents/{talent-id}")
-    @ResponseBody
     GeneralResponse delete(@PathVariable("talent-id") Long talentId) {
         return userService.deleteUser(talentId);
     }

@@ -2,7 +2,10 @@ package com.softserve.skillscope.general.util.service;
 
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
+import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.model.User;
+
+import java.util.Set;
 
 public interface UtilService {
     User findUserById(Long id);
@@ -18,4 +21,6 @@ public interface UtilService {
     String checkEmptyUserImage(RegistrationRequest request);
 
     String validateField(String requestField, String field);
+
+    Set<String> getRole(Set<Role> roles);
 }
