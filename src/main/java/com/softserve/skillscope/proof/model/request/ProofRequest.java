@@ -1,6 +1,6 @@
 package com.softserve.skillscope.proof.model.request;
 
-import com.softserve.skillscope.exception.generalException.ValidationException;
+import com.softserve.skillscope.general.handler.exception.generalException.ValidationException;
 import lombok.Builder;
 
 @Builder

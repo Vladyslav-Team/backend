@@ -1,11 +1,12 @@
 package com.softserve.skillscope.talent.controller;
 
-import com.softserve.skillscope.generalModel.GeneralResponse;
+import com.softserve.skillscope.general.model.GeneralResponse;
+import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
-import com.softserve.skillscope.talent.model.response.TalentImageResponse;
 import com.softserve.skillscope.talent.service.TalentService;
+import com.softserve.skillscope.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class TalentController {
     private TalentService talentService;
+    private UserService userService;
 
     @GetMapping("/talents")
     @ResponseStatus(HttpStatus.OK)
@@ -32,18 +34,18 @@ public class TalentController {
     @DeleteMapping("/talents/{talent-id}")
     @ResponseBody
     GeneralResponse delete(@PathVariable("talent-id") Long talentId) {
-        return talentService.delete(talentId);
+        return userService.deleteUser(talentId);
     }
 
     @PatchMapping("/talents/{talent-id}")
     ResponseEntity<GeneralResponse> editTalent(@PathVariable("talent-id") Long talentId,
-                                              @RequestBody @Valid TalentEditRequest talentProfile) {
+                                               @RequestBody(required = false) @Valid TalentEditRequest talentProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(talentService.editTalentProfile(talentId, talentProfile));
     }
 
     @GetMapping("/talent/image/{talent-id}")
     @ResponseStatus(HttpStatus.OK)
-    public TalentImageResponse showTalentImage(@PathVariable("talent-id") Long talentId) {
+    public ImageResponse showTalentImage(@PathVariable("talent-id") Long talentId) {
         return talentService.getTalentImage(talentId);
     }
 }

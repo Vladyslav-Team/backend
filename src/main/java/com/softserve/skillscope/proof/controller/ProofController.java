@@ -1,10 +1,11 @@
 package com.softserve.skillscope.proof.controller;
 
-import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.proof.model.request.ProofRequest;
+import com.softserve.skillscope.general.model.GeneralResponse;
+import com.softserve.skillscope.kudos.model.request.KudosAmountRequest;
+import com.softserve.skillscope.kudos.model.response.KudosResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;
+import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
-import com.softserve.skillscope.proof.model.response.KudosResponse;
 import com.softserve.skillscope.proof.service.ProofService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class ProofController {
     }
 
     @GetMapping("/proofs")
-    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest){
+    public GeneralProofResponse showAllProofs(@RequestParam(defaultValue = "1") int page, @RequestParam(name = "newest") Optional<Boolean> newest) {
         return proofService.getAllProofByPage(Optional.empty(), page, newest.orElse(true));
     }
 
@@ -41,7 +42,7 @@ public class ProofController {
     public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
                                                     @RequestBody ProofRequest creationRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
-    }    
+    }
 
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @ResponseStatus(HttpStatus.OK)
@@ -53,7 +54,7 @@ public class ProofController {
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
     ResponseEntity<GeneralResponse> editProofById(@PathVariable("talent-id") Long talentId,
                                                   @PathVariable("proof-id") Long proofId,
-                                                  @RequestBody ProofRequest proofToUpdate){
+                                                  @RequestBody(required = false) ProofRequest proofToUpdate) {
         return ResponseEntity.status(HttpStatus.OK).body(proofService.editProofById(talentId, proofId, proofToUpdate));
     }
 
@@ -63,6 +64,7 @@ public class ProofController {
                                                             @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.publishProofById(talentId, proofId));
     }
+
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/hide")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GeneralResponse> hideProofById(@PathVariable("talent-id") Long talentId,
@@ -76,7 +78,16 @@ public class ProofController {
     }
 
     @PostMapping("/proofs/{proof-id}/kudos")
-    public ResponseEntity<GeneralResponse> addLikeToProof(@PathVariable("proof-id") Long proofId) {
-        return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofByTalent(proofId));
+    public ResponseEntity<GeneralResponse> addLikeToProof(@PathVariable("proof-id") Long proofId,
+                                                          @RequestBody(required = false) KudosAmountRequest amount) {
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofBySponsor(proofId, amount));
+    }
+
+    @GetMapping("/sponsors/{sponsor-id}/proofs")
+    @ResponseStatus(HttpStatus.OK)
+    public GeneralProofResponse showAllProofsBySponsorId(@PathVariable("sponsor-id") Long sponsorId,
+                                                        @RequestParam(defaultValue = "1") Optional<Integer> page,
+                                                        @RequestParam(name = "newest") Optional<Boolean> newest) {
+        return proofService.getAllProofByPage(Optional.of(sponsorId), page.orElse(1), newest.orElse(true));
     }
 }

@@ -4,6 +4,7 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
+import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +25,24 @@ class ProofRepoTest {
     @Autowired
     ProofRepository proofTestRepository;
     @Autowired
-    TalentRepository talentTestRepository;
+    TalentRepository talentRepo;
     private Proof proof;
     private Talent talent;
+    private User user;
 
     @BeforeEach
     public void setUp() {
-        talent = Talent.builder()
+        user = User.builder()
                 .email("talent@talent.com")
                 .password("talent_password")
                 .name("talent")
                 .surname("talent")
                 .build();
+        talent = Talent.builder().
+                image("testImage")
+                .experience("Java - 2 years")
+                .build();
+        user.setTalent(talent);
         proof = Proof.builder()
                 .talent(talent)
                 .publicationDate(LocalDateTime.now())
@@ -48,7 +55,7 @@ class ProofRepoTest {
 
     @Test
     void createProof() {
-        talentTestRepository.save(talent);
+        talentRepo.save(talent);
         Proof savedProof = proofTestRepository.save(proof);
 
         assertThat(savedProof).isNotNull();
@@ -58,7 +65,7 @@ class ProofRepoTest {
     @Test
     void getProofById() {
         // Arrange
-        talentTestRepository.save(talent);
+        talentRepo.save(talent);
         Proof savedProof = proofTestRepository.save(proof);
 
         Optional<Proof> foundProof = proofTestRepository.findById(savedProof.getId());
@@ -71,7 +78,7 @@ class ProofRepoTest {
 
     @Test
     void updateProof() {
-        talentTestRepository.save(talent);
+        talentRepo.save(talent);
         Proof savedProof = proofTestRepository.save(proof);
 
         savedProof.setTitle("New title");
@@ -82,7 +89,7 @@ class ProofRepoTest {
 
     @Test
     void deleteProof() {
-        talentTestRepository.save(talent);
+        talentRepo.save(talent);
         Proof savedProof = proofTestRepository.save(proof);
 
         assertThat(savedProof).isNotNull();

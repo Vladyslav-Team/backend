@@ -13,6 +13,9 @@ import java.util.List;
 public interface ProofRepository extends JpaRepository<Proof, Long>{
     List<Proof> findByTalentId(Long talentId);
 
+
+
+
     @Modifying
     @Query("DELETE FROM Proof WHERE id = ?1")
     void deleteById(Long proofId);
@@ -20,6 +23,10 @@ public interface ProofRepository extends JpaRepository<Proof, Long>{
     Page<Proof> findAllVisible(ProofStatus status, Pageable pageable);
     @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1 and p.status = 'PUBLISHED'")
     Page<Proof> findAllVisibleByTalentId(Long id, ProofStatus status, Pageable pageable);
+
+    @Query("SELECT p FROM Proof p JOIN Kudos k ON k.proof.id = p.id WHERE k.sponsor.id = ?1 AND p.status = 'PUBLISHED'")
+    Page<Proof> findAllVisibleBySponsorId(Long sponsorId, ProofStatus status, Pageable pageable);
+
 
     @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1")
     Page<Proof> findForCurrentTalent(Long id, Pageable pageable);

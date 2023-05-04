@@ -1,49 +1,54 @@
 package com.softserve.skillscope.talent.service;
 
-import com.softserve.skillscope.config.SecurityConfiguration;
-import com.softserve.skillscope.exception.generalException.BadRequestException;
-import com.softserve.skillscope.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.exception.talentException.TalentNotFoundException;
-import com.softserve.skillscope.generalModel.GeneralResponse;
-import com.softserve.skillscope.mapper.talent.TalentMapper;
+import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.mapper.talent.TalentMapper;
+import com.softserve.skillscope.general.model.GeneralResponse;
+import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
-import com.softserve.skillscope.talent.model.entity.TalentProperties;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
-import com.softserve.skillscope.talent.model.response.TalentImageResponse;
+import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TalentServiceImpl implements TalentService {
-    private TalentProperties talentProp;
+    private UserProperties userProp;
     private TalentRepository talentRepo;
     private TalentMapper talentMapper;
     private PasswordEncoder passwordEncoder;
-    private SecurityConfiguration securityConfig;
+    private UtilService utilService;
 
     @Override
     public GeneralTalentResponse getAllTalentsByPage(int page) {
         try {
             Page<Talent> pageTalents =
-                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, talentProp.talentPageSize()));
+                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, userProp.userPageSize()));
+            if (pageTalents.isEmpty()) throw new UserNotFoundException();
+
             int totalPages = pageTalents.getTotalPages();
 
             if (page > totalPages) {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
 
-            List<GeneralTalent> talents = new java.util.ArrayList<>(pageTalents.stream()
+            List<GeneralTalent> talents = new ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
                     .toList());
 
@@ -61,29 +66,15 @@ public class TalentServiceImpl implements TalentService {
 
     @Override
     public TalentProfile getTalentProfile(Long talentId) {
-        return talentMapper.toTalentProfile(findTalentById(talentId));
-    }
-
-    @Override
-    public GeneralResponse delete(Long talentId) {
-        Talent talent = findTalentById(talentId);
-        if (securityConfig.isNotCurrentTalent(talent)) {
-            throw new ForbiddenRequestException();
-        }
-        talentRepo.delete(talent);
-        return new GeneralResponse(talentId, "Deleted successfully!");
+        return talentMapper.toTalentProfile(utilService.findUserById(talentId).getTalent());
     }
 
     @Transactional
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
-        Talent talent = findTalentById(talentId);
-        if (securityConfig.isNotCurrentTalent(talent)) {
+        Talent talent = utilService.findUserById(talentId).getTalent();
+        if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
-        }
-        //FIXME (Denys)
-        if (talentToUpdate == null){
-            throw new BadRequestException("No changes");
         }
         checkIfFieldsNotEmpty(talentToUpdate, talent);
         Talent saveTalent = talentRepo.save(talent);
@@ -96,53 +87,32 @@ public class TalentServiceImpl implements TalentService {
      * Check if it's the image of own talent, in another case forbidden to get it.
      */
     @Override
-    public TalentImageResponse getTalentImage(Long talentId) {
-        return talentMapper.toTalentImage(findTalentById(talentId));
+    public ImageResponse getTalentImage(Long talentId) {
+        return talentMapper.toTalentImage(utilService.findUserById(talentId).getTalent());
     }
 
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
     private void checkIfFieldsNotEmpty(TalentEditRequest talentToUpdate, Talent talent) {
-        //FIXME (Denys)
-        if (talentToUpdate != null){
-            if (talentToUpdate.name() != null)
-                talent.setName(talentToUpdate.name());
-
-            if (talentToUpdate.surname() != null)
-                talent.setSurname(talentToUpdate.surname());
-
-            if (talentToUpdate.location() != null)
-                talent.getTalentInfo().setLocation(talentToUpdate.location());
-
-            if (talentToUpdate.birthday() != null)
-                talent.getTalentInfo().setBirthday(talentToUpdate.birthday());
-
-            if (talentToUpdate.password() != null) {
-                boolean isSamePassword = passwordEncoder.matches(talentToUpdate.password(), talent.getPassword());
-                if (!isSamePassword) {
-                    talent.setPassword(passwordEncoder.encode(talentToUpdate.password()));
-                }
-            }
-            if (talentToUpdate.image() != null)
-                talent.getTalentInfo().setImage(talentToUpdate.image());
-
-            if (talentToUpdate.about() != null)
-                talent.getTalentInfo().setAbout(talentToUpdate.about());
-
-            if (talentToUpdate.phone() != null)
-                talent.getTalentInfo().setPhone(talentToUpdate.phone());
-
-            if (talentToUpdate.experience() != null)
-                talent.getTalentInfo().setExperience(talentToUpdate.experience());
-
-            if (talentToUpdate.education() != null)
-                talent.getTalentInfo().setEducation(talentToUpdate.education());
+        if (talentToUpdate == null) {
+            throw new BadRequestException("No changes were applied");
         }
-    }
-
-    private Talent findTalentById(Long id) {
-        return talentRepo.findById(id)
-                .orElseThrow(TalentNotFoundException::new);
+        talent.getUser().setName(utilService.validateField(talentToUpdate.name(), talent.getUser().getName()));
+        talent.getUser().setSurname(utilService.validateField(talentToUpdate.surname(), talent.getUser().getSurname()));
+        talent.setLocation(utilService.validateField(talentToUpdate.location(), talent.getLocation()));
+        talent.setBirthday(talentToUpdate.birthday() != null ? talentToUpdate.birthday() : talent.getBirthday());
+        if (talentToUpdate.password() != null) {
+            talent.getUser().setPassword(
+                    passwordEncoder.matches(talentToUpdate.password(), talent.getUser().getPassword())
+                            ? talent.getUser().getPassword()
+                            : passwordEncoder.encode(talentToUpdate.password())
+            );
+        }
+        talent.setImage(utilService.validateField(talentToUpdate.image(), talent.getImage()));
+        talent.setAbout(utilService.validateField(talentToUpdate.about(), talent.getAbout()));
+        talent.setPhone(utilService.validateField(talentToUpdate.phone(), talent.getPhone()));
+        talent.setExperience(utilService.validateField(talentToUpdate.experience(), talent.getExperience()));
+        talent.setEducation(utilService.validateField(talentToUpdate.education(), talent.getEducation()));
     }
 }

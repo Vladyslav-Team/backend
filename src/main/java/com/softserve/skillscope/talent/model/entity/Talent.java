@@ -1,13 +1,17 @@
 package com.softserve.skillscope.talent.model.entity;
 
-import com.softserve.skillscope.kudos.model.enity.Kudos;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.proof.model.entity.Proof;
-import com.softserve.skillscope.talentInfo.model.entity.TalentInfo;
+import com.softserve.skillscope.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.URL;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Setter
@@ -20,39 +24,37 @@ public class Talent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(mappedBy = "talent", cascade = CascadeType.ALL)
-    private TalentInfo talentInfo;
+
+    @MapsId
+    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "talent_id", referencedColumnName = "id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
 
     @NotEmpty
-    @Size(min = 5, max = 254)
-    private String email;
+    @URL
+    private String image;
+
+    @Size(max = 254)
+    private String experience;
 
     @NotEmpty
-    @Size(min = 5, max = 64)
-    private String password;
+    @Size(max = 32)
+    private String location;
 
-    @NotEmpty
-    @Size(min = 1, max = 64)
-    private String name;
+    @Size(max = 16)
+    private String phone;
 
-    @NotEmpty
-    @Size(min = 1, max = 64)
-    private String surname;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate birthday;
+
+    @Size(max = 64)
+    private String education;
+
+    @Size(max = 1000)
+    private String about;
 
     //Delete all proofs that are connected with this talent.
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     private List<Proof> proofs;
-
-    //Set null key to kudos in talent_id when talent is deleted.
-    @OneToMany(mappedBy = "talent")
-    private List<Kudos> kudos;
-
-    //Set nulls to kudos table to talent_id key before deleting the talent
-    @PreRemove
-    private void removeKudos() {
-        if (kudos != null) {
-            kudos.forEach(k -> k.setTalent(null));
-            kudos.clear();
-        }
-    }
 }
