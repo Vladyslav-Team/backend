@@ -15,5 +15,6 @@ public record GeneralProof(
         String title,
         String description,
         @NotBlank ProofStatus status
+        //Integer kudos
 ) {
 }
