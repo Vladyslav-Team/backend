@@ -15,12 +15,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
+//@PreAuthorize("hasRole('ROLE_SPONSOR')")
 public class SponsorController {
     private SponsorService sponsorService;
     private UserService userService;
 
+    //FIXME by @PanfiDen: fix security (problem with hasRole)
+
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAuthority('SPONSOR')")
     public GeneralSponsorResponse showAllSponsors(@RequestParam(defaultValue = "1") int page) {
         return sponsorService.getAllSponsorsByPage(page);
     }
@@ -50,7 +54,8 @@ public class SponsorController {
     }
 
     @PostMapping("/sponsors/{sponsor-id}/kudos")
-    public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsporId) {
-        return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsporId));
+//    @PreAuthorize("hasAuthority('ROLE_SPONSOR')")
+    public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsorId) {
+        return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId));
     }
 }

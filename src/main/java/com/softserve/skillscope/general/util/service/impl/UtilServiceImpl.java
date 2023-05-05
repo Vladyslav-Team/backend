@@ -5,15 +5,17 @@ import com.softserve.skillscope.general.handler.exception.proofException.ProofNo
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
-import com.softserve.skillscope.sponsor.model.entity.Sponsor;
-import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
+import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import com.softserve.skillscope.user.model.UserProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -62,5 +64,11 @@ public class UtilServiceImpl implements UtilService {
     @Override
     public String validateField(String requestField, String field) {
         return requestField == null ? field : requestField;
+    }
+
+    @Override
+    public Set<String> getRole(Set<Role> roles){
+        Set<String> rolesAuth = roles.stream().map(Role::getAuthority).collect(Collectors.toSet());
+        return rolesAuth;
     }
 }

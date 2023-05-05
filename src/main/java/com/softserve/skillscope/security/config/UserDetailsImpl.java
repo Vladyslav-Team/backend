@@ -1,7 +1,6 @@
-package com.softserve.skillscope.sercurity.config;
+package com.softserve.skillscope.security.config;
 
 
-import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,11 +21,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<Role> roles = user.getRoles();
+        Set<String> roles = user.getRoles();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-        for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
+        for (String role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role));
         }
 
         return authorities;

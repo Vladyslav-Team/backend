@@ -1,7 +1,7 @@
-package com.softserve.skillscope.sercurity.auth.controller;
+package com.softserve.skillscope.security.auth.controller;
 
-import com.softserve.skillscope.sercurity.auth.JwtToken;
-import com.softserve.skillscope.sercurity.auth.service.AuthenticationService;
+import com.softserve.skillscope.security.auth.JwtToken;
+import com.softserve.skillscope.security.auth.service.AuthenticationService;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

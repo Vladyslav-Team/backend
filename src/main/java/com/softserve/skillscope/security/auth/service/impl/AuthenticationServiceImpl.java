@@ -1,11 +1,12 @@
-package com.softserve.skillscope.sercurity.auth.service.impl;
+package com.softserve.skillscope.security.auth.service.impl;
 
+import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserAlreadyExistsException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
-import com.softserve.skillscope.sercurity.auth.JwtToken;
-import com.softserve.skillscope.sercurity.auth.service.AuthenticationService;
+import com.softserve.skillscope.security.auth.JwtToken;
+import com.softserve.skillscope.security.auth.service.AuthenticationService;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
@@ -44,14 +45,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userRepo.existsByEmail(request.email())) {
             throw new UserAlreadyExistsException();
         }
+        Role role = request.roles().iterator().next();
+        if (role == null) {
+            throw new BadRequestException("Invalid user role");
+        }
         User user = User.builder()
                 .name(request.name())
                 .surname(request.surname())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .roles(request.roles())
+                .roles(utilService.getRole(request.roles()))
                 .build();
-        if (request.roles().contains(Role.TALENT)) {
+        if (role == Role.TALENT) {
             Talent talentInfo = Talent.builder()
                     .location(request.location())
                     .birthday(request.birthday())
@@ -60,8 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
             talentInfo.setUser(user);
             user.setTalent(talentInfo);
-        }
-        if (request.roles().contains(Role.SPONSOR)) {
+        } else if (role == Role.SPONSOR) {
             Sponsor sponsorInfo = Sponsor.builder()
                     .location(request.location())
                     .birthday(request.birthday())
@@ -69,17 +73,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
             sponsorInfo.setUser(user);
             user.setSponsor(sponsorInfo);
+        } else {
+            throw new BadRequestException("Invalid user role");
         }
-
-
         User saveUser = userRepo.save(user);
-        return generateJwtToken(request.email(), saveUser.getId());
+        return generateJwtToken(request.email(), saveUser.getId(), role.name());
     }
 
+    //FIXME by @PanfiDen: fix security (problem with "user.getRoles().iterator().next()")
     @Override
     public JwtToken signIn(String username) {
         User user = userRepo.findByEmail(username).orElseThrow(UserNotFoundException::new);
-        return generateJwtToken(username, user.getId());
+        return generateJwtToken(username, user.getId(), user.getRoles().iterator().next());
     }
 
     @Override
@@ -91,7 +96,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private JwtToken generateJwtToken(String subject, Long id) {
+    private JwtToken generateJwtToken(String subject, Long id, String role) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")
@@ -99,6 +104,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .expiresAt(now.plus(45, ChronoUnit.MINUTES))
                 .subject(subject)
                 .claim("id", id)
+                .claim("role", role)
                 .build();
         String tokenValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
         verifiedTokens.put(subject, tokenValue);
