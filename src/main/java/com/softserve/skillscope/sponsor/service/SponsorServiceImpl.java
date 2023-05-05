@@ -90,12 +90,12 @@ public class SponsorServiceImpl implements SponsorService {
         return new GeneralResponse(saveSponsor.getId(), "Edit successfully!");
     }
 
-    //FIXME by @PanfiDen: change a check
     @Override
     public GeneralResponse buyKudos(Long sponsorId) {
         Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
+        //FIXME by @PanfiDen: change security;
         if (sponsor == null){
-            throw new BadRequestException("test");
+            throw new ForbiddenRequestException();
         }
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();

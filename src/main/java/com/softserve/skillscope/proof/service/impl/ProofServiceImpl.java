@@ -112,6 +112,10 @@ public class ProofServiceImpl implements ProofService {
         }
         Integer amount = kudosAmountRequest.amount();
         Sponsor sponsor = utilService.getCurrentUser().getSponsor();
+        //FIXME by @PanfiDen: change security;
+        if (sponsor == null){
+            throw new ForbiddenRequestException();
+        }
         if (sponsor.getBalance() < amount) {
             throw new BadRequestException("Not enough kudos on the balance sheet");
         }
