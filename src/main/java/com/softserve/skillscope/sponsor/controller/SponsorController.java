@@ -7,6 +7,8 @@ import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
 import com.softserve.skillscope.sponsor.service.SponsorService;
 import com.softserve.skillscope.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "Sponsor", description = "API for Sponsor")
 //@PreAuthorize("hasRole('ROLE_SPONSOR')")
 public class SponsorController {
     private SponsorService sponsorService;
@@ -24,6 +27,7 @@ public class SponsorController {
 
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get all sponsors")
 //    @PreAuthorize("hasAuthority('SPONSOR')")
     public GeneralSponsorResponse showAllSponsors(@RequestParam(defaultValue = "1") int page) {
         return sponsorService.getAllSponsorsByPage(page);
@@ -31,29 +35,33 @@ public class SponsorController {
 
     @GetMapping("/sponsors/{sponsor-id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get sponsor's profile")
     public SponsorProfile showSponsorProfile(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.getSponsorProfile(sponsorId);
     }
 
     @DeleteMapping("/sponsors/{sponsor-id}")
-    @ResponseBody
+    @Operation(summary = "Delete sponsor")
     GeneralResponse deleteSponsor(@PathVariable("sponsor-id") Long sponsorId) {
         return userService.deleteUser(sponsorId);
     }
 
     @PatchMapping("/sponsors/{sponsor-id}")
+    @Operation(summary = "Edit sponsor")
     ResponseEntity<GeneralResponse> editSponsor(@PathVariable("sponsor-id") Long sponsorId,
                                                 @RequestBody(required = false) @Valid SponsorEditRequest sponsorProfile) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.editSponsorProfile(sponsorId, sponsorProfile));
     }
 
     @GetMapping("/sponsor/image/{sponsor-id}")
+    @Operation(summary = "Get image")
     @ResponseStatus(HttpStatus.OK)
     public ImageResponse showSponsorImage(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.getSponsorImage(sponsorId);
     }
 
     @PostMapping("/sponsors/{sponsor-id}/kudos")
+    @Operation(summary = "Add kudos to the balance")
 //    @PreAuthorize("hasAuthority('ROLE_SPONSOR')")
     public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsorId) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId));
