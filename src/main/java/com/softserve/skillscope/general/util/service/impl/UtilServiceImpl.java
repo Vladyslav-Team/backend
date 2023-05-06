@@ -1,5 +1,7 @@
 package com.softserve.skillscope.general.util.service.impl;
 
+import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserAlreadyExistsException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
@@ -12,6 +14,7 @@ import com.softserve.skillscope.user.model.User;
 import com.softserve.skillscope.user.model.UserProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -24,6 +27,8 @@ public class UtilServiceImpl implements UtilService {
     private UserRepository userRepo;
     private ProofRepository proofRepo;
     private UserProperties userProps;
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
     public User findUserById(Long id) {
@@ -67,8 +72,25 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
-    public Set<String> getRole(Set<Role> roles){
+    public Set<String> getRole(Set<Role> roles) {
         Set<String> rolesAuth = roles.stream().map(Role::getAuthority).collect(Collectors.toSet());
         return rolesAuth;
+    }
+
+    @Override
+    public User createUser(RegistrationRequest request) {
+        if (userRepo.existsByEmail(request.email())) {
+            throw new UserAlreadyExistsException();
+        }
+        if (request.roles() == null) {
+            throw new BadRequestException("Invalid user role");
+        }
+        return User.builder()
+                .name(request.name())
+                .surname(request.surname())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .roles(getRole(request.roles()))
+                .build();
     }
 }

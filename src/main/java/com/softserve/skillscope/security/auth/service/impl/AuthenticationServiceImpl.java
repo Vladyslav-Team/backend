@@ -1,9 +1,8 @@
 package com.softserve.skillscope.security.auth.service.impl;
 
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserAlreadyExistsException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.security.auth.service.AuthenticationService;
@@ -13,11 +12,9 @@ import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
-import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -32,63 +29,78 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final JwtEncoder jwtEncoder;
     private final UserRepository userRepo;
-    private final UserProperties userProps;
-    private final PasswordEncoder passwordEncoder;
     private UtilService utilService;
-
+    private JwtEncoder jwtEncoder;
     private Map<String, String> verifiedTokens;
 
     @Override
-    public JwtToken registration(RegistrationRequest request) {
-        if (userRepo.existsByEmail(request.email())) {
-            throw new UserAlreadyExistsException();
-        }
-        Role role = request.roles().iterator().next();
-        if (role == null) {
+    public JwtToken registrationTalent(RegistrationRequest request) {
+        if (!request.roles().contains(Role.TALENT)) {
             throw new BadRequestException("Invalid user role");
         }
-        User user = User.builder()
-                .name(request.name())
-                .surname(request.surname())
-                .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
-                .roles(utilService.getRole(request.roles()))
+        User user = utilService.createUser(request);
+        Talent talentInfo = Talent.builder()
+                .location(request.location())
+                .birthday(request.birthday())
+                .image(utilService.checkEmptyUserImage(request))
+                .experience("Experience is not mentioned")
                 .build();
-        if (role == Role.TALENT) {
-            Talent talentInfo = Talent.builder()
-                    .location(request.location())
-                    .birthday(request.birthday())
-                    .image(utilService.checkEmptyUserImage(request))
-                    .experience("Experience is not mentioned")
-                    .build();
-            talentInfo.setUser(user);
-            user.setTalent(talentInfo);
-        } else if (role == Role.SPONSOR) {
-            Sponsor sponsorInfo = Sponsor.builder()
-                    .location(request.location())
-                    .birthday(request.birthday())
-                    .image(utilService.checkEmptyUserImage(request))
-                    .build();
-            sponsorInfo.setUser(user);
-            user.setSponsor(sponsorInfo);
-        } else {
+        talentInfo.setUser(user);
+        user.setTalent(talentInfo);
+        User saveUser = userRepo.save(user);
+        return generateJwtToken(request.email(), saveUser.getId(), Role.TALENT.name());
+    }
+
+    @Override
+    public JwtToken registerSponsor(RegistrationRequest request) {
+        if (!request.roles().contains(Role.SPONSOR)) {
             throw new BadRequestException("Invalid user role");
         }
+        User user = utilService.createUser(request);
+        Sponsor sponsor = Sponsor.builder()
+                .location(request.location())
+                .birthday(request.birthday())
+                .image(utilService.checkEmptyUserImage(request))
+                .build();
+        sponsor.setUser(user);
+        user.setSponsor(sponsor);
         User saveUser = userRepo.save(user);
-        return generateJwtToken(request.email(), saveUser.getId(), role.name());
+        return generateJwtToken(request.email(), saveUser.getId(), Role.SPONSOR.name());
     }
 
     //FIXME by @PanfiDen: fix security (problem with "user.getRoles().iterator().next()")
     @Override
-    public JwtToken signIn(String username) {
-        User user = userRepo.findByEmail(username).orElseThrow(UserNotFoundException::new);
+    public JwtToken signInTalent(String username) {
+        User user = utilService.findUserByEmail(username);
+        if (!user.getRoles().contains(Role.TALENT.getAuthority())) throw new ForbiddenRequestException();
+
         return generateJwtToken(username, user.getId(), user.getRoles().iterator().next());
     }
 
     @Override
-    public void signOut(String details) {
+    public void signOutTalent(String details) {
+        User user = utilService.findUserByEmail(details);
+        if (!user.getRoles().contains(Role.TALENT.getAuthority())) throw new ForbiddenRequestException();
+        deleteToken(details);
+    }
+
+    @Override
+    public JwtToken signInSponsor(String username) {
+        User user = utilService.findUserByEmail(username);
+        if (!user.getRoles().contains(Role.SPONSOR.getAuthority())) throw new ForbiddenRequestException();
+
+        return generateJwtToken(username, user.getId(), user.getRoles().iterator().next());
+    }
+
+    @Override
+    public void signOutSponsor(String details) {
+        User user = utilService.findUserByEmail(details);
+        if (!user.getRoles().contains(Role.SPONSOR.getAuthority())) throw new ForbiddenRequestException();
+        deleteToken(details);
+    }
+
+    private void deleteToken(String details) {
         if (verifiedTokens.containsKey(details)) {
             verifiedTokens.remove(details);
         } else {
@@ -96,7 +108,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private JwtToken generateJwtToken(String subject, Long id, String role) {
+    public JwtToken generateJwtToken(String subject, Long id, String role) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")

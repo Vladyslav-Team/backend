@@ -4,9 +4,13 @@ import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 
 public interface AuthenticationService {
-    JwtToken registration(RegistrationRequest registrationRequest);
+    JwtToken registrationTalent(RegistrationRequest request);
 
-    JwtToken signIn(String username);
+    JwtToken registerSponsor(RegistrationRequest request);
+    JwtToken signInTalent(String username);
 
-    void signOut(String details);
+    JwtToken signInSponsor(String username);
+
+    void signOutTalent(String details);
+    void signOutSponsor(String details);
 }
