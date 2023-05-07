@@ -15,5 +15,5 @@ public interface SponsorService {
 
     ImageResponse getSponsorImage(Long sponsorId);
 
-    GeneralResponse buyKudos(Long sponsorId);
+    GeneralResponse buyKudos(Long sponsorId, int kudosAmount);
 }
