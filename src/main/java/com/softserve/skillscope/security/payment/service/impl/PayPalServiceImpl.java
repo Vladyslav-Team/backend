@@ -4,6 +4,7 @@ import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.*;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.security.config.PaypalConfiguration;
 import com.softserve.skillscope.security.payment.OrderStatus;
 import com.softserve.skillscope.security.payment.model.CompletedOrder;
 import com.softserve.skillscope.security.payment.model.PaymentOrder;
@@ -25,6 +26,8 @@ import static com.softserve.skillscope.security.payment.PayPalEndpoints.*;
 public class PayPalServiceImpl implements PayPalService {
 
     private PayPalHttpClient payPalHttpClient;
+    private PaypalConfiguration paypalConfig;
+
     @Override
     public PaymentOrder createPayment(BigDecimal amount, HttpServletRequest request) {
         OrdersCreateRequest createRequest = new OrdersCreateRequest();
@@ -67,7 +70,7 @@ public class PayPalServiceImpl implements PayPalService {
         orderRequest.checkoutPaymentIntent("CAPTURE");
 
         AmountWithBreakdown amountBreakdown = new AmountWithBreakdown()
-                .currencyCode("USD")
+                .currencyCode(paypalConfig.currencyCode())
                 .value(amount.toString());
 
         PurchaseUnitRequest purchaseUnitRequest = new PurchaseUnitRequest()
