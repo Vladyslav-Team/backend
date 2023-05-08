@@ -4,12 +4,11 @@ import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.*;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
-import com.softserve.skillscope.security.config.PaypalConfiguration;
 import com.softserve.skillscope.security.payment.OrderStatus;
 import com.softserve.skillscope.security.payment.model.CompletedOrder;
 import com.softserve.skillscope.security.payment.model.PaymentOrder;
 import com.softserve.skillscope.security.payment.service.PayPalService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,17 +17,18 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.softserve.skillscope.security.payment.PayPalEndpoints.*;
+
 @Slf4j
 @Service
 @AllArgsConstructor
 public class PayPalServiceImpl implements PayPalService {
 
     private PayPalHttpClient payPalHttpClient;
-    private PaypalConfiguration paypalProps;
     @Override
-    public PaymentOrder createPayment(BigDecimal amount) {
+    public PaymentOrder createPayment(BigDecimal amount, HttpServletRequest request) {
         OrdersCreateRequest createRequest = new OrdersCreateRequest();
-        createRequest.requestBody(createOrderRequest(amount));
+        createRequest.requestBody(createOrderRequest(amount, request));
         try {
             HttpResponse<Order> response = payPalHttpClient.execute(createRequest);
             Order order = response.result();
@@ -62,7 +62,7 @@ public class PayPalServiceImpl implements PayPalService {
         return new CompletedOrder(OrderStatus.FAILED.toString(), token);
     }
 
-    private OrderRequest createOrderRequest(BigDecimal amount) {
+    private OrderRequest createOrderRequest(BigDecimal amount, HttpServletRequest url) {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.checkoutPaymentIntent("CAPTURE");
 
@@ -76,8 +76,8 @@ public class PayPalServiceImpl implements PayPalService {
         orderRequest.purchaseUnits(List.of(purchaseUnitRequest));
 
         ApplicationContext applicationContext = new ApplicationContext()
-                .returnUrl(paypalProps.returnUrl())
-                .cancelUrl(paypalProps.cancelUrl());
+                .returnUrl(createUrl(url, CAPTURE))
+                .cancelUrl(createUrl(url, CANCEL));
 
         orderRequest.applicationContext(applicationContext);
 
