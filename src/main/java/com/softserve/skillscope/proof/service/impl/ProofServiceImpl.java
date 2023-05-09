@@ -70,7 +70,7 @@ public class ProofServiceImpl implements ProofService {
             } else {
                 Long talentId = userIdWrapper.get();
                 User user = userRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
-                if (user.getRoles().contains(Role.SPONSOR)) {
+                if (user.getRoles().contains(Role.SPONSOR.getAuthority())) {
                     pageProofs = proofRepo.findAllVisibleBySponsorId(userIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else if (utilService.isNotCurrentUser(user)) {
@@ -150,7 +150,7 @@ public class ProofServiceImpl implements ProofService {
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
         Talent creator = utilService.findUserById(talentId).getTalent();
-        if (utilService.isNotCurrentUser(creator.getUser())) {
+        if (creator == null || utilService.isNotCurrentUser(creator.getUser())) {
             throw new ForbiddenRequestException();
         }
         Proof proof = Proof.builder()
@@ -235,6 +235,9 @@ public class ProofServiceImpl implements ProofService {
     private void checkOwnProofs(Long talentId, Long proofId) {
         Talent talent = utilService.findUserById(talentId).getTalent();
         Proof proof = utilService.findProofById(proofId);
+        if (talent == null) {
+            throw new ForbiddenRequestException();
+        }
         User user = talent.getUser();
 
         List<Proof> proofList = proofRepo.findByTalentId(talentId);
@@ -251,7 +254,7 @@ public class ProofServiceImpl implements ProofService {
 
     private boolean isClicked(Long proofId) {
         User user = utilService.getCurrentUser();
-        if (user == null || user.getRoles().contains(Role.TALENT)) {
+        if (user == null || user.getRoles().contains(Role.TALENT.getAuthority())) {
             return false;
         }
         Proof proof = utilService.findProofById(proofId);

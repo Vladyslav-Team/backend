@@ -49,7 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         talentInfo.setUser(user);
         user.setTalent(talentInfo);
         User saveUser = userRepo.save(user);
-        return generateJwtToken(request.email(), saveUser.getId(), Role.TALENT.name());
+        return generateJwtToken(request.email(), saveUser.getId(), Role.TALENT.getAuthority());
     }
 
     @Override
@@ -66,16 +66,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         sponsor.setUser(user);
         user.setSponsor(sponsor);
         User saveUser = userRepo.save(user);
-        return generateJwtToken(request.email(), saveUser.getId(), Role.SPONSOR.name());
+        return generateJwtToken(request.email(), saveUser.getId(), Role.SPONSOR.getAuthority());
     }
 
-    //FIXME by @PanfiDen: fix security (problem with "user.getRoles().iterator().next()")
     @Override
     public JwtToken signInTalent(String username) {
         User user = utilService.findUserByEmail(username);
         if (!user.getRoles().contains(Role.TALENT.getAuthority())) throw new ForbiddenRequestException();
 
-        return generateJwtToken(username, user.getId(), user.getRoles().iterator().next());
+        return generateJwtToken(username, user.getId(), Role.TALENT.getAuthority());
     }
 
     @Override
@@ -90,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = utilService.findUserByEmail(username);
         if (!user.getRoles().contains(Role.SPONSOR.getAuthority())) throw new ForbiddenRequestException();
 
-        return generateJwtToken(username, user.getId(), user.getRoles().iterator().next());
+        return generateJwtToken(username, user.getId(), Role.SPONSOR.getAuthority());
     }
 
     @Override

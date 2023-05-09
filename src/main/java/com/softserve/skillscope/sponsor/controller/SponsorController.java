@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @Tag(name = "Sponsor", description = "API for Sponsor")
-//@PreAuthorize("hasRole('ROLE_SPONSOR')")
 public class SponsorController {
     private SponsorService sponsorService;
     private UserService userService;
@@ -28,7 +27,6 @@ public class SponsorController {
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all sponsors")
-//    @PreAuthorize("hasAuthority('SPONSOR')")
     public GeneralSponsorResponse showAllSponsors(@RequestParam(defaultValue = "1") int page) {
         return sponsorService.getAllSponsorsByPage(page);
     }
@@ -62,7 +60,6 @@ public class SponsorController {
 
     @PostMapping("/sponsors/{sponsor-id}/kudos")
     @Operation(summary = "Add kudos to the balance")
-//    @PreAuthorize("hasAuthority('ROLE_SPONSOR')")
     public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsorId) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId));
     }
