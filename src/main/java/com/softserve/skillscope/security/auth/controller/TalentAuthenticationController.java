@@ -1,6 +1,5 @@
 package com.softserve.skillscope.security.auth.controller;
 
-import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.security.auth.service.AuthenticationService;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,14 +21,14 @@ public class TalentAuthenticationController {
     @PostMapping
     @Operation(summary = "Talent Registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public JwtToken registrationTalent(@Valid @RequestBody RegistrationRequest request) {
+    public String registrationTalent(@Valid @RequestBody RegistrationRequest request) {
         return authenticationService.registrationTalent(request);
     }
 
     @PostMapping("/login")
     @Operation(summary = "Talent Login")
     @ResponseStatus(HttpStatus.OK)
-    public JwtToken signIn(@Valid Authentication authentication) {
+    public String signIn(@Valid Authentication authentication) {
         return authenticationService.signInTalent(authentication.getName());
     }
 

@@ -4,7 +4,6 @@ import com.softserve.skillscope.general.handler.exception.generalException.BadRe
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.general.util.service.UtilService;
-import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.security.auth.service.AuthenticationService;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -15,6 +14,7 @@ import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -35,7 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private Map<String, String> verifiedTokens;
 
     @Override
-    public JwtToken registrationTalent(RegistrationRequest request) {
+    public String registrationTalent(RegistrationRequest request) {
         if (!request.roles().contains(Role.TALENT)) {
             throw new BadRequestException("Invalid user role");
         }
@@ -53,7 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public JwtToken registerSponsor(RegistrationRequest request) {
+    public String registerSponsor(RegistrationRequest request) {
         if (!request.roles().contains(Role.SPONSOR)) {
             throw new BadRequestException("Invalid user role");
         }
@@ -71,7 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     //FIXME by @PanfiDen: fix security (problem with "user.getRoles().iterator().next()")
     @Override
-    public JwtToken signInTalent(String username) {
+    public String signInTalent(String username) {
         User user = utilService.findUserByEmail(username);
         if (!user.getRoles().contains(Role.TALENT.getAuthority())) throw new ForbiddenRequestException();
 
@@ -86,7 +86,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public JwtToken signInSponsor(String username) {
+    public String signInSponsor(String username) {
         User user = utilService.findUserByEmail(username);
         if (!user.getRoles().contains(Role.SPONSOR.getAuthority())) throw new ForbiddenRequestException();
 
@@ -108,7 +108,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    public JwtToken generateJwtToken(String subject, Long id, String role) {
+    public String generateJwtToken(String subject, Long id, String role) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")
@@ -116,10 +116,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .expiresAt(now.plus(45, ChronoUnit.MINUTES))
                 .subject(subject)
                 .claim("id", id)
-                .claim("role", role)
+                .claim("scope", new SimpleGrantedAuthority(role))
                 .build();
-        String tokenValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        verifiedTokens.put(subject, tokenValue);
-        return JwtToken.builder().token(tokenValue).build();
+//        String tokenValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+//        verifiedTokens.put(subject, tokenValue);
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 }

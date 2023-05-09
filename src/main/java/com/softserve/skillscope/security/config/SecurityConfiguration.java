@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -84,7 +86,8 @@ public class SecurityConfiguration {
     @Bean
     UserDetailsService userDetailsService(UserRepository repository) {
         return email -> repository.findByEmail(email)
-                .map(UserDetailsImpl::new)
+                .map(i -> User.withUsername(i.getEmail()).password(i.getPassword())
+                        .authorities((GrantedAuthority) i.getRoles()).build())
                 .orElseThrow(UserNotFoundException::new);
     }
 

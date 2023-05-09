@@ -1,6 +1,5 @@
 package com.softserve.skillscope.security.auth.controller;
 
-import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.security.auth.service.AuthenticationService;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,14 +21,14 @@ public class SponsorAuthenticationController {
     @PostMapping
     @Operation(summary = "Sponsor Registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public JwtToken registrationSponsor(@Valid @RequestBody RegistrationRequest request) {
+    public String registrationSponsor(@Valid @RequestBody RegistrationRequest request) {
         return authenticationService.registerSponsor(request);
     }
 
     @PostMapping("/login")
     @Operation(summary = "Sponsor Login")
     @ResponseStatus(HttpStatus.OK)
-    public JwtToken signIn(@Valid Authentication authentication) {
+    public String signIn(@Valid Authentication authentication) {
         return authenticationService.signInSponsor(authentication.getName());
     }
 
