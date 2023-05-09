@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.mapper.UserMapper;
 import com.softserve.skillscope.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +14,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -84,10 +83,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    UserDetailsService userDetailsService(UserRepository repository) {
-        return email -> repository.findByEmail(email)
-                .map(i -> User.withUsername(i.getEmail()).password(i.getPassword())
-                        .authorities((GrantedAuthority) i.getRoles()).build())
+    UserDetailsService userDetailsService(UserRepository repository, UserMapper mapper) {
+        return email -> repository.findByEmail(email).map(mapper::toUserDetails)
                 .orElseThrow(UserNotFoundException::new);
     }
 
