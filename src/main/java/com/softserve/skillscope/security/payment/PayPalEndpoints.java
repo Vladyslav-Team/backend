@@ -12,6 +12,6 @@ public enum PayPalEndpoints {
     }
 
     public static String createUrl(HttpServletRequest baseUrl, PayPalEndpoints endpoint) {
-        return baseUrl.getScheme() + "://" + baseUrl.getServerName() + ":" + baseUrl.getServerPort() + endpoint.path;
+        return baseUrl.getHeader("Origin") + endpoint.path;
     }
 }
