@@ -1,12 +1,10 @@
 package com.softserve.skillscope.general.util.service;
 
 import com.softserve.skillscope.proof.model.entity.Proof;
-import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.model.User;
 
-import java.util.Map;
 import java.util.Set;
 
 public interface UtilService {

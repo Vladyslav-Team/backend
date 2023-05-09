@@ -43,6 +43,7 @@ public class Sponsor {
 
     private int balance;
 
+    private LocalDate lastPlayedDate;
 
     //Set null key to kudos in sponsor_id when sponsor is deleted.
     @OneToMany(mappedBy = "sponsor")

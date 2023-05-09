@@ -22,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,10 +102,14 @@ public class SponsorServiceImpl implements SponsorService {
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
-        if (kudosAmount < userProp.maxKudosAmount())
-            sponsor.setBalance(sponsor.getBalance() + kudosAmount);
-        else sponsor.setBalance(sponsor.getBalance() + userProp.maxKudosAmount());
-
+        if (canBuyKudos(sponsorId)){
+            if (kudosAmount < userProp.maxKudosAmount())
+                sponsor.setBalance(sponsor.getBalance() + kudosAmount);
+            else sponsor.setBalance(sponsor.getBalance() + userProp.maxKudosAmount());
+            sponsor.setLastPlayedDate(LocalDate.now(ZoneId.systemDefault()));
+        }else {
+            throw new BadRequestException("You have already bought Kudos today");
+        }
         sponsorRepo.save(sponsor);
         return new GeneralResponse(sponsorId, "Kudos has been purchased successfully!");
     }
@@ -125,5 +131,11 @@ public class SponsorServiceImpl implements SponsorService {
         }
         sponsor.setImage(utilService.validateField(sponsorToUpdate.image(), sponsor.getImage()));
         sponsor.setPhone(utilService.validateField(sponsorToUpdate.phone(), sponsor.getPhone()));
+    }
+
+    public boolean canBuyKudos(Long id) {
+        Sponsor sponsor = utilService.findUserById(id).getSponsor();
+        LocalDate serverDate = LocalDate.now(ZoneId.systemDefault());
+        return sponsor.getLastPlayedDate() == null || !sponsor.getLastPlayedDate().equals(serverDate);
     }
 }
