@@ -91,16 +91,19 @@ public class SponsorServiceImpl implements SponsorService {
     }
 
     @Override
-    public GeneralResponse buyKudos(Long sponsorId) {
+    public GeneralResponse buyKudos(Long sponsorId, int kudosAmount) {
         Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
         //FIXME by @PanfiDen: change security;
-        if (sponsor == null){
+        if (sponsor == null) {
             throw new ForbiddenRequestException();
         }
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
-        sponsor.setBalance(sponsor.getBalance() + 1);
+        if (kudosAmount < userProp.maxKudosAmount())
+            sponsor.setBalance(sponsor.getBalance() + kudosAmount);
+        else sponsor.setBalance(sponsor.getBalance() + userProp.maxKudosAmount());
+
         sponsorRepo.save(sponsor);
         return new GeneralResponse(sponsorId, "Kudos has been purchased successfully!");
     }

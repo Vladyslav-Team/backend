@@ -63,7 +63,8 @@ public class SponsorController {
     @PostMapping("/sponsors/{sponsor-id}/kudos")
     @Operation(summary = "Add kudos to the balance")
 //    @PreAuthorize("hasAuthority('ROLE_SPONSOR')")
-    public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsorId) {
-        return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId));
+    public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsorId,
+                                                    @RequestParam("amount") int kudosAmount) {
+        return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId, kudosAmount));
     }
 }
