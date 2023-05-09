@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -32,13 +33,14 @@ public class SponsorAuthenticationController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('SPONSOR')")
     public JwtToken signIn(@Valid Authentication authentication) {
-        return authenticationService.signInSponsor(authentication.getName());
+        return authenticationService.signIn(authentication.getName());
     }
 
     @GetMapping("/logout")
     @Operation(summary = "Sponsor Logout")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('SPONSOR')")
     public void signOut(Authentication authentication) {
-        authenticationService.signOutSponsor(authentication.getName());
+        authenticationService.signOut(authentication.getName());
     }
 }

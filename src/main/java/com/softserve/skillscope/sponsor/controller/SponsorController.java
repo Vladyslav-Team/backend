@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,7 +29,7 @@ public class SponsorController {
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all sponsors")
-//    @PreAuthorize("hasAuthority('SPONSOR')")
+    @PreAuthorize("hasAuthority('SPONSOR')")
     public GeneralSponsorResponse showAllSponsors(@RequestParam(defaultValue = "1") int page) {
         return sponsorService.getAllSponsorsByPage(page);
     }
@@ -36,12 +37,14 @@ public class SponsorController {
     @GetMapping("/sponsors/{sponsor-id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get sponsor's profile")
+    @PreAuthorize("hasAuthority('SPONSOR')")
     public SponsorProfile showSponsorProfile(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.getSponsorProfile(sponsorId);
     }
 
     @DeleteMapping("/sponsors/{sponsor-id}")
     @Operation(summary = "Delete sponsor")
+    @PreAuthorize("hasAuthority('SPONSOR')")
     GeneralResponse deleteSponsor(@PathVariable("sponsor-id") Long sponsorId) {
         return userService.deleteUser(sponsorId);
     }
@@ -56,13 +59,14 @@ public class SponsorController {
     @GetMapping("/sponsor/image/{sponsor-id}")
     @Operation(summary = "Get image")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('SPONSOR')")
     public ImageResponse showSponsorImage(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.getSponsorImage(sponsorId);
     }
 
     @PostMapping("/sponsors/{sponsor-id}/kudos")
     @Operation(summary = "Add kudos to the balance")
-//    @PreAuthorize("hasAuthority('ROLE_SPONSOR')")
+    @PreAuthorize("hasAuthority('SPONSOR')")
     public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsorId,
                                                     @RequestParam("amount") int kudosAmount) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId, kudosAmount));

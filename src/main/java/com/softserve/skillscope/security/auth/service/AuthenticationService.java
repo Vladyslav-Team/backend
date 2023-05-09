@@ -7,10 +7,8 @@ public interface AuthenticationService {
     JwtToken registrationTalent(RegistrationRequest request);
 
     JwtToken registerSponsor(RegistrationRequest request);
-    JwtToken signInTalent(String username);
 
-    JwtToken signInSponsor(String username);
+    JwtToken signIn(String username);
 
-    void signOutTalent(String details);
-    void signOutSponsor(String details);
+    void signOut(String details);
 }

@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +31,16 @@ public class TalentAuthenticationController {
     @PostMapping("/login")
     @Operation(summary = "Talent Login")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('TALENT')")
     public JwtToken signIn(@Valid Authentication authentication) {
-        return authenticationService.signInTalent(authentication.getName());
+        return authenticationService.signIn(authentication.getName());
     }
 
     @GetMapping("/logout")
     @Operation(summary = "Talent Logout")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('TALENT')")
     public void signOut(Authentication authentication) {
-        authenticationService.signOutTalent(authentication.getName());
+        authenticationService.signOut(authentication.getName());
     }
 }

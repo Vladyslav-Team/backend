@@ -16,8 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -25,9 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,9 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         talentInfo.setUser(user);
         user.setTalent(talentInfo);
         User saveUser = userRepo.save(user);
-        Collection<? extends GrantedAuthority> auth =
-                saveUser.getRoles().stream().map(SimpleGrantedAuthority::new).toList();
-        return generateJwtToken(request.email(), saveUser.getId(), auth);
+        return generateJwtToken(request.email(), saveUser.getId(), utilService.getRoles(user));
     }
 
     @Override
@@ -74,38 +68,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         sponsor.setUser(user);
         user.setSponsor(sponsor);
         User saveUser = userRepo.save(user);
-        Collection<? extends GrantedAuthority> auth =
-                saveUser.getRoles().stream().map(SimpleGrantedAuthority::new).toList();
-        return generateJwtToken(request.email(), saveUser.getId(), auth);
+        return generateJwtToken(request.email(), saveUser.getId(), utilService.getRoles(user));
     }
 
     @Override
-    public JwtToken signInTalent(String username) {
+    public JwtToken signIn(String username) {
         User user = utilService.findUserByEmail(username);
-        if (!user.getRoles().contains(Role.TALENT.getAuthority())) throw new ForbiddenRequestException();
-
-        return generateJwtToken(username, user.getId(), user.getRoles().stream().map(SimpleGrantedAuthority::new).toList());
+        return generateJwtToken(username, user.getId(), utilService.getRoles(user));
     }
 
     @Override
-    public void signOutTalent(String details) {
-        User user = utilService.findUserByEmail(details);
-        if (!user.getRoles().contains(Role.TALENT.getAuthority())) throw new ForbiddenRequestException();
-        deleteToken(details);
-    }
-
-    @Override
-    public JwtToken signInSponsor(String username) {
-        User user = utilService.findUserByEmail(username);
-        if (!user.getRoles().contains(Role.SPONSOR.getAuthority())) throw new ForbiddenRequestException();
-
-        return generateJwtToken(username, user.getId(), user.getRoles().stream().map(SimpleGrantedAuthority::new).toList());
-    }
-
-    @Override
-    public void signOutSponsor(String details) {
-        User user = utilService.findUserByEmail(details);
-        if (!user.getRoles().contains(Role.SPONSOR.getAuthority())) throw new ForbiddenRequestException();
+    public void signOut(String details) {
         deleteToken(details);
     }
 
@@ -117,14 +90,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    public JwtToken generateJwtToken(String subject, Long id, Collection<? extends GrantedAuthority> role) {
+    public JwtToken generateJwtToken(String subject, Long id, String role) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("SkillScope")
                 .issuedAt(now)
                 .expiresAt(now.plus(45, ChronoUnit.MINUTES))
                 .subject(subject)
-                .claim("scope", role.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" ")))
+                .claim("scope", role)
                 .claim("id", id)
                 .build();
         String tokenValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

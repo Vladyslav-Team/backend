@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,18 +36,21 @@ public class TalentController {
     @GetMapping("/talents/{talent-id}")
     @Operation(summary = "Get talent's profile")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('TALENT')")
     public TalentProfile showTalentProfile(@PathVariable("talent-id") Long talentId) {
         return talentService.getTalentProfile(talentId);
     }
 
     @DeleteMapping("/talents/{talent-id}")
     @Operation(summary = "Delete talent")
+    @PreAuthorize("hasRole('TALENT')")
     GeneralResponse delete(@PathVariable("talent-id") Long talentId) {
         return userService.deleteUser(talentId);
     }
 
     @PatchMapping("/talents/{talent-id}")
     @Operation(summary = "Edit talent")
+    @PreAuthorize("hasRole('TALENT')")
     ResponseEntity<GeneralResponse> editTalent(Authentication authentication, @PathVariable("talent-id") Long talentId,
                                                @RequestBody(required = false) @Valid TalentEditRequest talentProfile) {
         log.info("auth={}", authentication);
