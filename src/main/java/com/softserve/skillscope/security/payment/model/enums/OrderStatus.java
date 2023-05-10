@@ -1,4 +1,4 @@
-package com.softserve.skillscope.security.payment;
+package com.softserve.skillscope.security.payment.model.enums;
 
 public enum OrderStatus {
     CREATED,
@@ -8,5 +8,7 @@ public enum OrderStatus {
     COMPLETED,
     PAYER_ACTION_REQUIRED,
     SUCCESS,
-    FAILED;
+    READY_TO_USE,
+    USED,
+    FAILED
 }

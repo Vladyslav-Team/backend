@@ -1,4 +1,4 @@
-package com.softserve.skillscope.security.payment.model;
+package com.softserve.skillscope.security.payment.model.dto;
 
 import lombok.Builder;
 @Builder

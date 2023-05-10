@@ -1,4 +1,4 @@
-package com.softserve.skillscope.security.payment;
+package com.softserve.skillscope.security.payment.model.enums;
 
 import jakarta.servlet.http.HttpServletRequest;
 

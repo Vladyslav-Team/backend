@@ -41,16 +41,16 @@ INSERT INTO user_roles (user_id, role) VALUES (40, 'ROLE_SPONSOR');
 
 
 --Insert into Sponsor table--
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (28, 'Ukraine', '380103536263', '1998-02-13', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (29, 'Ukraine', '380199479826', '1992-12-26', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (30, 'Ukraine', '380199479826', '1992-11-27', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (31, 'Ukraine', '380136115559', '2001-10-28', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (32, 'Ukraine', '380136115559', '1952-09-29', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (33, 'Ukraine', '380136115559', '1962-08-01', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (34, 'Ukraine', '380136115559', '1972-07-02', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (35, 'Ukraine', '380136115559', '1982-06-03', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (36, 'Ukraine', '380136115559', '1992-05-04', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (37, 'Ukraine', '380136115559', '1902-04-05', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (38, 'Ukraine', '380136115559', '1932-03-06', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (39, 'Ukraine', '380136115559', '1932-02-09', 10);
-INSERT INTO sponsor (sponsor_id, location, phone, birthday, balance) VALUES (40, 'Ukraine', '380136115559', '1932-01-08', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (28, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380103536263', '1998-02-13', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (29, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380199479826', '1992-12-26', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (30, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380199479826', '1992-11-27', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (31, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '2001-10-28', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (32, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1952-09-29', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (33, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1962-08-01', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (34, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1972-07-02', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (35, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1982-06-03', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (36, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1992-05-04', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (37, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1902-04-05', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (38, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1932-03-06', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (39, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1932-02-09', 10);
+INSERT INTO sponsor (sponsor_id, location,image, phone, birthday, balance) VALUES (40, 'Ukraine','https://drive.google.com/uc?export=view&id=13ECMnYIRyH6RrXV_yLgvhwPz6aZIS8nd', '380136115559', '1932-01-08', 10);
