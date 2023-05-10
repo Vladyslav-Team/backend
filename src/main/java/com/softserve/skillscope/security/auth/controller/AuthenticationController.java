@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @Tag(name = "UserAuthentication", description = "API for User Authentication")
-@RequestMapping({"/talents", "/sponsors"})
+
 public class AuthenticationController {
 
     private AuthenticationService authenticationService;
 
-    @PostMapping
+    @PostMapping({"/talents", "/sponsors"})
     @Operation(summary = "User Registration")
     @ResponseStatus(HttpStatus.CREATED)
     public JwtToken registration(@Valid @RequestBody RegistrationRequest request) {
@@ -27,14 +27,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Talent Login")
+    @Operation(summary = "User Login")
     @ResponseStatus(HttpStatus.OK)
     public JwtToken signIn(@Valid Authentication authentication) {
         return authenticationService.signIn(authentication.getName());
     }
 
     @GetMapping("/logout")
-    @Operation(summary = "Talent Logout")
+    @Operation(summary = "User Logout")
     @ResponseStatus(HttpStatus.OK)
     public void signOut(Authentication authentication) {
         authenticationService.signOut(authentication.getName());

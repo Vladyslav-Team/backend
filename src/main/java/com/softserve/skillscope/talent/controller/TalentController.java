@@ -36,7 +36,6 @@ public class TalentController {
     @GetMapping("/talents/{talent-id}")
     @Operation(summary = "Get talent's profile")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('TALENT')")
     public TalentProfile showTalentProfile(@PathVariable("talent-id") Long talentId) {
         return talentService.getTalentProfile(talentId);
     }
