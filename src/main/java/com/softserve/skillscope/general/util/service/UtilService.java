@@ -1,6 +1,7 @@
 package com.softserve.skillscope.general.util.service;
 
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.model.User;
@@ -24,5 +25,9 @@ public interface UtilService {
 
     User createUser(RegistrationRequest request);
 
+    String getRoles(User saveUser);
+
     Set<String> getRole(Set<Role> roles);
+
+    boolean updateTokenActivation(Sponsor sponsor);
 }

@@ -15,9 +15,6 @@ import java.time.Period;
 @Component
 public class SponsorMapperImpl implements SponsorMapper {
 
-    @Autowired
-    private SponsorProperties sponsorProps;
-
     @Override
     public GeneralSponsor toGeneralSponsor(Sponsor sponsor) {
         return GeneralSponsor.builder()

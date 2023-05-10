@@ -8,7 +8,6 @@ import com.softserve.skillscope.general.model.ImageResponse;
 public interface TalentMapper {
     GeneralTalent toGeneralTalent(Talent talent);
     TalentProfile toTalentProfile(Talent talent);
-    //FIXME not a good option
     ImageResponse toTalentImage(Talent talent);
 
 }

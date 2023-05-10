@@ -7,16 +7,21 @@ import com.softserve.skillscope.general.handler.exception.proofException.ProofNo
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import com.softserve.skillscope.user.model.UserProperties;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,9 +77,15 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
+    public String getRoles(User saveUser) {
+        Collection<? extends GrantedAuthority> auth =
+                saveUser.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+        return auth.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(" "));
+    }
+
+    @Override
     public Set<String> getRole(Set<Role> roles) {
-        Set<String> rolesAuth = roles.stream().map(Role::getAuthority).collect(Collectors.toSet());
-        return rolesAuth;
+        return roles.stream().map(Role::getAuthority).collect(Collectors.toSet());
     }
 
     @Override
@@ -92,5 +103,11 @@ public class UtilServiceImpl implements UtilService {
                 .password(passwordEncoder.encode(request.password()))
                 .roles(getRole(request.roles()))
                 .build();
+    }
+
+    @Override
+    public boolean updateTokenActivation(Sponsor sponsor) {
+        return sponsor.getOrders().stream()
+                .anyMatch(order -> order.getActivation() == OrderStatus.READY_TO_USE);
     }
 }

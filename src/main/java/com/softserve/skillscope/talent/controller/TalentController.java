@@ -11,13 +11,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
 @Tag(name = "Talent", description = "API for Talent")
+@Slf4j
 public class TalentController {
     private TalentService talentService;
     private UserService userService;
@@ -38,14 +42,17 @@ public class TalentController {
 
     @DeleteMapping("/talents/{talent-id}")
     @Operation(summary = "Delete talent")
+    @PreAuthorize("hasRole('TALENT')")
     GeneralResponse delete(@PathVariable("talent-id") Long talentId) {
         return userService.deleteUser(talentId);
     }
 
     @PatchMapping("/talents/{talent-id}")
     @Operation(summary = "Edit talent")
-    ResponseEntity<GeneralResponse> editTalent(@PathVariable("talent-id") Long talentId,
+    @PreAuthorize("hasRole('TALENT')")
+    ResponseEntity<GeneralResponse> editTalent(Authentication authentication, @PathVariable("talent-id") Long talentId,
                                                @RequestBody(required = false) @Valid TalentEditRequest talentProfile) {
+        log.info("auth={}", authentication);
         return ResponseEntity.status(HttpStatus.OK).body(talentService.editTalentProfile(talentId, talentProfile));
     }
 

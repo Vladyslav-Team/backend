@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.mapper.UserMapper;
 import com.softserve.skillscope.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,9 +83,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    UserDetailsService userDetailsService(UserRepository repository) {
-        return email -> repository.findByEmail(email)
-                .map(UserDetailsImpl::new)
+    UserDetailsService userDetailsService(UserRepository repository, UserMapper mapper) {
+        return email -> repository.findByEmail(email).map(mapper::toUserDetails)
                 .orElseThrow(UserNotFoundException::new);
     }
 
