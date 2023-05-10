@@ -13,30 +13,30 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@Tag(name = "SponsorAuthentication", description = "API for Sponsor Authentication")
-@RequestMapping("/sponsors")
-public class SponsorAuthenticationController {
+@Tag(name = "UserAuthentication", description = "API for User Authentication")
+@RequestMapping({"/talents", "/sponsors"})
+public class AuthenticationController {
 
     private AuthenticationService authenticationService;
 
     @PostMapping
-    @Operation(summary = "Sponsor Registration")
+    @Operation(summary = "User Registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public JwtToken registrationSponsor(@Valid @RequestBody RegistrationRequest request) {
-        return authenticationService.registerSponsor(request);
+    public JwtToken registration(@Valid @RequestBody RegistrationRequest request) {
+        return authenticationService.registration(request);
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Sponsor Login")
+    @Operation(summary = "Talent Login")
     @ResponseStatus(HttpStatus.OK)
     public JwtToken signIn(@Valid Authentication authentication) {
-        return authenticationService.signInSponsor(authentication.getName());
+        return authenticationService.signIn(authentication.getName());
     }
 
     @GetMapping("/logout")
-    @Operation(summary = "Sponsor Logout")
+    @Operation(summary = "Talent Logout")
     @ResponseStatus(HttpStatus.OK)
     public void signOut(Authentication authentication) {
-        authenticationService.signOutSponsor(authentication.getName());
+        authenticationService.signOut(authentication.getName());
     }
 }

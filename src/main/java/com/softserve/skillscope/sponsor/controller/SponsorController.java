@@ -13,22 +13,20 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
 @Tag(name = "Sponsor", description = "API for Sponsor")
-//@PreAuthorize("hasRole('ROLE_SPONSOR')")
+@PreAuthorize("hasRole('SPONSOR')")
 public class SponsorController {
     private SponsorService sponsorService;
     private UserService userService;
 
-    //FIXME by @PanfiDen: fix security (problem with hasRole)
-
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all sponsors")
-//    @PreAuthorize("hasAuthority('SPONSOR')")
     public GeneralSponsorResponse showAllSponsors(@RequestParam(defaultValue = "1") int page) {
         return sponsorService.getAllSponsorsByPage(page);
     }
@@ -62,7 +60,6 @@ public class SponsorController {
 
     @PostMapping("/sponsors/{sponsor-id}/kudos")
     @Operation(summary = "Add kudos to the balance")
-//    @PreAuthorize("hasAuthority('ROLE_SPONSOR')")
     public ResponseEntity<GeneralResponse> buyKudos(@PathVariable("sponsor-id") Long sponsorId,
                                                     @RequestParam("amount") int kudosAmount) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId, kudosAmount));

@@ -26,5 +26,7 @@ public interface UtilService {
 
     User createUser(RegistrationRequest request);
 
+    String getRoles(User saveUser);
+
     Set<String> getRole(Set<Role> roles);
 }
