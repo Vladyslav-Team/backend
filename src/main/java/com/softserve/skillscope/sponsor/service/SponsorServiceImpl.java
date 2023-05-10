@@ -7,6 +7,7 @@ import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
@@ -22,6 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,10 +99,19 @@ public class SponsorServiceImpl implements SponsorService {
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
-        if (kudosAmount < userProp.maxKudosAmount())
-            sponsor.setBalance(sponsor.getBalance() + kudosAmount);
-        else sponsor.setBalance(sponsor.getBalance() + userProp.maxKudosAmount());
-
+        if (canBuyKudos(sponsorId)) {
+            if (kudosAmount < userProp.maxKudosAmount())
+                sponsor.setBalance(sponsor.getBalance() + kudosAmount);
+            else sponsor.setBalance(sponsor.getBalance() + userProp.maxKudosAmount());
+            //Find the order by sponsor and set the activation of order to "used" here
+            sponsor.getOrders().stream()
+                    .filter(order -> order.getActivation() == OrderStatus.READY_TO_USE)
+                    .findFirst()
+                    .ifPresent(order -> order.setActivation(OrderStatus.USED));
+            sponsor.setLastPlayedDate(LocalDate.now(ZoneId.systemDefault()));
+        } else {
+            throw new BadRequestException("You have already bought kudos today");
+        }
         sponsorRepo.save(sponsor);
         return new GeneralResponse(sponsorId, "Kudos has been purchased successfully!");
     }
@@ -121,5 +133,18 @@ public class SponsorServiceImpl implements SponsorService {
         }
         sponsor.setImage(utilService.validateField(sponsorToUpdate.image(), sponsor.getImage()));
         sponsor.setPhone(utilService.validateField(sponsorToUpdate.phone(), sponsor.getPhone()));
+    }
+
+    @Override
+    public boolean canBuyKudos(Long id) {
+        Sponsor sponsor = utilService.findUserById(id).getSponsor();
+        if (utilService.isNotCurrentUser(sponsor.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+        boolean orderToUsed = utilService.updateTokenActivation(sponsor);
+        LocalDate serverDate = LocalDate.now(ZoneId.systemDefault());
+
+        return sponsor.getLastPlayedDate() == null ||
+                !sponsor.getLastPlayedDate().equals(serverDate) || orderToUsed;
     }
 }

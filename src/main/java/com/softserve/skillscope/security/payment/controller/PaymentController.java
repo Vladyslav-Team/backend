@@ -1,7 +1,7 @@
 package com.softserve.skillscope.security.payment.controller;
 
-import com.softserve.skillscope.security.payment.model.CompletedOrder;
-import com.softserve.skillscope.security.payment.model.PaymentOrder;
+import com.softserve.skillscope.security.payment.model.dto.CompletedOrder;
+import com.softserve.skillscope.security.payment.model.dto.PaymentOrder;
 import com.softserve.skillscope.security.payment.service.PayPalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +26,7 @@ public class PaymentController {
     public PaymentOrder createPayment(
             @PathVariable("sponsor-id") Long sponsorId,
             @RequestParam("sum") BigDecimal sum, HttpServletRequest request) {
-        return paypalService.createPayment(sum, request);
+        return paypalService.createPayment(sponsorId, sum, request);
     }
 
     @PostMapping(value = "/capture")
@@ -34,6 +34,6 @@ public class PaymentController {
     public CompletedOrder completePayment(
             @PathVariable("sponsor-id") Long sponsorId,
             @RequestParam("token") String token) {
-        return paypalService.completePayment(token);
+        return paypalService.completePayment(sponsorId,token);
     }
 }

@@ -6,6 +6,7 @@ import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.security.auth.service.AuthenticationService;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
@@ -34,6 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private UtilService utilService;
     private JwtEncoder jwtEncoder;
     private Map<String, String> verifiedTokens;
+    private SponsorProperties sponsorProps;
 
     @Override
     public JwtToken registration(RegistrationRequest request) {
@@ -53,6 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .location(request.location())
                     .birthday(request.birthday())
                     .image(utilService.checkEmptyUserImage(request))
+                    .balance(sponsorProps.defaultBalance())
                     .build();
             sponsor.setUser(user);
             user.setSponsor(sponsor);

@@ -7,6 +7,8 @@ import com.softserve.skillscope.general.handler.exception.proofException.ProofNo
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
@@ -101,5 +103,11 @@ public class UtilServiceImpl implements UtilService {
                 .password(passwordEncoder.encode(request.password()))
                 .roles(getRole(request.roles()))
                 .build();
+    }
+
+    @Override
+    public boolean updateTokenActivation(Sponsor sponsor) {
+        return sponsor.getOrders().stream()
+                .anyMatch(order -> order.getActivation() == OrderStatus.READY_TO_USE);
     }
 }

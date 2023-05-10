@@ -5,6 +5,8 @@ import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.time.Period;
 
 @Component
 public class SponsorMapperImpl implements SponsorMapper {
+
     @Override
     public GeneralSponsor toGeneralSponsor(Sponsor sponsor) {
         return GeneralSponsor.builder()

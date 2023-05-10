@@ -64,4 +64,9 @@ public class SponsorController {
                                                     @RequestParam("amount") int kudosAmount) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId, kudosAmount));
     }
+    @GetMapping("/sponsors/{sponsor-id}/kudos")
+    @Operation(summary = "Check the ability to buy kudos")
+    public Boolean canBuyKudos(@PathVariable("sponsor-id") Long sponsorId) {
+        return sponsorService.canBuyKudos(sponsorId);
+    }
 }

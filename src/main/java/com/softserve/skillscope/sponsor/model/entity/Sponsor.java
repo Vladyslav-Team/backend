@@ -2,8 +2,10 @@ package com.softserve.skillscope.sponsor.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
+import com.softserve.skillscope.security.payment.model.entity.Orders;
 import com.softserve.skillscope.user.model.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -40,9 +42,14 @@ public class Sponsor {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate birthday;
-
+    @Min(0)
     private int balance;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate lastPlayedDate;
 
+    @OneToMany(mappedBy = "sponsor")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Orders> orders;
 
     //Set null key to kudos in sponsor_id when sponsor is deleted.
     @OneToMany(mappedBy = "sponsor")
