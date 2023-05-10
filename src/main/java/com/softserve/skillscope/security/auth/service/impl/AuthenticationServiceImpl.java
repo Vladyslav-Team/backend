@@ -1,7 +1,6 @@
 package com.softserve.skillscope.security.auth.service.impl;
 
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
-import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.security.auth.JwtToken;
@@ -37,37 +36,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private Map<String, String> verifiedTokens;
 
     @Override
-    public JwtToken registrationTalent(RegistrationRequest request) {
-        if (!request.roles().contains(Role.TALENT)) {
-            throw new BadRequestException("Invalid user role");
-        }
+    public JwtToken registration(RegistrationRequest request) {
         User user = utilService.createUser(request);
-        Talent talentInfo = Talent.builder()
-                .location(request.location())
-                .birthday(request.birthday())
-                .image(utilService.checkEmptyUserImage(request))
-                .experience("Experience is not mentioned")
-                .build();
-        talentInfo.setUser(user);
-        user.setTalent(talentInfo);
-        User saveUser = userRepo.save(user);
-        return generateJwtToken(request.email(), saveUser.getId(), utilService.getRoles(user));
-    }
+        if (request.roles().contains(Role.TALENT)) {
+            Talent talentInfo = Talent.builder()
+                    .location(request.location())
+                    .birthday(request.birthday())
+                    .image(utilService.checkEmptyUserImage(request))
+                    .experience("Experience is not mentioned")
+                    .build();
+            talentInfo.setUser(user);
+            user.setTalent(talentInfo);
+        }else if (request.roles().contains(Role.SPONSOR)) {
 
-    @Override
-    public JwtToken registerSponsor(RegistrationRequest request) {
-        if (!request.roles().contains(Role.SPONSOR)) {
+            Sponsor sponsor = Sponsor.builder()
+                    .location(request.location())
+                    .birthday(request.birthday())
+                    .image(utilService.checkEmptyUserImage(request))
+                    .build();
+            sponsor.setUser(user);
+            user.setSponsor(sponsor);
+
+        } else{
             throw new BadRequestException("Invalid user role");
         }
-        User user = utilService.createUser(request);
-        Sponsor sponsor = Sponsor.builder()
-                .location(request.location())
-                .birthday(request.birthday())
-                .image(utilService.checkEmptyUserImage(request))
-                .build();
-        sponsor.setUser(user);
-        user.setSponsor(sponsor);
         User saveUser = userRepo.save(user);
+
         return generateJwtToken(request.email(), saveUser.getId(), utilService.getRoles(user));
     }
 

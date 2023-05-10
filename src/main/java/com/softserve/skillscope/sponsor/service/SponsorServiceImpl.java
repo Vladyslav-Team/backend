@@ -93,9 +93,6 @@ public class SponsorServiceImpl implements SponsorService {
     @Override
     public GeneralResponse buyKudos(Long sponsorId, int kudosAmount) {
         Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
-        if (sponsor == null) {
-            throw new ForbiddenRequestException();
-        }
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }

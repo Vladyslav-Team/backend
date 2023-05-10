@@ -70,7 +70,7 @@ public class ProofServiceImpl implements ProofService {
             } else {
                 Long talentId = userIdWrapper.get();
                 User user = userRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
-                if (user.getRoles().contains(Role.SPONSOR)) {
+                if (user.getRoles().contains(Role.SPONSOR.getAuthority())) {
                     pageProofs = proofRepo.findAllVisibleBySponsorId(userIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else if (utilService.isNotCurrentUser(user)) {
@@ -112,9 +112,6 @@ public class ProofServiceImpl implements ProofService {
         }
         Integer amount = kudosAmountRequest.amount();
         Sponsor sponsor = utilService.getCurrentUser().getSponsor();
-        if (sponsor == null){
-            throw new ForbiddenRequestException();
-        }
         if (sponsor.getBalance() < amount) {
             throw new BadRequestException("Not enough kudos on the balance sheet");
         }
@@ -250,7 +247,7 @@ public class ProofServiceImpl implements ProofService {
 
     private boolean isClicked(Long proofId) {
         User user = utilService.getCurrentUser();
-        if (user == null || user.getRoles().contains(Role.TALENT)) {
+        if (user == null || user.getRoles().contains(Role.TALENT.getAuthority())) {
             return false;
         }
         Proof proof = utilService.findProofById(proofId);
