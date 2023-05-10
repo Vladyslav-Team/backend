@@ -93,7 +93,6 @@ public class SponsorServiceImpl implements SponsorService {
     @Override
     public GeneralResponse buyKudos(Long sponsorId, int kudosAmount) {
         Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
-        //FIXME by @PanfiDen: change security;
         if (sponsor == null) {
             throw new ForbiddenRequestException();
         }

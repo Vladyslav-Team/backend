@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -21,9 +22,6 @@ import java.util.Optional;
 @Tag(name = "Proof", description = "API for Proof")
 public class ProofController {
     private ProofService proofService;
-
-    //FIXME by @PanfiDen: fix security (problem with hasRole)
-
     @GetMapping("/proofs/{proof-id}")
     @Operation(summary = "Get full proof")
     public FullProof showFullProof(@PathVariable("proof-id") Long proofId) {
@@ -48,7 +46,7 @@ public class ProofController {
 
     @PostMapping("/talents/{talent-id}/proofs")
     @Operation(summary = "Create proof")
-//    @PreAuthorize("hasRole('ROLE_TALENT')")
+    @PreAuthorize("hasRole('TALENT')")
     public ResponseEntity<GeneralResponse> addProof(@PathVariable("talent-id") Long talentId,
                                                     @RequestBody ProofRequest creationRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.addProof(talentId, creationRequest));
@@ -57,7 +55,7 @@ public class ProofController {
     @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}")
     @Operation(summary = "Delete proof")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasRole('ROLE_TALENT')")
+    @PreAuthorize("hasRole('TALENT')")
     public ResponseEntity<GeneralResponse> deleteProofById(@PathVariable("talent-id") Long talentId,
                                                            @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.deleteProofById(talentId, proofId));
@@ -65,7 +63,7 @@ public class ProofController {
 
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}")
     @Operation(summary = "Edit proof")
-//    @PreAuthorize("hasRole('ROLE_TALENT')")
+    @PreAuthorize("hasRole('TALENT')")
     ResponseEntity<GeneralResponse> editProofById(@PathVariable("talent-id") Long talentId,
                                                   @PathVariable("proof-id") Long proofId,
                                                   @RequestBody(required = false) ProofRequest proofToUpdate) {
@@ -75,7 +73,7 @@ public class ProofController {
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/publish")
     @Operation(summary = "Publish proof")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasRole('ROLE_TALENT')")
+    @PreAuthorize("hasRole('TALENT')")
     public ResponseEntity<GeneralResponse> publishProofById(@PathVariable("talent-id") Long talentId,
                                                             @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.publishProofById(talentId, proofId));
@@ -84,7 +82,7 @@ public class ProofController {
     @PatchMapping("/talents/{talent-id}/proofs/{proof-id}/hide")
     @Operation(summary = "Hide proof")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasRole('ROLE_TALENT')")
+    @PreAuthorize("hasRole('TALENT')")
     public ResponseEntity<GeneralResponse> hideProofById(@PathVariable("talent-id") Long talentId,
                                                          @PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.hideProofById(talentId, proofId));
@@ -98,7 +96,7 @@ public class ProofController {
 
     @PostMapping("/proofs/{proof-id}/kudos")
     @Operation(summary = "Add kudos to Proof")
-//    @PreAuthorize("hasRole('ROLE_SPONSOR')")
+    @PreAuthorize("hasRole('SPONSOR')")
     public ResponseEntity<GeneralResponse> addLikeToProof(@PathVariable("proof-id") Long proofId,
                                                           @RequestBody(required = false) KudosAmountRequest amount) {
         return ResponseEntity.status(HttpStatus.OK).body(proofService.addKudosToProofBySponsor(proofId, amount));
@@ -107,7 +105,7 @@ public class ProofController {
     @GetMapping("/sponsors/{sponsor-id}/proofs")
     @Operation(summary = "Get all proofs by sponsorId")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasRole('ROLE_SPONSOR')")
+    @PreAuthorize("hasRole('SPONSOR')")
     public GeneralProofResponse showAllProofsBySponsorId(@PathVariable("sponsor-id") Long sponsorId,
                                                         @RequestParam(defaultValue = "1") Optional<Integer> page,
                                                         @RequestParam(name = "newest") Optional<Boolean> newest) {
