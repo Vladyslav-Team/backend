@@ -25,7 +25,7 @@ public interface ProofRepository extends JpaRepository<Proof, Long> {
     @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1 and p.status = 'PUBLISHED'")
     Page<Proof> findAllVisibleByTalentId(Long id, ProofStatus status, Pageable pageable);
 
-    @Query("SELECT p FROM Proof p JOIN p.kudos k WHERE k.sponsor.id = :sponsorId AND p.status = :status")
+    @Query("SELECT p FROM Proof p JOIN p.kudos k WHERE k.sponsor.id = :sponsorId AND p.status = :status GROUP BY p")
     Page<Proof> findAllKudosedBySponsorId(@Param("sponsorId") Long sponsorId, @Param("status") ProofStatus status, Pageable pageable);
     @Query("SELECT p FROM Proof p WHERE p.talent.id = ?1")
     Page<Proof> findForCurrentTalent(Long id, Pageable pageable);
