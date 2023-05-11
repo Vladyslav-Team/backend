@@ -132,17 +132,18 @@ public class ProofServiceImpl implements ProofService {
     public KudosResponse showAmountKudosOfProof(Long proofId) {
         Proof proof = utilService.findProofById(proofId);
         User user = utilService.getCurrentUser();
-        Integer amountOfKudos = 0;
-        Integer amountOfKudosCurrentUser = 0;
-        for (Kudos kudos : proof.getKudos()) {
-            amountOfKudos += kudos.getAmount();
-            if (user != null && kudos.getSponsor().getId().equals(user.getId())) {
-                amountOfKudosCurrentUser += kudos.getAmount();
-            }
-        }
-        return new KudosResponse(proofId, isClicked(proofId), amountOfKudos, amountOfKudosCurrentUser);
-    }
+        int totalKudos = proof.getKudos().stream()
+                .mapToInt(Kudos::getAmount)
+                .sum();
 
+        int currentUserKudos = proof.getKudos().stream()
+                .filter(kudos -> kudos.getSponsor() != null)
+                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
+                .mapToInt(Kudos::getAmount)
+                .sum();
+        return new KudosResponse(proofId, isClicked(proofId), totalKudos, currentUserKudos);
+    }
+    
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
         Talent creator = utilService.findUserById(talentId).getTalent();
