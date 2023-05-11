@@ -71,7 +71,7 @@ public class ProofServiceImpl implements ProofService {
                 Long talentId = userIdWrapper.get();
                 User user = userRepo.findById(talentId).orElseThrow(UserNotFoundException::new);
                 if (user.getRoles().contains(Role.SPONSOR.getAuthority())) {
-                    pageProofs = proofRepo.findAllVisibleBySponsorId(userIdWrapper.get(),
+                    pageProofs = proofRepo.findAllKudosedBySponsorId(userIdWrapper.get(),
                             proofProp.visible(), pageRequest);
                 } else if (utilService.isNotCurrentUser(user)) {
                     pageProofs = proofRepo.findAllVisibleByTalentId(userIdWrapper.get(),
