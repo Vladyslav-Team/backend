@@ -3,6 +3,7 @@ package com.softserve.skillscope.proof.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
+import com.softserve.skillscope.skill.model.Skill;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -47,4 +48,9 @@ public class Proof {
     //Remove all kudos that connected to this proof.
     @OneToMany(mappedBy = "proof", cascade = CascadeType.ALL)
     private List<Kudos> kudos;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "skill_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Skill> skill;
 }
