@@ -1,12 +1,10 @@
 package com.softserve.skillscope.general.mapper.sponsor.impl;
 
-import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
+import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
-import com.softserve.skillscope.sponsor.model.entity.SponsorProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

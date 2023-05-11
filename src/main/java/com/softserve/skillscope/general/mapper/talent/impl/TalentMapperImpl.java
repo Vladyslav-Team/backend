@@ -1,7 +1,7 @@
 package com.softserve.skillscope.general.mapper.talent.impl;
 
-import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.mapper.talent.TalentMapper;
+import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
