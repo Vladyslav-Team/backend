@@ -26,7 +26,7 @@ public class Kudos {
     @JoinColumn(name = "sponsor_id")
     private Sponsor sponsor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "proof_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Proof proof;
