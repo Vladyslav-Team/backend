@@ -6,6 +6,7 @@ import com.softserve.skillscope.kudos.model.response.KudosResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
+import com.softserve.skillscope.skill.model.SkillResponse;
 
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface ProofService {
     GeneralResponse hideProofById(Long talentId, Long proofId);
     GeneralResponse addKudosToProofBySponsor(Long proofId, KudosAmountRequest amount);
     KudosResponse showAmountKudosOfProof(Long proofId);
+
+    SkillResponse getAllSkillByProof(Long proofId);
 }
