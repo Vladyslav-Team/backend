@@ -7,6 +7,7 @@ import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
+import com.softserve.skillscope.skill.model.SkillResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -110,5 +111,11 @@ public class ProofController {
                                                         @RequestParam(defaultValue = "1") Optional<Integer> page,
                                                         @RequestParam(name = "newest") Optional<Boolean> newest) {
         return proofService.getAllProofByPage(Optional.of(sponsorId), page.orElse(1), newest.orElse(true));
+    }
+
+    @GetMapping("/proofs/{proof-id}/skills")
+    @Operation(summary = "Get all skills by proof")
+    public SkillResponse showAllSkillsByProof(@PathVariable("proof-id") Long proofId){
+        return proofService.getAllSkillByProof(proofId);
     }
 }
