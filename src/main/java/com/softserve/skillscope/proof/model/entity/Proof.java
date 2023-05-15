@@ -1,6 +1,7 @@
 package com.softserve.skillscope.proof.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.skill.model.Skill;
@@ -49,8 +50,10 @@ public class Proof {
     @OneToMany(mappedBy = "proof", cascade = CascadeType.ALL)
     private List<Kudos> kudos;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "skill_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(name = "proof_skill",
+            joinColumns = @JoinColumn(name = "proof_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    @JsonManagedReference
     private List<Skill> skill;
 }

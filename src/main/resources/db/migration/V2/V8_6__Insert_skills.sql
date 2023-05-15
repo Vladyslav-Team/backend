@@ -12,10 +12,11 @@ CREATE TABLE proof_skill
 );
 
 ALTER TABLE proof_skill
-    ADD CONSTRAINT fk_proski_on_proof FOREIGN KEY (proof_id) REFERENCES proof (id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_proski_on_proof FOREIGN KEY (proof_id) REFERENCES proof (id);
 
 ALTER TABLE proof_skill
     ADD CONSTRAINT fk_proski_on_skill FOREIGN KEY (skill_id) REFERENCES skill (id);
+
 
 INSERT INTO skill (title)
 VALUES
@@ -63,7 +64,7 @@ VALUES
     ('Jenkins'),
     ('Verilog'),
     ('Jest'),
-    ('Mocha '),
+    ('Mocha'),
     ('Supertest'),
     ('Puppeteer'),
     ('WebDriverIO'),
@@ -77,5 +78,4 @@ VALUES
 
 
 INSERT INTO proof_skill (proof_id, skill_id)
-VALUES
-    (1,1);
+VALUES (1, 1), (1, 14), (1, 20), (1, 27), (1, 49);
