@@ -22,6 +22,9 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.proof.service.ProofService;
+import com.softserve.skillscope.skill.SkillRepository;
+import com.softserve.skillscope.skill.model.Skill;
+import com.softserve.skillscope.skill.model.SkillResponse;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -43,6 +46,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
+    private final SkillRepository skillRepository;
     private SponsorRepository sponsorRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
@@ -214,6 +218,12 @@ public class ProofServiceImpl implements ProofService {
         }
         proofRepo.save(proof);
         return new GeneralResponse(proofId, "Proof successfully hidden!");
+    }
+
+    @Override
+        public SkillResponse getAllSkillByProof(Long proofId){
+        List<Skill> skills = skillRepository.findAllByProofId(proofId);
+        return new SkillResponse(proofId, skills);
     }
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
