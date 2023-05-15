@@ -113,7 +113,7 @@ public class ProofController {
         return proofService.getAllProofByPage(Optional.of(sponsorId), page.orElse(1), newest.orElse(true));
     }
 
-    @GetMapping("/proof/{proof-id}/skill")
+    @GetMapping("/proofs/{proof-id}/skills")
     @Operation(summary = "Get all skills by proof")
     public SkillResponse showAllSkillsByProof(@PathVariable("proof-id") Long proofId){
         return proofService.getAllSkillByProof(proofId);

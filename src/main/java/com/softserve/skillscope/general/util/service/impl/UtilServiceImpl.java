@@ -8,6 +8,8 @@ import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
+import com.softserve.skillscope.skill.SkillRepository;
+import com.softserve.skillscope.skill.model.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
@@ -22,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,7 @@ public class UtilServiceImpl implements UtilService {
 
     private UserRepository userRepo;
     private ProofRepository proofRepo;
+    private SkillRepository skillRepo;
     private UserProperties userProps;
     private PasswordEncoder passwordEncoder;
 
@@ -109,5 +113,11 @@ public class UtilServiceImpl implements UtilService {
     public boolean updateTokenActivation(Sponsor sponsor) {
         return sponsor.getOrders().stream()
                 .anyMatch(order -> order.getActivation() == OrderStatus.READY_TO_USE);
+    }
+
+    @Override
+    public List<Skill> getSkillsByProofId(Long proofId){
+        Proof proof = findProofById(proofId);
+        return skillRepo.findAllByProofsId(proof.getId());
     }
 }

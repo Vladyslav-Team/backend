@@ -55,5 +55,5 @@ public class Proof {
             joinColumns = @JoinColumn(name = "proof_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
     @JsonManagedReference
-    private List<Skill> skill;
+    private List<Skill> skills;
 }

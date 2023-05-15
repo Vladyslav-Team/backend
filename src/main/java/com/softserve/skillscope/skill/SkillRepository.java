@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
-    List<Skill> findAllByProofId(Long proofId);
+    List<Skill> findAllByProofsId(Long proofsId);
 
 }
