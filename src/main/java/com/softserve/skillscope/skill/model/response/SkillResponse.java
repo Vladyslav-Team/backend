@@ -1,6 +1,7 @@
-package com.softserve.skillscope.skill.model;
+package com.softserve.skillscope.skill.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.softserve.skillscope.skill.model.entity.Skill;
 
 import java.util.List;
 

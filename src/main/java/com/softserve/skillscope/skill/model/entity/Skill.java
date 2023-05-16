@@ -1,11 +1,11 @@
-package com.softserve.skillscope.skill.model;
+package com.softserve.skillscope.skill.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -21,7 +21,7 @@ public class Skill {
 
     @ManyToMany(mappedBy = "skill", cascade = CascadeType.REMOVE)
     @JsonBackReference
-    private List<Proof> proof;
+    private Set<Proof> proofs;
 
     private String title;
 }

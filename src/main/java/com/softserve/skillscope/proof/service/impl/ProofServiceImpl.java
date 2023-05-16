@@ -23,8 +23,9 @@ import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.proof.service.ProofService;
 import com.softserve.skillscope.skill.SkillRepository;
-import com.softserve.skillscope.skill.model.Skill;
-import com.softserve.skillscope.skill.model.SkillResponse;
+import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
+import com.softserve.skillscope.skill.model.entity.Skill;
+import com.softserve.skillscope.skill.model.response.SkillResponse;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -41,7 +42,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -225,6 +229,29 @@ public class ProofServiceImpl implements ProofService {
         public SkillResponse getAllSkillByProof(Long proofId){
         List<Skill> skills = skillRepository.findAllByProofId(proofId);
         return new SkillResponse(proofId, skills);
+    }
+
+    @Override
+    public GeneralResponse addSkillsOnProof(Long talentId, Long proofId, AddSkillsRequest newSkillsRequest) {
+        if (newSkillsRequest == null) {
+            throw new BadRequestException("No skills were applied");
+        }
+        checkOwnProofs(talentId, proofId);
+        Proof proof = utilService.findProofById(proofId);
+        if (proof.getStatus() != proofProp.defaultType()) {
+            throw new ProofAlreadyPublishedException();
+        } else if (proof.getSkill().size() == 4){
+            throw new BadRequestException("Proof can contain no more than 4 Skills");
+        }
+        Set<Skill> newSkills = newSkillsRequest.skills().stream()
+                .map(skillRepository::findByTitle)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        proof.getSkill().addAll(newSkills);
+        proof.setSkill(proof.getSkill());
+        proofRepo.save(proof);
+        
+        return new GeneralResponse(proofId, "Skills successfully added!");
     }
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
