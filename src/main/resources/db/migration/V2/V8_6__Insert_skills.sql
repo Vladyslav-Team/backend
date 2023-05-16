@@ -74,8 +74,22 @@ VALUES
     ('TestRail'),
     ('Animator'),
     ('Blockchain'),
-    ('Design');
+    ('Design'),
+    ('Team-leader'),
+    ('Teamwork'),
+    ('Creativity'),
+    ('Fast-learner'),
+    ('Critical-thinking'),
+    ('Self-organization'),
+    ('Time management'),
+    ('Communication'),
+    ('Adaptability'),
+    ('Interpersonal Skills'),
+    ('Work ethic'),
+    ('Attention to detail');
+
+
 
 
 INSERT INTO proof_skill (proof_id, skill_id)
-VALUES (1, 1), (1, 14), (1, 20), (1, 27), (1, 49);
+VALUES (2, 1), (3, 2), (3, 3), (4, 4), (4, 5), (4, 6), (4, 7), (42, 6), (42, 6), (42, 6), (42, 50);

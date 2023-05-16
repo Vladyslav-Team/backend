@@ -50,7 +50,6 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
-    private final SkillRepository skillRepository;
     private SponsorRepository sponsorRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
@@ -227,7 +226,7 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
         public SkillResponse getAllSkillByProof(Long proofId){
-        List<Skill> skills = skillRepository.findAllByProofId(proofId);
+        List<Skill> skills = utilService.getSkillsByProofId(proofId);
         return new SkillResponse(proofId, skills);
     }
 

@@ -19,7 +19,7 @@ public class Skill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "skill", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "skills", cascade = CascadeType.REMOVE)
     @JsonBackReference
     private Set<Proof> proofs;
 

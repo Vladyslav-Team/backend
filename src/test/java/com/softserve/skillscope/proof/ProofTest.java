@@ -3,6 +3,7 @@ package com.softserve.skillscope.proof;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
+import com.softserve.skillscope.skill.model.Skill;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class ProofTest {
     @Test
     void testAllArgsConstructor() {
         Proof proof1 = new Proof(2L, new Talent(), LocalDateTime.now(),
-                "Title", "Description", ProofStatus.DRAFT, List.of(new Kudos()));
+                "Title", "Description", ProofStatus.DRAFT, List.of(new Kudos()), List.of(new Skill()));
         assertNotNull(proof1);
     }
 }
