@@ -64,6 +64,7 @@ public class SecurityConfiguration {
                 .requestMatchers(antMatcher("/proofs/**/kudos")).permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/proofs/**/skills").permitAll()
+                .requestMatchers(HttpMethod.GET, "/skills/**").permitAll()
                 .anyRequest().authenticated());
 
         //HTTP session state management

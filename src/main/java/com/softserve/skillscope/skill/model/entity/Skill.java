@@ -1,4 +1,4 @@
-package com.softserve.skillscope.skill.model;
+package com.softserve.skillscope.skill.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.softserve.skillscope.proof.model.entity.Proof;

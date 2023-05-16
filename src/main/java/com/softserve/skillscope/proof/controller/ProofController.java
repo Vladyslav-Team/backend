@@ -7,7 +7,7 @@ import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
-import com.softserve.skillscope.skill.model.SkillResponse;
+import com.softserve.skillscope.skill.model.response.SkillResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -23,6 +23,7 @@ import java.util.Optional;
 @Tag(name = "Proof", description = "API for Proof")
 public class ProofController {
     private ProofService proofService;
+
     @GetMapping("/proofs/{proof-id}")
     @Operation(summary = "Get full proof")
     public FullProof showFullProof(@PathVariable("proof-id") Long proofId) {
@@ -91,7 +92,7 @@ public class ProofController {
 
     @GetMapping("/proofs/{proof-id}/kudos")
     @Operation(summary = "Show amount Kudos of Proof")
-    public ResponseEntity<KudosResponse> showAmountKudosOfProof(@PathVariable("proof-id") Long proofId){
+    public ResponseEntity<KudosResponse> showAmountKudosOfProof(@PathVariable("proof-id") Long proofId) {
         return ResponseEntity.status(HttpStatus.OK).body(proofService.showAmountKudosOfProof(proofId));
     }
 
@@ -108,14 +109,14 @@ public class ProofController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('SPONSOR')")
     public GeneralProofResponse showAllProofsBySponsorId(@PathVariable("sponsor-id") Long sponsorId,
-                                                        @RequestParam(defaultValue = "1") Optional<Integer> page,
-                                                        @RequestParam(name = "newest") Optional<Boolean> newest) {
+                                                         @RequestParam(defaultValue = "1") Optional<Integer> page,
+                                                         @RequestParam(name = "newest") Optional<Boolean> newest) {
         return proofService.getAllProofByPage(Optional.of(sponsorId), page.orElse(1), newest.orElse(true));
     }
 
     @GetMapping("/proofs/{proof-id}/skills")
     @Operation(summary = "Get all skills by proof")
-    public SkillResponse showAllSkillsByProof(@PathVariable("proof-id") Long proofId){
+    public SkillResponse showAllSkillsByProof(@PathVariable("proof-id") Long proofId) {
         return proofService.getAllSkillByProof(proofId);
     }
 }
