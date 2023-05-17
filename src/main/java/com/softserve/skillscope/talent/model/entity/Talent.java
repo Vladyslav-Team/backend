@@ -61,10 +61,11 @@ public class Talent {
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     private List<Proof> proofs;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany
     @JoinTable(name = "talent_skill",
             joinColumns = @JoinColumn(name = "talent_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonManagedReference
     private Set<Skill> skills;
 }

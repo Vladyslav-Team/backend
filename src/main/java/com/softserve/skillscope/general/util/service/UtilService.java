@@ -35,4 +35,6 @@ public interface UtilService {
     Set<Skill> getSkillsByProofId(Long proofId);
 
     Skill findSkillById(Long id);
+
+    Set<Skill> stringToSkills(Set<String> newSet);
 }

@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -125,5 +126,10 @@ public class UtilServiceImpl implements UtilService {
     public Skill findSkillById(Long id) {
         return skillRepo.findById(id)
                 .orElseThrow(SkillNotFoundException::new);
+    }
+
+    @Override
+    public Set<Skill> stringToSkills(Set<String> newSet) {
+        return newSet.stream().map(skillRepo::findByTitle).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 }

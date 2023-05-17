@@ -2,6 +2,7 @@ package com.softserve.skillscope.talent.controller;
 
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
@@ -61,5 +62,21 @@ public class TalentController {
     @ResponseStatus(HttpStatus.OK)
     public ImageResponse showTalentImage(@PathVariable("talent-id") Long talentId) {
         return talentService.getTalentImage(talentId);
+    }
+
+    @PostMapping("/talents/{talent-id}/skills")
+    @Operation(summary = "Add skills on talent profile")
+    @PreAuthorize("hasRole('TALENT')")
+    ResponseEntity<GeneralResponse> addSkillsOnTalentProfile(@PathVariable("talent-id") Long talentId,
+                                                     @RequestBody(required = false) AddSkillsRequest newSkills){
+        return ResponseEntity.status(HttpStatus.OK).body(talentService.addSkillsOnTalentProfile(talentId, newSkills));
+    }
+
+    @DeleteMapping("/talents/{talent-id}/skills/{skill-id}")
+    @Operation(summary = "Delete skills from talent profile")
+    @PreAuthorize("hasRole('TALENT')")
+    ResponseEntity<GeneralResponse> deleteSkillFromTalentProfile(@PathVariable("talent-id") Long talentId,
+                                                         @PathVariable("skill-id") Long skillId){
+        return ResponseEntity.status(HttpStatus.OK).body(talentService.deleteSkillFromTalentProfile(talentId, skillId));
     }
 }
