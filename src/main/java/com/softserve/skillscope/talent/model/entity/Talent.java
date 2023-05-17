@@ -1,7 +1,9 @@
 package com.softserve.skillscope.talent.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,6 +15,7 @@ import org.hibernate.validator.constraints.URL;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -57,4 +60,11 @@ public class Talent {
     //Delete all proofs that are connected with this talent.
     @OneToMany(mappedBy = "talent", cascade = CascadeType.ALL)
     private List<Proof> proofs;
+
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(name = "talent_skill",
+            joinColumns = @JoinColumn(name = "talent_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    @JsonManagedReference
+    private Set<Skill> skills;
 }
