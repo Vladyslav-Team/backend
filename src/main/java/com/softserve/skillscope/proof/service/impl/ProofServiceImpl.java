@@ -6,6 +6,7 @@ import com.softserve.skillscope.general.handler.exception.generalException.UserN
 import com.softserve.skillscope.general.handler.exception.proofException.ProofAlreadyPublishedException;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofHasNullValue;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
+import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.mapper.proof.ProofMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
@@ -22,6 +23,8 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.proof.service.ProofService;
+import com.softserve.skillscope.skill.SkillRepository;
+import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.response.SkillResponse;
 import com.softserve.skillscope.sponsor.SponsorRepository;
@@ -40,12 +43,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
     private SponsorRepository sponsorRepo;
+    private SkillRepository skillRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
     private UserRepository userRepo;
@@ -221,9 +228,54 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
         public SkillResponse getAllSkillByProof(Long proofId){
-        List<Skill> skills = utilService.getSkillsByProofId(proofId);
+        Set<Skill> skills = utilService.getSkillsByProofId(proofId);
+        if (skills.size() < 1){
+            throw new BadRequestException("Any skills not found");
+        }
         return new SkillResponse(proofId, skills);
     }
+
+    @Override
+    public GeneralResponse addSkillsOnProof(Long talentId, Long proofId, AddSkillsRequest newSkillsRequest) {
+        if (newSkillsRequest == null || newSkillsRequest.skills() == null) {
+            throw new BadRequestException("No skills were applied");
+        }
+        checkOwnProofs(talentId, proofId);
+        Proof proof = utilService.findProofById(proofId);
+        if (proof.getStatus() != proofProp.defaultType()) {
+            throw new ProofAlreadyPublishedException();
+        } else if (proof.getSkills().size() >= 4){
+            throw new BadRequestException("Proof cannot contain more than 4 Skills");
+        }
+        Set<Skill> newSkills = newSkillsRequest.skills().stream()
+                .map(skillRepo::findByTitle)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        proof.getSkills().addAll(newSkills);
+        proof.setSkills(newSkills);
+        proofRepo.save(proof);
+
+        return new GeneralResponse(proofId, "Skills successfully added!");
+    }
+
+    @Override
+    public GeneralResponse deleteSkillFromProof(Long talentId, Long proofId, Long skillId) {
+        Skill skill = utilService.findSkillById(skillId);
+        checkOwnProofs(talentId, proofId);
+        Proof proof = utilService.findProofById(proofId);
+        if (proof.getStatus() != proofProp.defaultType()) {
+            throw new ProofAlreadyPublishedException();
+        } else if (proof.getSkills().size() < 1){
+            throw new BadRequestException("Proof cannot contain less than 0 Skills");
+        }
+        if (!proof.getSkills().contains(skill)){
+            throw new SkillNotFoundException();
+        }
+        proof.getSkills().remove(skill);
+        proofRepo.save(proof);
+        return new GeneralResponse(proofId, "Skill " + skill.getTitle() + " successfully deleted!");
+    }
+
 
     private void checkForChanges(ProofRequest proofToUpdate, Proof proof) {
         if (proofToUpdate == null) {

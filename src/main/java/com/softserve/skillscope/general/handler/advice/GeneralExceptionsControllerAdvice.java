@@ -1,12 +1,9 @@
 package com.softserve.skillscope.general.handler.advice;
 
 import com.softserve.skillscope.general.handler.exception.ErrorDTO;
-import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
-import com.softserve.skillscope.general.handler.exception.generalException.ValidationException;
-import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.*;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,7 +31,7 @@ public class GeneralExceptionsControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO(exception.getMessage()));
     }
 
-    @ExceptionHandler({UserNotFoundException.class, ProofNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ProofNotFoundException.class, SkillNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorDTO> notFoundExceptionExceptionHandler(Exception exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));

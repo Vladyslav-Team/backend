@@ -7,7 +7,6 @@ import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.model.User;
 
-import java.util.List;
 import java.util.Set;
 
 public interface UtilService {
@@ -33,5 +32,7 @@ public interface UtilService {
 
     boolean updateTokenActivation(Sponsor sponsor);
 
-    List<Skill> getSkillsByProofId(Long proofId);
+    Set<Skill> getSkillsByProofId(Long proofId);
+
+    Skill findSkillById(Long id);
 }

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import lombok.Builder;
 
-import java.util.List;
+import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-public record SkillResponse(Long id, List<Skill> skills) {
+public record SkillResponse(Long id, Set<Skill> skills) {
 }

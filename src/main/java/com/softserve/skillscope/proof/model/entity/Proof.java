@@ -15,6 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -55,5 +56,5 @@ public class Proof {
             joinColumns = @JoinColumn(name = "proof_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
     @JsonManagedReference
-    private List<Skill> skills;
+    private Set<Skill> skills;
 }

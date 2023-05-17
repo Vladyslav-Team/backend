@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,11 +19,11 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public SkillResponse getAllSkillsWithFilter(String text) {
-        List<Skill> similarSkills = (text == null) ? skillRepo.findTop4ByOrderByTitleAsc() :
+        Set<Skill> similarSkills = (text == null) ? skillRepo.findTop4ByOrderByTitleAsc() :
                 skillRepo.findSimilarTitles(transformWord(text))
                         .stream()
                         .limit(4)
-                        .toList();
+                        .collect(Collectors.toSet());
         return SkillResponse.builder()
                 .skills(similarSkills)
                 .build();

@@ -4,11 +4,14 @@ import com.softserve.skillscope.skill.model.entity.Skill;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import java.util.Set;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
-    List<Skill> findAllByProofsId(Long proofsId);
-    List<Skill> findTop4ByOrderByTitleAsc();
+
+    Set<Skill> findAllByProofsId(Long proofId);
+    Skill findByTitle(String title);
+
+    Set<Skill> findTop4ByOrderByTitleAsc();
     @Query(value = "SELECT s FROM Skill s WHERE UPPER(s.title) LIKE CONCAT('%', UPPER(:text), '%')")
-    List<Skill> findSimilarTitles(String text);
+    Set<Skill> findSimilarTitles(String text);
 }

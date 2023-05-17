@@ -8,6 +8,7 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
 import com.softserve.skillscope.skill.model.response.SkillResponse;
+import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -92,7 +93,7 @@ public class ProofController {
 
     @GetMapping("/proofs/{proof-id}/kudos")
     @Operation(summary = "Show amount Kudos of Proof")
-    public ResponseEntity<KudosResponse> showAmountKudosOfProof(@PathVariable("proof-id") Long proofId) {
+    public ResponseEntity<KudosResponse> showAmountKudosOfProof(@PathVariable("proof-id") Long proofId){
         return ResponseEntity.status(HttpStatus.OK).body(proofService.showAmountKudosOfProof(proofId));
     }
 
@@ -109,8 +110,8 @@ public class ProofController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('SPONSOR')")
     public GeneralProofResponse showAllProofsBySponsorId(@PathVariable("sponsor-id") Long sponsorId,
-                                                         @RequestParam(defaultValue = "1") Optional<Integer> page,
-                                                         @RequestParam(name = "newest") Optional<Boolean> newest) {
+                                                        @RequestParam(defaultValue = "1") Optional<Integer> page,
+                                                        @RequestParam(name = "newest") Optional<Boolean> newest) {
         return proofService.getAllProofByPage(Optional.of(sponsorId), page.orElse(1), newest.orElse(true));
     }
 
@@ -118,5 +119,23 @@ public class ProofController {
     @Operation(summary = "Get all skills by proof")
     public SkillResponse showAllSkillsByProof(@PathVariable("proof-id") Long proofId) {
         return proofService.getAllSkillByProof(proofId);
+    }
+
+    @PostMapping("/talents/{talent-id}/proofs/{proof-id}/skills")
+    @Operation(summary = "Add skills on proof")
+    @PreAuthorize("hasRole('TALENT')")
+    ResponseEntity<GeneralResponse> addSkillsOnProof(@PathVariable("talent-id") Long talentId,
+                                                     @PathVariable("proof-id") Long proofId,
+                                                     @RequestBody(required = false) AddSkillsRequest newSkills){
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.addSkillsOnProof(talentId, proofId, newSkills));
+    }
+
+    @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
+    @Operation(summary = "Delete skills from proof")
+    @PreAuthorize("hasRole('TALENT')")
+    ResponseEntity<GeneralResponse> deleteSkillFromProof(@PathVariable("talent-id") Long talentId,
+                                                     @PathVariable("proof-id") Long proofId,
+                                                     @PathVariable("skill-id") Long skillId){
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.deleteSkillFromProof(talentId, proofId, skillId));
     }
 }

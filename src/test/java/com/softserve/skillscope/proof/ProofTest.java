@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -52,7 +53,7 @@ class ProofTest {
     @Test
     void testAllArgsConstructor() {
         Proof proof1 = new Proof(2L, new Talent(), LocalDateTime.now(),
-                "Title", "Description", ProofStatus.DRAFT, List.of(new Kudos()), List.of(new Skill()));
+                "Title", "Description", ProofStatus.DRAFT, List.of(new Kudos()), Set.of(new Skill()));
         assertNotNull(proof1);
     }
 }
