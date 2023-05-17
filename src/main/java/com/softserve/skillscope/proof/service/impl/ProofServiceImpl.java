@@ -35,7 +35,6 @@ import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.internal.util.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,7 +50,6 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class ProofServiceImpl implements ProofService {
     private SponsorRepository sponsorRepo;
     private SkillRepository skillRepo;
@@ -239,7 +237,6 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public GeneralResponse addSkillsOnProof(Long talentId, Long proofId, AddSkillsRequest newSkillsRequest) {
-        log.info("newSkillsRequest={}", newSkillsRequest);
         if (newSkillsRequest == null || newSkillsRequest.skills() == null) {
             throw new BadRequestException("No skills were applied");
         }

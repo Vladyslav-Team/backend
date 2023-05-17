@@ -7,8 +7,8 @@ import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.service.ProofService;
-import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.skill.model.response.SkillResponse;
+import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -24,6 +24,7 @@ import java.util.Optional;
 @Tag(name = "Proof", description = "API for Proof")
 public class ProofController {
     private ProofService proofService;
+
     @GetMapping("/proofs/{proof-id}")
     @Operation(summary = "Get full proof")
     public FullProof showFullProof(@PathVariable("proof-id") Long proofId) {
@@ -116,7 +117,7 @@ public class ProofController {
 
     @GetMapping("/proofs/{proof-id}/skills")
     @Operation(summary = "Get all skills by proof")
-    public SkillResponse showAllSkillsByProof(@PathVariable("proof-id") Long proofId){
+    public SkillResponse showAllSkillsByProof(@PathVariable("proof-id") Long proofId) {
         return proofService.getAllSkillByProof(proofId);
     }
 
