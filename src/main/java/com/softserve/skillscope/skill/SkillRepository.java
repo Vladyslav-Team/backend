@@ -7,7 +7,7 @@ import java.util.Set;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
-    Set<Skill> findAllByProofId(Long proofId);
+    Set<Skill> findAllByProofsId(Long proofId);
     Skill findByTitle(String title);
 
 }

@@ -25,4 +25,5 @@ public interface ProofService {
 
     SkillResponse getAllSkillByProof(Long proofId);
     GeneralResponse addSkillsOnProof(Long talentId, Long proofId, AddSkillsRequest newSkills);
+    GeneralResponse deleteSkillFromProof(Long talentId, Long proofId, Long skillId);
 }

@@ -128,4 +128,13 @@ public class ProofController {
                                                      @RequestBody(required = false) AddSkillsRequest newSkills){
         return ResponseEntity.status(HttpStatus.OK).body(proofService.addSkillsOnProof(talentId, proofId, newSkills));
     }
+
+    @DeleteMapping("/talents/{talent-id}/proofs/{proof-id}/skills/{skill-id}")
+    @Operation(summary = "Delete skills from proof")
+    @PreAuthorize("hasRole('TALENT')")
+    ResponseEntity<GeneralResponse> deleteSkillFromProof(@PathVariable("talent-id") Long talentId,
+                                                     @PathVariable("proof-id") Long proofId,
+                                                     @PathVariable("skill-id") Long skillId){
+        return ResponseEntity.status(HttpStatus.OK).body(proofService.deleteSkillFromProof(talentId, proofId, skillId));
+    }
 }

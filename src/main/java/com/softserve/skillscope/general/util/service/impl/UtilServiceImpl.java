@@ -4,12 +4,13 @@ import com.softserve.skillscope.general.handler.exception.generalException.BadRe
 import com.softserve.skillscope.general.handler.exception.generalException.UserAlreadyExistsException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
+import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
 import com.softserve.skillscope.skill.SkillRepository;
-import com.softserve.skillscope.skill.model.Skill;
+import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
@@ -24,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -116,8 +116,14 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
-    public List<Skill> getSkillsByProofId(Long proofId){
+    public Set<Skill> getSkillsByProofId(Long proofId){
         Proof proof = findProofById(proofId);
         return skillRepo.findAllByProofsId(proof.getId());
+    }
+
+    @Override
+    public Skill findSkillById(Long id) {
+        return skillRepo.findById(id)
+                .orElseThrow(SkillNotFoundException::new);
     }
 }
