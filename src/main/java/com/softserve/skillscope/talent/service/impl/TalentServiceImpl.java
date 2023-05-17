@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -37,10 +38,15 @@ public class TalentServiceImpl implements TalentService {
     private UtilService utilService;
 
     @Override
-    public GeneralTalentResponse getAllTalentsByPage(int page) {
+    public GeneralTalentResponse getAllTalentsByPage(int page, String skills) {
         try {
-            Page<Talent> pageTalents =
-                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, userProp.userPageSize()));
+            PageRequest pageable = PageRequest.of(page - 1, userProp.userPageSize());
+
+            Page<Talent> pageTalents = Optional.ofNullable(skills)
+                    .map(skill -> talentRepo.findTalentsBySkills(utilService.parseAllSkills(skill), pageable))
+
+                    .orElseGet(() -> talentRepo.findAllByOrderByIdDesc(pageable));
+
             if (pageTalents.isEmpty()) throw new UserNotFoundException();
 
             int totalPages = pageTalents.getTotalPages();
@@ -48,7 +54,6 @@ public class TalentServiceImpl implements TalentService {
             if (page > totalPages) {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
-
             List<GeneralTalent> talents = new ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
                     .toList());

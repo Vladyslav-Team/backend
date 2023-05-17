@@ -24,8 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,5 +124,15 @@ public class UtilServiceImpl implements UtilService {
     public Skill findSkillById(Long id) {
         return skillRepo.findById(id)
                 .orElseThrow(SkillNotFoundException::new);
+    }
+    @Override
+    public Set<Skill> parseAllSkills(String text) {
+        Set<String> labels = Set.of(text.split(","));
+
+        return labels.stream()
+                .map(label -> skillRepo.findByTitleIgnoreCase(label))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
     }
 }

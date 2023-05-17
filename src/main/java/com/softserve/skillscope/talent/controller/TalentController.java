@@ -29,8 +29,9 @@ public class TalentController {
     @GetMapping("/talents")
     @Operation(summary = "Get all talents")
     @ResponseStatus(HttpStatus.OK)
-    public GeneralTalentResponse showAllTalents(@RequestParam(defaultValue = "1") int page) {
-        return talentService.getAllTalentsByPage(page);
+    public GeneralTalentResponse showAllTalents(@RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(value = "skills", required = false) String skills) {
+        return talentService.getAllTalentsByPage(page, skills);
     }
 
     @GetMapping("/talents/{talent-id}")
