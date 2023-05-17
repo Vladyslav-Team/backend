@@ -3,7 +3,7 @@ package com.softserve.skillscope.proof;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
-import com.softserve.skillscope.skill.model.Skill;
+import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

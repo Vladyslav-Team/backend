@@ -1,7 +1,7 @@
 package com.softserve.skillscope.general.util.service;
 
 import com.softserve.skillscope.proof.model.entity.Proof;
-import com.softserve.skillscope.skill.model.Skill;
+import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;

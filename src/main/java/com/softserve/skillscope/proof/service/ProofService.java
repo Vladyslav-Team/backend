@@ -6,7 +6,7 @@ import com.softserve.skillscope.kudos.model.response.KudosResponse;
 import com.softserve.skillscope.proof.model.dto.FullProof;
 import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
-import com.softserve.skillscope.skill.model.SkillResponse;
+import com.softserve.skillscope.skill.model.response.SkillResponse;
 
 import java.util.Optional;
 

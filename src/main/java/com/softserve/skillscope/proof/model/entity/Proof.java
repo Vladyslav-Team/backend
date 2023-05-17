@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
-import com.softserve.skillscope.skill.model.Skill;
+import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
