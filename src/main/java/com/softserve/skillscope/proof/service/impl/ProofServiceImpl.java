@@ -225,7 +225,7 @@ public class ProofServiceImpl implements ProofService {
     @Override
         public SkillResponse getAllSkillByProof(Long proofId){
         Set<Skill> skills = utilService.getSkillsByProofId(proofId);
-        if (skills.size() < 1){
+        if (skills.size() < 0){
             throw new BadRequestException("Any skills not found");
         }
         return new SkillResponse(proofId, skills);
