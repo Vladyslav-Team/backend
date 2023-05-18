@@ -4,7 +4,6 @@ import com.softserve.skillscope.skill.SkillRepository;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.response.SkillResponse;
 import com.softserve.skillscope.skill.service.SkillService;
-import com.softserve.skillscope.user.model.UserProperties;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SkillServiceImpl implements SkillService {
     private SkillRepository skillRepo;
-    private UserProperties userProps;
 
     @Override
     public SkillResponse getAllSkillsWithFilter(String text) {
@@ -29,7 +27,7 @@ public class SkillServiceImpl implements SkillService {
         return (text == null) ? skillRepo.findTop4ByOrderByTitleAsc() :
                 skillRepo.findSimilarTitles(transformWord(text))
                         .stream()
-                        .limit(userProps.maxSkillsOnTalent())
+                        .limit(4)
                         .collect(Collectors.toSet());
     }
 

@@ -127,10 +127,10 @@ public class UtilServiceImpl implements UtilService {
     }
     @Override
     public Set<Skill> parseAllSkills(String text) {
-        Set<String> labels = Set.of(text.split(","));
+        Set<String> skills = Set.of(text.split(","));
 
-        return labels.stream()
-                .map(label -> skillRepo.findByTitleIgnoreCase(label))
+        return skills.stream()
+                .map(skill -> skillRepo.findByTitleIgnoreCase(skill))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
