@@ -91,12 +91,14 @@ public class ProofController {
         return ResponseEntity.status(HttpStatus.CREATED).body(proofService.hideProofById(talentId, proofId));
     }
 
+//    TODO: change logic
     @GetMapping("/proofs/{proof-id}/kudos")
     @Operation(summary = "Show amount Kudos of Proof")
     public ResponseEntity<KudosResponse> showAmountKudosOfProof(@PathVariable("proof-id") Long proofId){
         return ResponseEntity.status(HttpStatus.OK).body(proofService.showAmountKudosOfProof(proofId));
     }
 
+//    TODO: change logic + when you add Kudos on Proof you add 1 Kudos on ALL Skills
     @PostMapping("/proofs/{proof-id}/kudos")
     @Operation(summary = "Add kudos to Proof")
     @PreAuthorize("hasRole('SPONSOR')")

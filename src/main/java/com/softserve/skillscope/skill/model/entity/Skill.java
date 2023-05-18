@@ -1,6 +1,7 @@
 package com.softserve.skillscope.skill.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
@@ -8,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -31,6 +33,11 @@ public class Skill {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private Set<Talent> talent;
+
+
+    //Remove all kudos that connected to this skill.
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "skill", cascade = CascadeType.ALL)
+    private List<Kudos> kudos;
 
     private String title;
 }
