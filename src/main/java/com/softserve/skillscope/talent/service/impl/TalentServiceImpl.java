@@ -3,10 +3,12 @@ package com.softserve.skillscope.talent.service.impl;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
+import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -95,6 +98,38 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public ImageResponse getTalentImage(Long talentId) {
         return talentMapper.toTalentImage(utilService.findUserById(talentId).getTalent());
+    }
+
+    @Override
+    public GeneralResponse addSkillsOnTalentProfile(Long talentId, AddSkillsRequest newSkillsRequest) {
+        Talent talent = utilService.findUserById(talentId).getTalent();
+        if (utilService.isNotCurrentUser(talent.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+        Set<Skill> newSkills = utilService.stringToSkills(newSkillsRequest.skills());
+        talent.getSkills().addAll(newSkills);
+        talent.setSkills(talent.getSkills());
+        talentRepo.save(talent);
+
+        return new GeneralResponse(talentId, "Skills successfully added!");
+    }
+
+    @Override
+    public GeneralResponse deleteSkillFromTalentProfile(Long talentId, Long skillId) {
+        Skill skill = utilService.findSkillById(skillId);
+        Talent talent = utilService.findUserById(talentId).getTalent();
+        if (utilService.isNotCurrentUser(talent.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+        if (talent.getSkills().size() < 1){
+            throw new BadRequestException("Talent cannot contain less than 0 Skills");
+        }
+        if (!talent.getSkills().contains(skill)){
+            throw new SkillNotFoundException();
+        }
+        talent.getSkills().remove(skill);
+        talentRepo.save(talent);
+        return new GeneralResponse(talentId, "Skill " + skill.getTitle() + " successfully deleted!");
     }
 
     /*

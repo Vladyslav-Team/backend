@@ -23,9 +23,8 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.proof.service.ProofService;
-import com.softserve.skillscope.skill.SkillRepository;
-import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.skill.model.entity.Skill;
+import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.skill.model.response.SkillResponse;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
@@ -43,16 +42,13 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
     private SponsorRepository sponsorRepo;
-    private SkillRepository skillRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
     private UserRepository userRepo;
@@ -247,12 +243,9 @@ public class ProofServiceImpl implements ProofService {
         } else if (proof.getSkills().size() >= 4){
             throw new BadRequestException("Proof cannot contain more than 4 Skills");
         }
-        Set<Skill> newSkills = newSkillsRequest.skills().stream()
-                .map(skillRepo::findByTitle)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        Set<Skill> newSkills = utilService.stringToSkills(newSkillsRequest.skills());
         proof.getSkills().addAll(newSkills);
-        proof.setSkills(newSkills);
+        proof.setSkills(proof.getSkills());
         proofRepo.save(proof);
 
         return new GeneralResponse(proofId, "Skills successfully added!");
