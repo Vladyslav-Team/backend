@@ -27,7 +27,7 @@ public class TalentMapperImpl implements TalentMapper {
                 .surname(talent.getUser().getSurname())
                 .location(talent.getLocation())
                 .experience(talent.getExperience())
-                //TODO make it dynamic so text sorts as the filter words
+                //TODO @SEM make it dynamic so text sorts as the filter words
                 .skills(talent.getSkills().stream().limit(userProps.maxSkillsOnTalent()).collect(Collectors.toSet()))
                 .build();
     }

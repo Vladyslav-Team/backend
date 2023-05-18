@@ -9,6 +9,7 @@ import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.skill.model.entity.Skill;
+import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
@@ -46,8 +47,8 @@ public class TalentServiceImpl implements TalentService {
             PageRequest pageable = PageRequest.of(page - 1, userProp.userPageSize());
 
             Page<Talent> pageTalents = Optional.ofNullable(skills)
+                    .filter(skill -> !skill.isBlank())
                     .map(skill -> talentRepo.findTalentsBySkills(utilService.parseAllSkills(skill), pageable))
-
                     .orElseGet(() -> talentRepo.findAllByOrderByIdDesc(pageable));
 
             if (pageTalents.isEmpty()) throw new UserNotFoundException();
@@ -121,10 +122,10 @@ public class TalentServiceImpl implements TalentService {
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
-        if (talent.getSkills().size() < 1){
+        if (talent.getSkills().size() < 1) {
             throw new BadRequestException("Talent cannot contain less than 0 Skills");
         }
-        if (!talent.getSkills().contains(skill)){
+        if (!talent.getSkills().contains(skill)) {
             throw new SkillNotFoundException();
         }
         talent.getSkills().remove(skill);
