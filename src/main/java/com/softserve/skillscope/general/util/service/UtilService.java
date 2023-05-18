@@ -36,5 +36,7 @@ public interface UtilService {
 
     Skill findSkillById(Long id);
 
+    Set<Skill> parseAllSkills(String skillsString);
+
     Set<Skill> stringToSkills(Set<String> newSet);
 }

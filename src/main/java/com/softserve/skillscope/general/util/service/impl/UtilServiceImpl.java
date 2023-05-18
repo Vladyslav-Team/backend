@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -126,6 +127,16 @@ public class UtilServiceImpl implements UtilService {
     public Skill findSkillById(Long id) {
         return skillRepo.findById(id)
                 .orElseThrow(SkillNotFoundException::new);
+    }
+    @Override
+    public Set<Skill> parseAllSkills(String text) {
+        Set<String> skills = Set.of(text.split(","));
+
+        return skills.stream()
+                .map(skill -> skillRepo.findByTitleIgnoreCase(skill))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
     }
 
     @Override
