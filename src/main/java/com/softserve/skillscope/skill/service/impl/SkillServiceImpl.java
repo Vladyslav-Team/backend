@@ -18,14 +18,14 @@ public class SkillServiceImpl implements SkillService {
     private UserProperties userProps;
 
     @Override
-    public SkillResponse getAllSkillsWithFilter(java.lang.String text) {
+    public SkillResponse getAllSkillsWithFilter(String text) {
         Set<Skill> similarSkills = getFilteredSkills(text);
         return SkillResponse.builder()
                 .skills(similarSkills)
                 .build();
     }
 
-    public Set<Skill> getFilteredSkills(java.lang.String text) {
+    public Set<Skill> getFilteredSkills(String text) {
         return (text == null) ? skillRepo.findTop4ByOrderByTitleAsc() :
                 skillRepo.findSimilarTitles(transformWord(text))
                         .stream()
