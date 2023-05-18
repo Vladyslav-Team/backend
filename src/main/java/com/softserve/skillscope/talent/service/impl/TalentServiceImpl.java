@@ -104,7 +104,7 @@ public class TalentServiceImpl implements TalentService {
         }
         Set<Skill> newSkills = utilService.stringToSkills(newSkillsRequest.skills());
         talent.getSkills().addAll(newSkills);
-        talent.setSkills(newSkills);
+        talent.setSkills(talent.getSkills());
         talentRepo.save(talent);
 
         return new GeneralResponse(talentId, "Skills successfully added!");

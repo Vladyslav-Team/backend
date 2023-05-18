@@ -51,10 +51,11 @@ public class Proof {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "proof", cascade = CascadeType.ALL)
     private List<Kudos> kudos;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany
     @JoinTable(name = "proof_skill",
             joinColumns = @JoinColumn(name = "proof_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonManagedReference
     private Set<Skill> skills;
 }

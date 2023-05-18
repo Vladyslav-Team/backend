@@ -5,6 +5,8 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Set;
 
@@ -20,11 +22,13 @@ public class Skill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "skills", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "skills")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private Set<Proof> proofs;
 
-    @ManyToMany(mappedBy = "skills", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "skills")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private Set<Talent> talent;
 
