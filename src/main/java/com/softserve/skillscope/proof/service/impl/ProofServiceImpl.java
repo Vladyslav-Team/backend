@@ -23,7 +23,6 @@ import com.softserve.skillscope.proof.model.request.ProofRequest;
 import com.softserve.skillscope.proof.model.response.GeneralProofResponse;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.proof.service.ProofService;
-import com.softserve.skillscope.skill.SkillRepository;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.skill.model.response.SkillResponse;
@@ -50,7 +49,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class ProofServiceImpl implements ProofService {
     private SponsorRepository sponsorRepo;
-    private SkillRepository skillRepo;
     private ProofRepository proofRepo;
     private KudosRepository kudosRepo;
     private UserRepository userRepo;
@@ -247,7 +245,7 @@ public class ProofServiceImpl implements ProofService {
         }
         Set<Skill> newSkills = utilService.stringToSkills(newSkillsRequest.skills());
         proof.getSkills().addAll(newSkills);
-        proof.setSkills(newSkills);
+        proof.setSkills(proof.getSkills());
         proofRepo.save(proof);
 
         return new GeneralResponse(proofId, "Skills successfully added!");
