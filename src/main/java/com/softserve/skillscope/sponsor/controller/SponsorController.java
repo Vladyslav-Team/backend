@@ -2,6 +2,7 @@ package com.softserve.skillscope.sponsor.controller;
 
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.security.payment.model.dto.OrdersResponse;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
@@ -68,5 +69,11 @@ public class SponsorController {
     @Operation(summary = "Check the ability to buy kudos")
     public Boolean canBuyKudos(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.canBuyKudos(sponsorId);
+    }
+    @GetMapping("/sponsors/{sponsor-id}/orders")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get sponsor's orders")
+    public OrdersResponse showAllSponsorsBills(@PathVariable("sponsor-id") Long sponsorId) {
+        return sponsorService.getAllOrders(sponsorId);
     }
 }

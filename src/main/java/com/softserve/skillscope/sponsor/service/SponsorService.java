@@ -2,6 +2,7 @@ package com.softserve.skillscope.sponsor.service;
 
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.security.payment.model.dto.OrdersResponse;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
@@ -18,4 +19,6 @@ public interface SponsorService {
     GeneralResponse buyKudos(Long sponsorId, int kudosAmount);
 
     boolean canBuyKudos(Long id);
+
+    OrdersResponse getAllOrders(Long sponsorId);
 }
