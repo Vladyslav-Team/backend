@@ -3,6 +3,7 @@ package com.softserve.skillscope.sponsor.controller;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.security.payment.model.dto.OrdersResponse;
+import com.softserve.skillscope.security.payment.service.OrdersService;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class SponsorController {
     private SponsorService sponsorService;
     private UserService userService;
+    private OrdersService ordersService;
 
     @GetMapping("/sponsors")
     @ResponseStatus(HttpStatus.OK)
@@ -65,15 +68,20 @@ public class SponsorController {
                                                     @RequestParam("amount") int kudosAmount) {
         return ResponseEntity.status(HttpStatus.OK).body(sponsorService.buyKudos(sponsorId, kudosAmount));
     }
+
     @GetMapping("/sponsors/{sponsor-id}/kudos")
     @Operation(summary = "Check the ability to buy kudos")
     public Boolean canBuyKudos(@PathVariable("sponsor-id") Long sponsorId) {
         return sponsorService.canBuyKudos(sponsorId);
     }
+
     @GetMapping("/sponsors/{sponsor-id}/orders")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get sponsor's orders")
-    public OrdersResponse showAllSponsorsBills(@PathVariable("sponsor-id") Long sponsorId) {
-        return sponsorService.getAllOrders(sponsorId);
+    @Validated
+    public OrdersResponse showAllSponsorsBills(@PathVariable("sponsor-id") Long sponsorId,
+                                               @RequestParam(defaultValue = "1") int page,
+                                               @RequestParam(defaultValue = "4") int size) {
+        return ordersService.getAllOrders(sponsorId, page, size);
     }
 }

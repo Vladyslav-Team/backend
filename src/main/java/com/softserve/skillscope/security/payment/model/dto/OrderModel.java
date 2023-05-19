@@ -11,6 +11,7 @@ public record OrderModel(
         Long id,
         String orderId,
         String status,
+        String link,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
         LocalDate createDate,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")

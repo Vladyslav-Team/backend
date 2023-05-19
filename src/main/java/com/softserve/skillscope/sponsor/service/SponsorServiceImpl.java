@@ -7,7 +7,6 @@ import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
-import com.softserve.skillscope.security.payment.model.dto.OrdersResponse;
 import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
 import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
@@ -147,16 +146,5 @@ public class SponsorServiceImpl implements SponsorService {
 
         return sponsor.getLastPlayedDate() == null ||
                 !sponsor.getLastPlayedDate().equals(serverDate) || orderToUsed;
-    }
-
-    @Override
-    public OrdersResponse getAllOrders(Long sponsorId) {
-        User sponsor = utilService.findUserById(sponsorId);
-        if (utilService.isNotCurrentUser(sponsor)) {
-            throw new ForbiddenRequestException();
-        }
-        return new OrdersResponse(sponsor.getSponsor().getOrders().stream()
-                .map(sponsorMapper::toOrders)
-                .toList());
     }
 }

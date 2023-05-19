@@ -28,6 +28,8 @@ public class Orders {
 
     private String status;
 
+    private String link;
+
     private LocalDate createDate;
 
     private LocalDate updateDate;
