@@ -135,19 +135,6 @@ public class ProofServiceImpl implements ProofService {
 
     @Override
     public KudosResponse showAmountKudosOfProof(Long proofId) {
-//        Proof proof = utilService.findProofById(proofId);
-//        User user = utilService.getCurrentUser();
-//        int totalKudos = proof.getSkills().stream()
-//                .flatMap(skill -> skill.getKudos().stream())
-//                .mapToInt(Kudos::getAmount)
-//                .sum();
-//
-//        int currentUserKudos = proof.getSkills().stream()
-//                .flatMap(skill -> skill.getKudos().stream())
-//                .filter(kudos -> kudos.getSponsor() != null)
-//                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
-//                .mapToInt(Kudos::getAmount)
-//                .sum();
         Proof proof = utilService.findProofById(proofId);
         User user = utilService.getCurrentUser();
         int totalKudos = proof.getKudos().stream()
@@ -271,9 +258,7 @@ public class ProofServiceImpl implements ProofService {
         Proof proof = utilService.findProofById(proofId);
         if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
-        }/* else if (proof.getSkills().size() < 1){
-            throw new BadRequestException("Proof cannot contain less than 0 Skills");
-        }*/
+        }
         if (!proof.getSkills().contains(skill)){
             throw new SkillNotFoundException();
         }

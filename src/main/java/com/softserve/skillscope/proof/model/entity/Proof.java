@@ -48,7 +48,7 @@ public class Proof {
     @NotNull
     private ProofStatus status;
 
-//    //Remove all kudos that connected to this proof.
+    //Remove all kudos that connected to this proof.
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "proof", cascade = CascadeType.ALL)
     private List<Kudos> kudos;
 
