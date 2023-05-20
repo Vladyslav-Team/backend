@@ -115,22 +115,25 @@ public class ProofServiceImpl implements ProofService {
         if (kudosAmountRequest == null || kudosAmountRequest.amount() < 1) {
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
+
         Integer amount = kudosAmountRequest.amount();
         Sponsor sponsor = utilService.getCurrentUser().getSponsor();
-        if (sponsor.getBalance() < amount) {
+        Proof proof = utilService.findProofById(proofId);
+
+        int totalKudos = amount * proof.getSkills().size();
+
+        if (sponsor.getBalance() < totalKudos) {
             throw new BadRequestException("Not enough kudos on the balance sheet");
         }
-        Proof proof = utilService.findProofById(proofId);
-        Kudos kudos = Kudos.builder()
-                .sponsor(sponsor)
-                .amount(amount)
-                .kudosDate(LocalDateTime.now())
-                .proof(proof)
-                .build();
-        sponsor.setBalance(sponsor.getBalance() - amount);
-        kudosRepo.save(kudos);
+
+        proof.getSkills().forEach(skill -> {
+            utilService.checkIfKudosIsPresent(amount, sponsor, proof, skill);
+        });
+
+        sponsor.setBalance(sponsor.getBalance() - totalKudos);
         sponsorRepo.save(sponsor);
-        return new GeneralResponse(proof.getId(), amount + " kudos was added successfully!");
+
+        return new GeneralResponse(proof.getId(), totalKudos + " kudos were added successfully!");
     }
 
     @Override
@@ -148,7 +151,7 @@ public class ProofServiceImpl implements ProofService {
                 .sum();
         return new KudosResponse(proofId, isClicked(proofId), totalKudos, currentUserKudos);
     }
-    
+
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
         Talent creator = utilService.findUserById(talentId).getTalent();
@@ -223,9 +226,9 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-        public SkillResponse getAllSkillByProof(Long proofId){
+    public SkillResponse getAllSkillByProof(Long proofId) {
         Set<Skill> skills = utilService.getSkillsByProofId(proofId);
-        if (skills.size() < 1){
+        if (skills.size() < 1) {
             throw new BadRequestException("Any skills not found");
         }
         return new SkillResponse(proofId, skills);
@@ -240,7 +243,7 @@ public class ProofServiceImpl implements ProofService {
         Proof proof = utilService.findProofById(proofId);
         if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
-        } else if (proof.getSkills().size() >= 4){
+        } else if (proof.getSkills().size() >= 4) {
             throw new BadRequestException("Proof cannot contain more than 4 Skills");
         }
         Set<Skill> newSkills = utilService.stringToSkills(newSkillsRequest.skills());
@@ -259,7 +262,7 @@ public class ProofServiceImpl implements ProofService {
         if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
         }
-        if (!proof.getSkills().contains(skill)){
+        if (!proof.getSkills().contains(skill)) {
             throw new SkillNotFoundException();
         }
         proof.getSkills().remove(skill);

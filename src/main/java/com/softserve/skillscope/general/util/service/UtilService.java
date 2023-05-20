@@ -37,4 +37,6 @@ public interface UtilService {
     Skill findSkillById(Long id);
 
     Set<Skill> stringToSkills(Set<String> newSet);
+
+    void checkIfKudosIsPresent(Integer amount, Sponsor sponsor, Proof proof, Skill skill);
 }

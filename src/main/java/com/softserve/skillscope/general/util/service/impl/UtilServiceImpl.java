@@ -6,6 +6,8 @@ import com.softserve.skillscope.general.handler.exception.generalException.UserN
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.kudos.KudosRepository;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
@@ -24,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -38,6 +41,7 @@ public class UtilServiceImpl implements UtilService {
     private SkillRepository skillRepo;
     private UserProperties userProps;
     private PasswordEncoder passwordEncoder;
+    private KudosRepository kudosRepo;
 
 
     @Override
@@ -131,5 +135,22 @@ public class UtilServiceImpl implements UtilService {
     @Override
     public Set<Skill> stringToSkills(Set<String> newSet) {
         return newSet.stream().map(skillRepo::findByTitle).filter(Objects::nonNull).collect(Collectors.toSet());
+    }
+    @Override
+    public void checkIfKudosIsPresent(Integer amount, Sponsor sponsor, Proof proof, Skill skill) {
+        Kudos kudos = kudosRepo.findBySponsorAndProofAndSkill(sponsor, proof, skill);
+        if (kudos != null) {
+            kudos.setAmount(kudos.getAmount() + amount);
+            kudos.setKudosDate(LocalDateTime.now());
+        } else {
+            kudos = Kudos.builder()
+                    .sponsor(sponsor)
+                    .amount(amount)
+                    .kudosDate(LocalDateTime.now())
+                    .proof(proof)
+                    .skill(skill)
+                    .build();
+        }
+        kudosRepo.save(kudos);
     }
 }
