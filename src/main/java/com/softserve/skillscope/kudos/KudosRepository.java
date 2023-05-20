@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Set;
 
 public interface KudosRepository extends JpaRepository<Kudos, Long> {
-    Set<Kudos> findBySponsorAndProof(Sponsor sponsor, Proof proof);
+
+    Set<Kudos> findBySponsorAndProof(Sponsor sponsor, Proof proofId);
 }

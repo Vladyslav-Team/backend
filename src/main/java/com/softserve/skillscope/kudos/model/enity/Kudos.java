@@ -2,6 +2,7 @@ package com.softserve.skillscope.kudos.model.enity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +31,11 @@ public class Kudos {
     @JoinColumn(name = "proof_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Proof proof;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "skill_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Skill skill;
 
     private Integer amount;
 
