@@ -6,6 +6,7 @@ import com.softserve.skillscope.general.handler.exception.generalException.UserN
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
@@ -131,5 +132,10 @@ public class UtilServiceImpl implements UtilService {
     @Override
     public Set<Skill> stringToSkills(Set<String> newSet) {
         return newSet.stream().map(skillRepo::findByTitle).filter(Objects::nonNull).collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isCurrentKudos(Kudos kudos, User user){
+        return kudos.getSponsor().getId().equals(user.getId());
     }
 }

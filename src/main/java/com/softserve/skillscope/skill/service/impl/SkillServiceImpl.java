@@ -59,9 +59,13 @@ public class SkillServiceImpl implements SkillService {
         int currentUserKudos = skill.getKudos().stream()
                 .filter(kudos -> Objects.equals(kudos.getProof(), proof))
                 .filter(kudos -> kudos.getSponsor() != null)
-                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
+                .filter(kudos -> user != null && utilService.isCurrentKudos(kudos, user))
                 .mapToInt(Kudos::getAmount)
                 .sum();
-        return new KudosResponse(proofId, false, totalKudos, currentUserKudos);
+        return KudosResponse.builder()
+                .proofId(proofId)
+                .amountOfKudos(totalKudos)
+                .amountOfKudosCurrentUser(currentUserKudos)
+                .build();
     }
 }

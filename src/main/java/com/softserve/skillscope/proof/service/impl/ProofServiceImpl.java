@@ -143,7 +143,7 @@ public class ProofServiceImpl implements ProofService {
 
         int currentUserKudos = proof.getKudos().stream()
                 .filter(kudos -> kudos.getSponsor() != null)
-                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
+                .filter(kudos -> user != null && utilService.isCurrentKudos(kudos, user))
                 .mapToInt(Kudos::getAmount)
                 .sum();
         return new KudosResponse(proofId, isClicked(proofId), totalKudos, currentUserKudos);
