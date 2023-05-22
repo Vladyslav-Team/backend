@@ -1,6 +1,7 @@
 package com.softserve.skillscope.skill.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -37,6 +38,7 @@ public class Skill {
 
     //Remove all kudos that connected to this skill.
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "skill", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Kudos> kudos;
 
     private String title;
