@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,25 +45,23 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public KudosResponse showAmountKudosOfSkill(Long proofId, Long skillId) {
+        User user = utilService.getCurrentUser();
         Proof proof = utilService.findProofById(proofId);
         Skill skill = utilService.findSkillById(skillId);
         if (!proof.getSkills().contains(skill)){
             throw new SkillNotFoundException();
         }
-        User user = utilService.getCurrentUser();
         int totalKudos = skill.getKudos().stream()
+                .filter(kudos -> Objects.equals(kudos.getProof(), proof))
                 .mapToInt(Kudos::getAmount)
                 .sum();
 
         int currentUserKudos = skill.getKudos().stream()
+                .filter(kudos -> Objects.equals(kudos.getProof(), proof))
                 .filter(kudos -> kudos.getSponsor() != null)
                 .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
                 .mapToInt(Kudos::getAmount)
                 .sum();
-        return KudosResponse.builder()
-                .proofId(proofId)
-                .amountOfKudos(totalKudos)
-                .amountOfKudosCurrentUser(currentUserKudos)
-                .build();
+        return new KudosResponse(proofId, false, totalKudos, currentUserKudos);
     }
 }
