@@ -115,22 +115,29 @@ public class ProofServiceImpl implements ProofService {
         if (kudosAmountRequest == null || kudosAmountRequest.amount() < 1) {
             throw new BadRequestException("Amount of Kudos must not be less than 1!");
         }
+
         Integer amount = kudosAmountRequest.amount();
         Sponsor sponsor = utilService.getCurrentUser().getSponsor();
-        if (sponsor.getBalance() < amount) {
+        Proof proof = utilService.findProofById(proofId);
+        int skillsOnProof = proof.getSkills().size();
+
+        if (skillsOnProof < 1) {
+            throw new SkillNotFoundException("Unable to kudos the proof since no skills were found.");
+        }
+        int totalKudos = amount * skillsOnProof;
+
+        if (sponsor.getBalance() < totalKudos) {
             throw new BadRequestException("Not enough kudos on the balance sheet");
         }
-        Proof proof = utilService.findProofById(proofId);
-        Kudos kudos = Kudos.builder()
-                .sponsor(sponsor)
-                .amount(amount)
-                .kudosDate(LocalDateTime.now())
-                .proof(proof)
-                .build();
-        sponsor.setBalance(sponsor.getBalance() - amount);
-        kudosRepo.save(kudos);
+
+        proof.getSkills().forEach(skill -> {
+            utilService.checkIfKudosIsPresent(amount, sponsor, proof, skill);
+        });
+
+        sponsor.setBalance(sponsor.getBalance() - totalKudos);
         sponsorRepo.save(sponsor);
-        return new GeneralResponse(proof.getId(), amount + " kudos was added successfully!");
+
+        return new GeneralResponse(proof.getId(), totalKudos + " kudos were added successfully!");
     }
 
     @Override
@@ -143,12 +150,12 @@ public class ProofServiceImpl implements ProofService {
 
         int currentUserKudos = proof.getKudos().stream()
                 .filter(kudos -> kudos.getSponsor() != null)
-                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
+                .filter(kudos -> user != null && utilService.isCurrentKudos(kudos, user))
                 .mapToInt(Kudos::getAmount)
                 .sum();
         return new KudosResponse(proofId, isClicked(proofId), totalKudos, currentUserKudos);
     }
-    
+
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
         Talent creator = utilService.findUserById(talentId).getTalent();
