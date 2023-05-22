@@ -119,8 +119,12 @@ public class ProofServiceImpl implements ProofService {
         Integer amount = kudosAmountRequest.amount();
         Sponsor sponsor = utilService.getCurrentUser().getSponsor();
         Proof proof = utilService.findProofById(proofId);
+        int skillsOnProof = proof.getSkills().size();
 
-        int totalKudos = amount * proof.getSkills().size();
+        if (skillsOnProof < 1) {
+            throw new SkillNotFoundException("Unable to kudos the proof since no skills were found.");
+        }
+        int totalKudos = amount * skillsOnProof;
 
         if (sponsor.getBalance() < totalKudos) {
             throw new BadRequestException("Not enough kudos on the balance sheet");
