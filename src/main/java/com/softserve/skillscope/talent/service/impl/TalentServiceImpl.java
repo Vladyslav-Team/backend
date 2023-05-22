@@ -48,7 +48,10 @@ public class TalentServiceImpl implements TalentService {
 
             Page<Talent> pageTalents = Optional.ofNullable(skills)
                     .filter(skill -> !skill.isBlank())
-                    .map(skill -> talentRepo.findTalentsBySkills(utilService.parseAllSkills(skill), pageable))
+                    .map(skill -> {
+                        Set<Skill> skillSet = utilService.parseAllSkills(skill);
+                        return talentRepo.findTalentsBySkills(skillSet, skillSet.size(), pageable);
+                    })
                     .orElseGet(() -> talentRepo.findAllByOrderByIdDesc(pageable));
 
             if (pageTalents.isEmpty()) throw new UserNotFoundException();

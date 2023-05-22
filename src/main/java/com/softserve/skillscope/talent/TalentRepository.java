@@ -13,6 +13,11 @@ import java.util.Set;
 public interface TalentRepository extends JpaRepository<Talent, Long> {
     Page<Talent> findAllByOrderByIdDesc(Pageable pageable);
 
-    @Query(value = "SELECT t FROM Talent t INNER JOIN t.skills s WHERE s IN :skills")
-    Page<Talent> findTalentsBySkills(@Param("skills") Set<Skill> skills, Pageable pageable);
+    @Query("SELECT t FROM Talent t INNER JOIN t.skills s WHERE s IN :skills " +
+            "GROUP BY t HAVING COUNT(DISTINCT s) = :numSkills")
+    Page<Talent> findTalentsBySkills(
+            @Param("skills") Set<Skill> skills,
+            @Param("numSkills") int numSkills,
+            Pageable pageable
+    );
 }
