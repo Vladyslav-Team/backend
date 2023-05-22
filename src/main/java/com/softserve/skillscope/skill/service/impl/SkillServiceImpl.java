@@ -17,15 +17,14 @@ import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.user.model.User;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class SkillServiceImpl implements SkillService {
     private SkillRepository skillRepo;
     private UtilService utilService;
@@ -34,14 +33,18 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public SkillResponse getAllSkillsWithFilter(String text) {
-        Set<Skill> similarSkills = (text == null) ? skillRepo.findTop4ByOrderByTitleAsc() :
+        Set<Skill> similarSkills = getFilteredSkills(text);
+        return SkillResponse.builder()
+                .skills(similarSkills)
+                .build();
+    }
+
+    public Set<Skill> getFilteredSkills(String text) {
+        return (text == null) ? skillRepo.findTop4ByOrderByTitleAsc() :
                 skillRepo.findSimilarTitles(transformWord(text))
                         .stream()
                         .limit(4)
                         .collect(Collectors.toSet());
-        return SkillResponse.builder()
-                .skills(similarSkills)
-                .build();
     }
 
     private String transformWord(String word) {
@@ -52,19 +55,21 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     public KudosResponse showAmountKudosOfSkill(Long proofId, Long skillId) {
+        User user = utilService.getCurrentUser();
         Proof proof = utilService.findProofById(proofId);
         Skill skill = utilService.findSkillById(skillId);
         if (!proof.getSkills().contains(skill)) {
             throw new SkillNotFoundException();
         }
-        User user = utilService.getCurrentUser();
         int totalKudos = skill.getKudos().stream()
+                .filter(kudos -> Objects.equals(kudos.getProof(), proof))
                 .mapToInt(Kudos::getAmount)
                 .sum();
 
         int currentUserKudos = skill.getKudos().stream()
+                .filter(kudos -> Objects.equals(kudos.getProof(), proof))
                 .filter(kudos -> kudos.getSponsor() != null)
-                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
+                .filter(kudos -> user != null && utilService.isCurrentKudos(kudos, user))
                 .mapToInt(Kudos::getAmount)
                 .sum();
         return KudosResponse.builder()

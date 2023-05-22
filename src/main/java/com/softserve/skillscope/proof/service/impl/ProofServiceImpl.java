@@ -150,7 +150,7 @@ public class ProofServiceImpl implements ProofService {
 
         int currentUserKudos = proof.getKudos().stream()
                 .filter(kudos -> kudos.getSponsor() != null)
-                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
+                .filter(kudos -> user != null && utilService.isCurrentKudos(kudos, user))
                 .mapToInt(Kudos::getAmount)
                 .sum();
         return new KudosResponse(proofId, isClicked(proofId), totalKudos, currentUserKudos);
@@ -230,9 +230,9 @@ public class ProofServiceImpl implements ProofService {
     }
 
     @Override
-    public SkillResponse getAllSkillByProof(Long proofId) {
+        public SkillResponse getAllSkillByProof(Long proofId){
         Set<Skill> skills = utilService.getSkillsByProofId(proofId);
-        if (skills.size() < 1) {
+        if (skills.size() < 0){
             throw new BadRequestException("Any skills not found");
         }
         return new SkillResponse(proofId, skills);
@@ -247,7 +247,7 @@ public class ProofServiceImpl implements ProofService {
         Proof proof = utilService.findProofById(proofId);
         if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
-        } else if (proof.getSkills().size() >= 4) {
+        } else if (proof.getSkills().size() >= 4){
             throw new BadRequestException("Proof cannot contain more than 4 Skills");
         }
         Set<Skill> newSkills = utilService.stringToSkills(newSkillsRequest.skills());
@@ -266,7 +266,7 @@ public class ProofServiceImpl implements ProofService {
         if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
         }
-        if (!proof.getSkills().contains(skill)) {
+        if (!proof.getSkills().contains(skill)){
             throw new SkillNotFoundException();
         }
         proof.getSkills().remove(skill);

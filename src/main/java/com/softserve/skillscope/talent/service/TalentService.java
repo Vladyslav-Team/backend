@@ -9,7 +9,7 @@ import com.softserve.skillscope.general.model.ImageResponse;
 
 
 public interface TalentService {
-    GeneralTalentResponse getAllTalentsByPage(int page);
+    GeneralTalentResponse getAllTalentsByPage(int page, String skills);
     TalentProfile getTalentProfile(Long talentId);
 
     GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate);

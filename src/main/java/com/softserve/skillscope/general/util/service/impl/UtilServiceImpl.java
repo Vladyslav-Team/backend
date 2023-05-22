@@ -6,6 +6,7 @@ import com.softserve.skillscope.general.handler.exception.generalException.UserN
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.kudos.KudosRepository;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -131,6 +133,16 @@ public class UtilServiceImpl implements UtilService {
         return skillRepo.findById(id)
                 .orElseThrow(SkillNotFoundException::new);
     }
+    @Override
+    public Set<Skill> parseAllSkills(String text) {
+        Set<String> skills = Set.of(text.split(","));
+
+        return skills.stream()
+                .map(skill -> skillRepo.findByTitleIgnoreCase(skill))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+    }
 
     @Override
     public Set<Skill> stringToSkills(Set<String> newSet) {
@@ -152,5 +164,10 @@ public class UtilServiceImpl implements UtilService {
                     .build();
         }
         kudosRepo.save(kudos);
+    }
+
+    @Override
+    public boolean isCurrentKudos(Kudos kudos, User user){
+        return kudos.getSponsor().getId().equals(user.getId());
     }
 }

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -41,10 +42,15 @@ public class TalentServiceImpl implements TalentService {
     private UtilService utilService;
 
     @Override
-    public GeneralTalentResponse getAllTalentsByPage(int page) {
+    public GeneralTalentResponse getAllTalentsByPage(int page, String skills) {
         try {
-            Page<Talent> pageTalents =
-                    talentRepo.findAllByOrderByIdDesc(PageRequest.of(page - 1, userProp.userPageSize()));
+            PageRequest pageable = PageRequest.of(page - 1, userProp.userPageSize());
+
+            Page<Talent> pageTalents = Optional.ofNullable(skills)
+                    .filter(skill -> !skill.isBlank())
+                    .map(skill -> talentRepo.findTalentsBySkills(utilService.parseAllSkills(skill), pageable))
+                    .orElseGet(() -> talentRepo.findAllByOrderByIdDesc(pageable));
+
             if (pageTalents.isEmpty()) throw new UserNotFoundException();
 
             int totalPages = pageTalents.getTotalPages();
@@ -52,7 +58,6 @@ public class TalentServiceImpl implements TalentService {
             if (page > totalPages) {
                 throw new BadRequestException("Page index must not be bigger than expected");
             }
-
             List<GeneralTalent> talents = new ArrayList<>(pageTalents.stream()
                     .map(talentMapper::toGeneralTalent)
                     .toList());
@@ -117,10 +122,10 @@ public class TalentServiceImpl implements TalentService {
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
-        if (talent.getSkills().size() < 1){
+        if (talent.getSkills().size() < 1) {
             throw new BadRequestException("Talent cannot contain less than 0 Skills");
         }
-        if (!talent.getSkills().contains(skill)){
+        if (!talent.getSkills().contains(skill)) {
             throw new SkillNotFoundException();
         }
         talent.getSkills().remove(skill);
