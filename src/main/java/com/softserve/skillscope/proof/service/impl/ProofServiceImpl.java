@@ -143,7 +143,7 @@ public class ProofServiceImpl implements ProofService {
 
         int currentUserKudos = proof.getKudos().stream()
                 .filter(kudos -> kudos.getSponsor() != null)
-                .filter(kudos -> user != null && kudos.getSponsor().getId().equals(user.getId()))
+                .filter(kudos -> user != null && utilService.isCurrentKudos(kudos, user))
                 .mapToInt(Kudos::getAmount)
                 .sum();
         return new KudosResponse(proofId, isClicked(proofId), totalKudos, currentUserKudos);
@@ -258,8 +258,6 @@ public class ProofServiceImpl implements ProofService {
         Proof proof = utilService.findProofById(proofId);
         if (proof.getStatus() != proofProp.defaultType()) {
             throw new ProofAlreadyPublishedException();
-        } else if (proof.getSkills().size() < 1){
-            throw new BadRequestException("Proof cannot contain less than 0 Skills");
         }
         if (!proof.getSkills().contains(skill)){
             throw new SkillNotFoundException();

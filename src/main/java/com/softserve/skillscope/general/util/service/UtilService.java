@@ -1,5 +1,6 @@
 package com.softserve.skillscope.general.util.service;
 
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
@@ -39,4 +40,6 @@ public interface UtilService {
     Set<Skill> parseAllSkills(String skillsString);
 
     Set<Skill> stringToSkills(Set<String> newSet);
+
+    boolean isCurrentKudos(Kudos kudos, User user);
 }
