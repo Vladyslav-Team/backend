@@ -2,6 +2,8 @@ package com.softserve.skillscope.general.mapper.sponsor.impl;
 
 import com.softserve.skillscope.general.mapper.sponsor.SponsorMapper;
 import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.security.payment.model.dto.OrderModel;
+import com.softserve.skillscope.security.payment.model.entity.Orders;
 import com.softserve.skillscope.sponsor.model.dto.GeneralSponsor;
 import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
@@ -42,5 +44,17 @@ public class SponsorMapperImpl implements SponsorMapper {
     @Override
     public ImageResponse toSponsorImage(Sponsor sponsor) {
         return new ImageResponse(sponsor.getImage());
+    }
+
+    @Override
+    public OrderModel toOrders(Orders orders) {
+        return OrderModel.builder()
+                .id(orders.getId())
+                .orderId(orders.getOrderId())
+                .status(orders.getStatus())
+                .createDate(orders.getCreateDate())
+                .updateDate(orders.getUpdateDate())
+                .activation(orders.getActivation())
+                .build();
     }
 }
