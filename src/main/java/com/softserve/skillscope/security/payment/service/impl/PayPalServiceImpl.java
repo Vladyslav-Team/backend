@@ -60,6 +60,7 @@ public class PayPalServiceImpl implements PayPalService {
                     .status(order.status())
                     .createDate(LocalDate.now())
                     .activation(OrderStatus.PAYER_ACTION_REQUIRED)
+                    .link(redirectUrl)
                     .build();
             ordersRepo.save(saveOrder);
             return new PaymentOrder(OrderStatus.SUCCESS.toString(), order.id(), redirectUrl);
@@ -84,6 +85,7 @@ public class PayPalServiceImpl implements PayPalService {
                 oldOrder.setActivation(OrderStatus.READY_TO_USE);
                 oldOrder.setStatus(OrderStatus.COMPLETED.name());
                 oldOrder.setUpdateDate(LocalDate.now());
+                oldOrder.setLink(OrderStatus.SUCCESS.toString());
                 ordersRepo.save(oldOrder);
                 return new CompletedOrder(OrderStatus.SUCCESS.toString(), token);
             }

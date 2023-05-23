@@ -42,4 +42,6 @@ public interface UtilService {
     Set<Skill> stringToSkills(Set<String> newSet);
 
     boolean isCurrentKudos(Kudos kudos, User user);
+
+    void checkIfKudosIsPresent(Integer amount, Sponsor sponsor, Proof proof, Skill skill);
 }
