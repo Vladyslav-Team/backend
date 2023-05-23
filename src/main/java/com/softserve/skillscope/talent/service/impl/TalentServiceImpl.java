@@ -8,8 +8,10 @@ import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
+import com.softserve.skillscope.skill.model.response.MostKudosedSkillsResponse;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
@@ -20,7 +22,6 @@ import com.softserve.skillscope.talent.service.TalentService;
 import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +34,6 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class TalentServiceImpl implements TalentService {
     private UserProperties userProp;
     private TalentRepository talentRepo;
@@ -136,6 +136,33 @@ public class TalentServiceImpl implements TalentService {
         return new GeneralResponse(talentId, "Skill " + skill.getTitle() + " successfully deleted!");
     }
 
+    @Override
+    public MostKudosedSkillsResponse getOwnMostKudosedSkills(Long talentId) {
+
+        Talent talent = utilService.findUserById(talentId).getTalent();
+        if (utilService.isNotCurrentUser(talent.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+
+        int maxTotalAmount = talent.getProofs().stream()
+                .flatMap(proof -> proof.getSkills().stream())
+                .mapToInt(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount)
+                        .sum())
+                .max().getAsInt();
+
+        return MostKudosedSkillsResponse.builder()
+                .mostKudosedSkills(talent.getProofs().stream()
+                .flatMap(proof -> proof.getSkills().stream())
+                .filter(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount).sum() !=  0)
+                .filter(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount).sum() == maxTotalAmount)
+                .toList()).build();
+    }
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
