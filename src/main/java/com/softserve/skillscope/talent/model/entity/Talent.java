@@ -6,6 +6,7 @@ import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.user.model.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -68,4 +69,7 @@ public class Talent {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonManagedReference
     private Set<Skill> skills;
+
+    @Min(0)
+    Integer balance;
 }

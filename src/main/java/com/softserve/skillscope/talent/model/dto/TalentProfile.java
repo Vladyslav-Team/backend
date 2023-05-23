@@ -19,6 +19,7 @@ public record TalentProfile(
         @NotBlank int age,
         @NotBlank String email,
         @NotBlank String phone,
-        @NotBlank Set<Skill> skills
+        @NotBlank Set<Skill> skills,
+        @NotBlank Integer balance
 ) {
 }

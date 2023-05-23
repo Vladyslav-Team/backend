@@ -2,6 +2,9 @@ package com.softserve.skillscope.general.mapper.talent.impl;
 
 import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.general.model.ImageResponse;
+import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
+import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -14,6 +17,8 @@ import java.time.Period;
 @Component
 @AllArgsConstructor
 public class TalentMapperImpl implements TalentMapper {
+
+    private UtilService utilService;
 
     @Override
     public GeneralTalent toGeneralTalent(Talent talent) {
@@ -44,11 +49,20 @@ public class TalentMapperImpl implements TalentMapper {
                 .email(talent.getUser().getEmail())
                 .phone(talent.getPhone())
                 .skills(talent.getSkills())
+                .balance(calculateTotalKudosAmount4CurrentUser(talent))
                 .build();
     }
 
     @Override
     public ImageResponse toTalentImage(Talent talent) {
         return new ImageResponse(talent.getImage());
+    }
+
+    private Integer calculateTotalKudosAmount4CurrentUser(Talent talent) {
+        return utilService.isNotCurrentUser(talent.getUser()) ?
+                null :
+                talent.getProofs().stream()
+                        .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
+                        .flatMapToInt(proof -> proof.getKudos().stream().mapToInt(Kudos::getAmount)).sum();
     }
 }
