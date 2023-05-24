@@ -4,7 +4,6 @@ import com.softserve.skillscope.general.handler.exception.generalException.BadRe
 import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
-import com.softserve.skillscope.kudos.KudosRepository;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.kudos.model.request.KudosAmountRequest;
 import com.softserve.skillscope.kudos.model.response.KudosResponse;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 public class SkillServiceImpl implements SkillService {
     private SkillRepository skillRepo;
     private UtilService utilService;
-    private KudosRepository kudosRepo;
     private SponsorRepository sponsorRepo;
 
     @Override
