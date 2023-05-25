@@ -88,4 +88,11 @@ public class TalentController {
     public TalentStatsResponse showOwnMostKudosProofs(@PathVariable("talent-id") Long talentId) {
         return talentService.showOwnMostKudosProofs(talentId);
     }
+
+    @GetMapping("/talents/{talent-id}/stats/skills")
+    @Operation(summary = "Get the most kudosed skill")
+    @ResponseStatus(HttpStatus.OK)
+    public TalentStatsResponse getOwnMostKudosedSkills(@PathVariable("talent-id") Long talentId) {
+        return talentService.getOwnMostKudosedSkills(talentId);
+    }
 }

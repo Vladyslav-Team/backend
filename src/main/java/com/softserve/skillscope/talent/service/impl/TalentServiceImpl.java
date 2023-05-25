@@ -162,6 +162,37 @@ public class TalentServiceImpl implements TalentService {
                 .toList());
     }
 
+    @Override
+    public TalentStatsResponse getOwnMostKudosedSkills(Long talentId) {
+
+        Talent talent = utilService.findTalentById(talentId);
+        if (utilService.isNotCurrentUser(talent.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+
+        int maxTotalAmount = talent.getProofs().stream()
+                .flatMap(proof -> proof.getSkills().stream())
+                .mapToInt(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount)
+                        .sum())
+                .max().getAsInt();
+
+        return TalentStatsResponse.builder()
+                .mostKudosedList(talent.getProofs().stream()
+                        .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
+                        .flatMap(proof -> proof.getSkills().stream())
+                        .filter(skill -> skill.getKudos().stream()
+                                .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                                .mapToInt(Kudos::getAmount).sum() != 0)
+                        .filter(skill -> skill.getKudos().stream()
+                                .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                                .mapToInt(Kudos::getAmount).sum() == maxTotalAmount)
+                        .map(Skill::getId)
+                        .toList()).build();
+    }
+
+
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
