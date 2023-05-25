@@ -6,6 +6,7 @@ import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
+import com.softserve.skillscope.talent.model.response.TalentStatsResponse;
 import com.softserve.skillscope.talent.service.TalentService;
 import com.softserve.skillscope.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,5 +80,19 @@ public class TalentController {
     ResponseEntity<GeneralResponse> deleteSkillFromTalentProfile(@PathVariable("talent-id") Long talentId,
                                                                  @PathVariable("skill-id") Long skillId) {
         return ResponseEntity.status(HttpStatus.OK).body(talentService.deleteSkillFromTalentProfile(talentId, skillId));
+    }
+    @GetMapping("/talents/{talent-id}/stats/proofs")
+    @Operation(summary = "Show the Talent's Most Kudos Proofs")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('TALENT')")
+    public TalentStatsResponse showOwnMostKudosProofs(@PathVariable("talent-id") Long talentId) {
+        return talentService.showOwnMostKudosProofs(talentId);
+    }
+
+    @GetMapping("/talents/{talent-id}/stats/skills")
+    @Operation(summary = "Get the most kudosed skill")
+    @ResponseStatus(HttpStatus.OK)
+    public TalentStatsResponse getOwnMostKudosedSkills(@PathVariable("talent-id") Long talentId) {
+        return talentService.getOwnMostKudosedSkills(talentId);
     }
 }

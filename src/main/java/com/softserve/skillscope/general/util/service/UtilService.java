@@ -13,7 +13,9 @@ import com.softserve.skillscope.user.model.User;
 import java.util.Set;
 
 public interface UtilService {
-    User findUserById(Long id);
+    Talent findTalentById(Long id);
+
+    Sponsor findSponsorById(Long id);
 
     User findUserByEmail(String name);
 

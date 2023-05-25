@@ -14,7 +14,6 @@ import com.softserve.skillscope.sponsor.model.dto.SponsorProfile;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import com.softserve.skillscope.sponsor.model.request.SponsorEditRequest;
 import com.softserve.skillscope.sponsor.model.respone.GeneralSponsorResponse;
-import com.softserve.skillscope.user.model.User;
 import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -69,22 +68,22 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Override
     public SponsorProfile getSponsorProfile(Long sponsorId) {
-        User sponsor = utilService.findUserById(sponsorId);
-        if (utilService.isNotCurrentUser(sponsor)) {
+        Sponsor sponsor = utilService.findSponsorById(sponsorId);
+        if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
-        return sponsorMapper.toSponsorProfile(sponsor.getSponsor());
+        return sponsorMapper.toSponsorProfile(sponsor);
     }
 
     @Override
     public ImageResponse getSponsorImage(Long sponsorId) {
-        return sponsorMapper.toSponsorImage(utilService.findUserById(sponsorId).getSponsor());
+        return sponsorMapper.toSponsorImage(utilService.findSponsorById(sponsorId));
     }
 
     @Transactional
     @Override
     public GeneralResponse editSponsorProfile(Long sponsorId, SponsorEditRequest sponsorToUpdate) {
-        Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
+        Sponsor sponsor = utilService.findSponsorById(sponsorId);
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -95,7 +94,7 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Override
     public GeneralResponse buyKudos(Long sponsorId, int kudosAmount) {
-        Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
+        Sponsor sponsor = utilService.findSponsorById(sponsorId);
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -137,7 +136,7 @@ public class SponsorServiceImpl implements SponsorService {
 
     @Override
     public boolean canBuyKudos(Long id) {
-        Sponsor sponsor = utilService.findUserById(id).getSponsor();
+        Sponsor sponsor = utilService.findSponsorById(id);
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }

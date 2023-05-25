@@ -8,6 +8,9 @@ import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
+import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.talent.TalentRepository;
@@ -16,6 +19,7 @@ import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
+import com.softserve.skillscope.talent.model.response.TalentStatsResponse;
 import com.softserve.skillscope.talent.service.TalentService;
 import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
@@ -79,12 +83,12 @@ public class TalentServiceImpl implements TalentService {
 
     @Override
     public TalentProfile getTalentProfile(Long talentId) {
-        return talentMapper.toTalentProfile(utilService.findUserById(talentId).getTalent());
+        return talentMapper.toTalentProfile(utilService.findTalentById(talentId));
     }
     @Transactional
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -100,12 +104,12 @@ public class TalentServiceImpl implements TalentService {
      */
     @Override
     public ImageResponse getTalentImage(Long talentId) {
-        return talentMapper.toTalentImage(utilService.findUserById(talentId).getTalent());
+        return talentMapper.toTalentImage(utilService.findTalentById(talentId));
     }
 
     @Override
     public GeneralResponse addSkillsOnTalentProfile(Long talentId, AddSkillsRequest newSkillsRequest) {
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -120,7 +124,7 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public GeneralResponse deleteSkillFromTalentProfile(Long talentId, Long skillId) {
         Skill skill = utilService.findSkillById(skillId);
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -134,6 +138,59 @@ public class TalentServiceImpl implements TalentService {
         talentRepo.save(talent);
         return new GeneralResponse(talentId, "Skill " + skill.getTitle() + " successfully deleted!");
     }
+
+    @Override
+    public TalentStatsResponse showOwnMostKudosProofs(Long talentId) {
+        Talent talent = utilService.findTalentById(talentId);
+        if (utilService.isNotCurrentUser(talent.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+
+        int maxTotalAmount = talent.getProofs().stream()
+                .mapToInt(proof -> proof.getKudos().stream()
+                        .mapToInt(Kudos::getAmount)
+                        .sum())
+                .max().getAsInt();
+
+        return new TalentStatsResponse(talent.getProofs().stream()
+                .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
+                .filter(proof -> proof.getKudos().stream()
+                        .mapToInt(Kudos::getAmount)
+                        .sum() == maxTotalAmount)
+                .map(Proof::getId)
+                .toList());
+    }
+
+    @Override
+    public TalentStatsResponse getOwnMostKudosedSkills(Long talentId) {
+
+        Talent talent = utilService.findTalentById(talentId);
+        if (utilService.isNotCurrentUser(talent.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+
+        int maxTotalAmount = talent.getProofs().stream()
+                .flatMap(proof -> proof.getSkills().stream())
+                .mapToInt(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount)
+                        .sum())
+                .max().getAsInt();
+
+        return TalentStatsResponse.builder()
+                .mostKudosedList(talent.getProofs().stream()
+                        .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
+                        .flatMap(proof -> proof.getSkills().stream())
+                        .filter(skill -> skill.getKudos().stream()
+                                .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                                .mapToInt(Kudos::getAmount).sum() != 0)
+                        .filter(skill -> skill.getKudos().stream()
+                                .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                                .mapToInt(Kudos::getAmount).sum() == maxTotalAmount)
+                        .map(Skill::getId)
+                        .toList()).build();
+    }
+
 
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.

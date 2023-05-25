@@ -6,6 +6,7 @@ import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
+import com.softserve.skillscope.talent.model.response.TalentStatsResponse;
 
 
 public interface TalentService {
@@ -20,4 +21,7 @@ public interface TalentService {
 
     GeneralResponse deleteSkillFromTalentProfile(Long talentId, Long skillId);
 
+    TalentStatsResponse getOwnMostKudosedSkills(Long talentId);
+
+    TalentStatsResponse showOwnMostKudosProofs(Long talentId);
 }

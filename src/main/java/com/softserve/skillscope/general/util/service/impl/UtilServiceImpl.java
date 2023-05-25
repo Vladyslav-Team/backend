@@ -6,8 +6,8 @@ import com.softserve.skillscope.general.handler.exception.generalException.UserN
 import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.util.service.UtilService;
-import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.kudos.KudosRepository;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.proof.model.response.ProofStatus;
@@ -15,7 +15,9 @@ import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
 import com.softserve.skillscope.skill.SkillRepository;
 import com.softserve.skillscope.skill.model.dto.SkillWithVerification;
 import com.softserve.skillscope.skill.model.entity.Skill;
+import com.softserve.skillscope.sponsor.SponsorRepository;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
@@ -41,6 +43,8 @@ import java.util.stream.Collectors;
 public class UtilServiceImpl implements UtilService {
 
     private UserRepository userRepo;
+    private TalentRepository talentRepo;
+    private SponsorRepository sponsorRepo;
     private ProofRepository proofRepo;
     private SkillRepository skillRepo;
     private UserProperties userProps;
@@ -49,9 +53,13 @@ public class UtilServiceImpl implements UtilService {
 
 
     @Override
-    public User findUserById(Long id) {
-        return userRepo.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+    public Talent findTalentById(Long id){
+        return talentRepo.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public Sponsor findSponsorById(Long id){
+        return sponsorRepo.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
     @Override
