@@ -21,7 +21,7 @@
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.junit.jupiter.api.Assertions.assertTrue;
 //
-//FIXME @SEM change foreign keys to sponsor from Talent later, so test will work
+////FIXME @SEM change foreign keys to sponsor from Talent later, so test will work
 //@DataJpaTest
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 //@Transactional
