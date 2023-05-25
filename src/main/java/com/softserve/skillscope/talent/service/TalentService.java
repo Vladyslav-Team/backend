@@ -8,6 +8,7 @@ import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentStatsResponse;
 
+
 public interface TalentService {
     GeneralTalentResponse getAllTalentsByPage(int page, String skills);
     TalentProfile getTalentProfile(Long talentId);
@@ -21,4 +22,6 @@ public interface TalentService {
     GeneralResponse deleteSkillFromTalentProfile(Long talentId, Long skillId);
 
     TalentStatsResponse getOwnMostKudosedSkills(Long talentId);
+
+    TalentStatsResponse showOwnMostKudosProofs(Long talentId);
 }
