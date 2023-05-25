@@ -3,7 +3,6 @@ package com.softserve.skillscope.talent.service.impl;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
-import com.softserve.skillscope.general.handler.exception.proofException.ProofNotFoundException;
 import com.softserve.skillscope.general.handler.exception.skillException.SkillNotFoundException;
 import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
@@ -11,6 +10,7 @@ import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.talent.TalentRepository;
@@ -140,7 +140,6 @@ public class TalentServiceImpl implements TalentService {
         return new GeneralResponse(talentId, "Skill " + skill.getTitle() + " successfully deleted!");
     }
 
-    //TODO handle only published proofs
     @Override
     public TalentStatsResponse showOwnMostKudosProofs(Long talentId) {
         Talent talent = utilService.findUserById(talentId).getTalent();
@@ -152,11 +151,10 @@ public class TalentServiceImpl implements TalentService {
                 .mapToInt(proof -> proof.getKudos().stream()
                         .mapToInt(Kudos::getAmount)
                         .sum())
-                .max()
-                //TODO maybe test and change the exception since it doesn't throw it
-                .orElseThrow(ProofNotFoundException::new);
+                .max().getAsInt();
 
         return new TalentStatsResponse(talent.getProofs().stream()
+                .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
                 .filter(proof -> proof.getKudos().stream()
                         .mapToInt(Kudos::getAmount)
                         .sum() == maxTotalAmount)
