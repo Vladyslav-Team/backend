@@ -8,8 +8,11 @@ import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.kudos.model.enity.Kudos;
+import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
+import com.softserve.skillscope.skill.model.response.MostKudosedSkillsResponse;
 import com.softserve.skillscope.talent.TalentRepository;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
@@ -135,6 +138,37 @@ public class TalentServiceImpl implements TalentService {
         talentRepo.save(talent);
         return new GeneralResponse(talentId, "Skill " + skill.getTitle() + " successfully deleted!");
     }
+
+    @Override
+    public MostKudosedSkillsResponse getOwnMostKudosedSkills(Long talentId) {
+
+        Talent talent = utilService.findUserById(talentId).getTalent();
+        if (utilService.isNotCurrentUser(talent.getUser())) {
+            throw new ForbiddenRequestException();
+        }
+
+        int maxTotalAmount = talent.getProofs().stream()
+                .flatMap(proof -> proof.getSkills().stream())
+                .mapToInt(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount)
+                        .sum())
+                .max().getAsInt();
+
+        return MostKudosedSkillsResponse.builder()
+                .mostKudosedSkillsId(talent.getProofs().stream()
+                        .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
+                .flatMap(proof -> proof.getSkills().stream())
+                .filter(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount).sum() !=  0)
+                .filter(skill -> skill.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount).sum() == maxTotalAmount)
+                        .map(Skill::getId)
+                .toList()).build();
+    }
+
 
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
