@@ -1,4 +1,4 @@
-package com.softserve.skillscope.general.mapper;
+package com.softserve.skillscope.general.mapper.user;
 
 import com.softserve.skillscope.user.model.User;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,7 +1,7 @@
-package com.softserve.skillscope.general.mapper;
+package com.softserve.skillscope.general.mapper.user.impl;
 
+import com.softserve.skillscope.general.mapper.user.UserMapper;
 import com.softserve.skillscope.user.model.User;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
