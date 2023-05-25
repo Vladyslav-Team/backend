@@ -9,6 +9,7 @@ import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
+import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.skill.model.request.AddSkillsRequest;
 import com.softserve.skillscope.skill.model.response.MostKudosedSkillsResponse;
@@ -22,6 +23,7 @@ import com.softserve.skillscope.talent.service.TalentService;
 import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +36,7 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TalentServiceImpl implements TalentService {
     private UserProperties userProp;
     private TalentRepository talentRepo;
@@ -153,7 +156,8 @@ public class TalentServiceImpl implements TalentService {
                 .max().getAsInt();
 
         return MostKudosedSkillsResponse.builder()
-                .mostKudosedSkills(talent.getProofs().stream()
+                .mostKudosedSkillsId(talent.getProofs().stream()
+                        .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
                 .flatMap(proof -> proof.getSkills().stream())
                 .filter(skill -> skill.getKudos().stream()
                         .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
@@ -161,8 +165,11 @@ public class TalentServiceImpl implements TalentService {
                 .filter(skill -> skill.getKudos().stream()
                         .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
                         .mapToInt(Kudos::getAmount).sum() == maxTotalAmount)
+                        .map(Skill::getId)
                 .toList()).build();
     }
+
+
     /*
      * This method checks the field for not null. If in request we didn't get that fields, don't edit them.
      */
