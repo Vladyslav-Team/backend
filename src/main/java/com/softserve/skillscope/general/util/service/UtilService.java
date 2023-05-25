@@ -2,8 +2,10 @@ package com.softserve.skillscope.general.util.service;
 
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.skill.model.dto.SkillWithVerification;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.model.User;
@@ -40,6 +42,10 @@ public interface UtilService {
     Set<Skill> parseAllSkills(String skillsString);
 
     Set<Skill> stringToSkills(Set<String> newSet);
+
+    Set<SkillWithVerification> getSkillsWithVerification(Talent talent);
+
+    Integer calculateTotalKudosAmount4CurrentUser(Talent talent);
 
     boolean isCurrentKudos(Kudos kudos, User user);
 

@@ -3,8 +3,6 @@ package com.softserve.skillscope.general.mapper.talent.impl;
 import com.softserve.skillscope.general.mapper.talent.TalentMapper;
 import com.softserve.skillscope.general.model.ImageResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
-import com.softserve.skillscope.kudos.model.enity.Kudos;
-import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.talent.model.dto.GeneralTalent;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
@@ -29,7 +27,6 @@ public class TalentMapperImpl implements TalentMapper {
                 .surname(talent.getUser().getSurname())
                 .location(talent.getLocation())
                 .experience(talent.getExperience())
-                //TODO @SEM make it dynamic so text sorts as the filter words
                 .skills(talent.getSkills())
                 .build();
     }
@@ -48,8 +45,8 @@ public class TalentMapperImpl implements TalentMapper {
                 .age(talent.getBirthday() != null ? Period.between(talent.getBirthday(), LocalDate.now()).getYears() : 0)
                 .email(talent.getUser().getEmail())
                 .phone(talent.getPhone())
-                .skills(talent.getSkills())
-                .balance(calculateTotalKudosAmount4CurrentUser(talent))
+                .skills(utilService.getSkillsWithVerification(talent))
+                .balance(utilService.calculateTotalKudosAmount4CurrentUser(talent))
                 .build();
     }
 
@@ -58,11 +55,4 @@ public class TalentMapperImpl implements TalentMapper {
         return new ImageResponse(talent.getImage());
     }
 
-    private Integer calculateTotalKudosAmount4CurrentUser(Talent talent) {
-        return utilService.isNotCurrentUser(talent.getUser()) ?
-                null :
-                talent.getProofs().stream()
-                        .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
-                        .flatMapToInt(proof -> proof.getKudos().stream().mapToInt(Kudos::getAmount)).sum();
-    }
 }

@@ -8,13 +8,15 @@ import com.softserve.skillscope.general.handler.exception.skillException.SkillNo
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.kudos.KudosRepository;
-import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.ProofRepository;
 import com.softserve.skillscope.proof.model.entity.Proof;
+import com.softserve.skillscope.proof.model.response.ProofStatus;
 import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
 import com.softserve.skillscope.skill.SkillRepository;
+import com.softserve.skillscope.skill.model.dto.SkillWithVerification;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
@@ -164,6 +166,28 @@ public class UtilServiceImpl implements UtilService {
                     .build();
         }
         kudosRepo.save(kudos);
+    }
+    @Override
+    public Set<SkillWithVerification> getSkillsWithVerification(Talent talent) {
+        Set<Skill> verifiedSkills = getSkillsFromProofs(talent);
+        return talent.getSkills().stream()
+                .map(skill -> new SkillWithVerification(skill, verifiedSkills.contains(skill)))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Skill> getSkillsFromProofs(Talent talent) {
+        return talent.getProofs().stream()
+                .flatMap(proof -> proof.getSkills().stream())
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Integer calculateTotalKudosAmount4CurrentUser(Talent talent) {
+        return isNotCurrentUser(talent.getUser()) ?
+                null :
+                talent.getProofs().stream()
+                        .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
+                        .flatMapToInt(proof -> proof.getKudos().stream().mapToInt(Kudos::getAmount)).sum();
     }
 
     @Override
