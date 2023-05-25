@@ -70,7 +70,7 @@ public class TalentController {
     @Operation(summary = "Add skills on talent profile")
     @PreAuthorize("hasRole('TALENT')")
     ResponseEntity<GeneralResponse> addSkillsOnTalentProfile(@PathVariable("talent-id") Long talentId,
-                                                     @RequestBody(required = false) AddSkillsRequest newSkills){
+                                                             @RequestBody(required = false) AddSkillsRequest newSkills) {
         return ResponseEntity.status(HttpStatus.OK).body(talentService.addSkillsOnTalentProfile(talentId, newSkills));
     }
 
@@ -78,7 +78,7 @@ public class TalentController {
     @Operation(summary = "Delete skills from talent profile")
     @PreAuthorize("hasRole('TALENT')")
     ResponseEntity<GeneralResponse> deleteSkillFromTalentProfile(@PathVariable("talent-id") Long talentId,
-                                                         @PathVariable("skill-id") Long skillId){
+                                                                 @PathVariable("skill-id") Long skillId) {
         return ResponseEntity.status(HttpStatus.OK).body(talentService.deleteSkillFromTalentProfile(talentId, skillId));
     }
     @GetMapping("/talents/{talent-id}/stats/proofs")

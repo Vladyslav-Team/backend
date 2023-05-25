@@ -1,6 +1,6 @@
 package com.softserve.skillscope.talent.model.dto;
 
-import com.softserve.skillscope.skill.model.entity.Skill;
+import com.softserve.skillscope.skill.model.dto.SkillWithVerification;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
@@ -19,7 +19,7 @@ public record TalentProfile(
         @NotBlank int age,
         @NotBlank String email,
         @NotBlank String phone,
-        @NotBlank Set<Skill> skills,
+        @NotBlank Set<SkillWithVerification> skills,
         @NotBlank Integer balance
 ) {
 }

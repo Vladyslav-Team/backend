@@ -85,7 +85,6 @@ public class TalentServiceImpl implements TalentService {
     public TalentProfile getTalentProfile(Long talentId) {
         return talentMapper.toTalentProfile(utilService.findTalentById(talentId));
     }
-
     @Transactional
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
