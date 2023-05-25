@@ -38,7 +38,7 @@ public class PayPalServiceImpl implements PayPalService {
 
     @Override
     public PaymentOrder createPayment(Long sponsorId, BigDecimal amount, HttpServletRequest request) {
-        Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
+        Sponsor sponsor = utilService.findSponsorById(sponsorId);
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -72,7 +72,7 @@ public class PayPalServiceImpl implements PayPalService {
 
     @Override
     public CompletedOrder completePayment(Long sponsorId, String token) {
-        Sponsor sponsor = utilService.findUserById(sponsorId).getSponsor();
+        Sponsor sponsor = utilService.findSponsorById(sponsorId);
         if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }

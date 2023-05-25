@@ -82,13 +82,13 @@ public class TalentServiceImpl implements TalentService {
 
     @Override
     public TalentProfile getTalentProfile(Long talentId) {
-        return talentMapper.toTalentProfile(utilService.findUserById(talentId).getTalent());
+        return talentMapper.toTalentProfile(utilService.findTalentById(talentId));
     }
 
     @Transactional
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -104,12 +104,12 @@ public class TalentServiceImpl implements TalentService {
      */
     @Override
     public ImageResponse getTalentImage(Long talentId) {
-        return talentMapper.toTalentImage(utilService.findUserById(talentId).getTalent());
+        return talentMapper.toTalentImage(utilService.findTalentById(talentId));
     }
 
     @Override
     public GeneralResponse addSkillsOnTalentProfile(Long talentId, AddSkillsRequest newSkillsRequest) {
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -124,7 +124,7 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public GeneralResponse deleteSkillFromTalentProfile(Long talentId, Long skillId) {
         Skill skill = utilService.findSkillById(skillId);
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -142,7 +142,7 @@ public class TalentServiceImpl implements TalentService {
     @Override
     public MostKudosedSkillsResponse getOwnMostKudosedSkills(Long talentId) {
 
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
             throw new ForbiddenRequestException();
         }

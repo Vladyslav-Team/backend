@@ -151,7 +151,7 @@ public class ProofServiceImpl implements ProofService {
     
     @Override
     public GeneralResponse addProof(Long talentId, ProofRequest creationRequest) {
-        Talent creator = utilService.findUserById(talentId).getTalent();
+        Talent creator = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(creator.getUser())) {
             throw new ForbiddenRequestException();
         }
@@ -281,7 +281,7 @@ public class ProofServiceImpl implements ProofService {
     }
 
     private void checkOwnProofs(Long talentId, Long proofId) {
-        Talent talent = utilService.findUserById(talentId).getTalent();
+        Talent talent = utilService.findTalentById(talentId);
         Proof proof = utilService.findProofById(proofId);
         User user = talent.getUser();
 

@@ -13,6 +13,7 @@ import com.softserve.skillscope.security.payment.model.enums.OrderStatus;
 import com.softserve.skillscope.skill.SkillRepository;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
@@ -41,11 +42,24 @@ public class UtilServiceImpl implements UtilService {
     private UserProperties userProps;
     private PasswordEncoder passwordEncoder;
 
+    @Override
+    public Talent findTalentById(Long id){
+        User user = userRepo.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+        if (user.getTalent() == null){
+            throw new BadRequestException("Talent with such credentials is not found");
+        }
+        return user.getTalent();
+    }
 
     @Override
-    public User findUserById(Long id) {
-        return userRepo.findById(id)
+    public Sponsor findSponsorById(Long id){
+        User user = userRepo.findById(id)
                 .orElseThrow(UserNotFoundException::new);
+        if (user.getSponsor() == null){
+            throw new BadRequestException("Sponsor with such credentials is not found");
+        }
+        return user.getSponsor();
     }
 
     @Override

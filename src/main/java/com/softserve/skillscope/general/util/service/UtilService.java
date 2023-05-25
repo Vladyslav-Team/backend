@@ -4,6 +4,7 @@ import com.softserve.skillscope.kudos.model.enity.Kudos;
 import com.softserve.skillscope.proof.model.entity.Proof;
 import com.softserve.skillscope.skill.model.entity.Skill;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
+import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.model.User;
@@ -11,7 +12,9 @@ import com.softserve.skillscope.user.model.User;
 import java.util.Set;
 
 public interface UtilService {
-    User findUserById(Long id);
+    Talent findTalentById(Long id);
+
+    Sponsor findSponsorById(Long id);
 
     User findUserByEmail(String name);
 
