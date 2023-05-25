@@ -9,7 +9,7 @@ import com.softserve.skillscope.security.payment.model.dto.OrderModel;
 import com.softserve.skillscope.security.payment.model.dto.OrdersResponse;
 import com.softserve.skillscope.security.payment.model.entity.Orders;
 import com.softserve.skillscope.security.payment.service.OrdersService;
-import com.softserve.skillscope.user.model.User;
+import com.softserve.skillscope.sponsor.model.entity.Sponsor;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,15 +27,15 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public OrdersResponse getAllOrders(Long sponsorId, int page, int size) {
-        User sponsor = utilService.findUserById(sponsorId);
-        if (utilService.isNotCurrentUser(sponsor)) {
+        Sponsor sponsor = utilService.findSponsorById(sponsorId);
+        if (utilService.isNotCurrentUser(sponsor.getUser())) {
             throw new ForbiddenRequestException();
         }
         if (page < 1 || size < 1) {
             throw new BadRequestException("Page index/size must not be lower than expected");
         }
         Page<Orders> pageSponsors =
-                orderRepo.findAllBySponsorOrderByCreateDate(PageRequest.of(page - 1, size), sponsor.getSponsor());
+                orderRepo.findAllBySponsorOrderByCreateDate(PageRequest.of(page - 1, size), sponsor);
         if (pageSponsors.isEmpty())
             return OrdersResponse.builder().id(sponsorId).status("No orders were found. Try next time.").build();
 

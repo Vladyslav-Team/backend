@@ -1,6 +1,7 @@
 package com.softserve.skillscope.user.service.impl;
 
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
+import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.user.UserRepository;
@@ -17,7 +18,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GeneralResponse deleteUser(Long userId) {
-        User user = utilService.findUserById(userId);
+        User user = userRepo.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
         if (utilService.isNotCurrentUser(user)) {
             throw new ForbiddenRequestException();
         }

@@ -8,7 +8,6 @@ import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
 import com.softserve.skillscope.talent.model.response.TalentStatsResponse;
 
-
 public interface TalentService {
     GeneralTalentResponse getAllTalentsByPage(int page, String skills);
     TalentProfile getTalentProfile(Long talentId);
