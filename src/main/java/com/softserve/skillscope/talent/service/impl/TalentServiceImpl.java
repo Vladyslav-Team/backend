@@ -19,6 +19,7 @@ import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.entity.Talent;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
+import com.softserve.skillscope.talent.model.response.TalentStatsResponse;
 import com.softserve.skillscope.talent.service.TalentService;
 import com.softserve.skillscope.user.model.UserProperties;
 import jakarta.transaction.Transactional;
@@ -140,7 +141,7 @@ public class TalentServiceImpl implements TalentService {
     }
 
     @Override
-    public MostKudosedSkillsResponse getOwnMostKudosedSkills(Long talentId) {
+public TalentStatsResponse getOwnMostKudosedSkills(Long talentId) {
 
         Talent talent = utilService.findTalentById(talentId);
         if (utilService.isNotCurrentUser(talent.getUser())) {
@@ -155,8 +156,8 @@ public class TalentServiceImpl implements TalentService {
                         .sum())
                 .max().getAsInt();
 
-        return MostKudosedSkillsResponse.builder()
-                .mostKudosedSkillsId(talent.getProofs().stream()
+        return TalentStatsResponse.builder()
+                .mostKudosedList(talent.getProofs().stream()
                         .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
                 .flatMap(proof -> proof.getSkills().stream())
                 .filter(skill -> skill.getKudos().stream()

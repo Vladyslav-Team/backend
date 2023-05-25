@@ -7,6 +7,7 @@ import com.softserve.skillscope.skill.model.response.MostKudosedSkillsResponse;
 import com.softserve.skillscope.talent.model.dto.TalentProfile;
 import com.softserve.skillscope.talent.model.request.TalentEditRequest;
 import com.softserve.skillscope.talent.model.response.GeneralTalentResponse;
+import com.softserve.skillscope.talent.model.response.TalentStatsResponse;
 import com.softserve.skillscope.talent.service.TalentService;
 import com.softserve.skillscope.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -85,7 +86,7 @@ public class TalentController {
     @GetMapping("/talents/{talent-id}/stats/skills")
     @Operation(summary = "Get the most kudosed skill")
     @ResponseStatus(HttpStatus.OK)
-    public MostKudosedSkillsResponse getOwnMostKudosedSkills(@PathVariable("talent-id") Long talentId) {
+    public TalentStatsResponse getOwnMostKudosedSkills(@PathVariable("talent-id") Long talentId) {
         return talentService.getOwnMostKudosedSkills(talentId);
     }
 }
