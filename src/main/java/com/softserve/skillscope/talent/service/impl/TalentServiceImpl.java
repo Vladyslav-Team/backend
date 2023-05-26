@@ -85,6 +85,7 @@ public class TalentServiceImpl implements TalentService {
     public TalentProfile getTalentProfile(Long talentId) {
         return talentMapper.toTalentProfile(utilService.findTalentById(talentId));
     }
+
     @Transactional
     @Override
     public GeneralResponse editTalentProfile(Long talentId, TalentEditRequest talentToUpdate) {
@@ -154,6 +155,9 @@ public class TalentServiceImpl implements TalentService {
 
         return new TalentStatsResponse(talent.getProofs().stream()
                 .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
+                .filter(proof -> proof.getKudos().stream()
+                        .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
+                        .mapToInt(Kudos::getAmount).sum() != 0)
                 .filter(proof -> proof.getKudos().stream()
                         .mapToInt(Kudos::getAmount)
                         .sum() == maxTotalAmount)
