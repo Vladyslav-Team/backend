@@ -148,6 +148,7 @@ public class TalentServiceImpl implements TalentService {
         }
 
         int maxTotalAmount = talent.getProofs().stream()
+                .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
                 .mapToInt(proof -> proof.getKudos().stream()
                         .mapToInt(Kudos::getAmount)
                         .sum())
@@ -174,6 +175,7 @@ public class TalentServiceImpl implements TalentService {
         }
 
         int maxTotalAmount = talent.getProofs().stream()
+                .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
                 .flatMap(proof -> proof.getSkills().stream())
                 .mapToInt(skill -> skill.getKudos().stream()
                         .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
