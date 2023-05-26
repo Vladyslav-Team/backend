@@ -53,12 +53,12 @@ public class UtilServiceImpl implements UtilService {
 
 
     @Override
-    public Talent findTalentById(Long id){
+    public Talent findTalentById(Long id) {
         return talentRepo.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
     @Override
-    public Sponsor findSponsorById(Long id){
+    public Sponsor findSponsorById(Long id) {
         return sponsorRepo.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
@@ -133,7 +133,7 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
-    public Set<Skill> getSkillsByProofId(Long proofId){
+    public Set<Skill> getSkillsByProofId(Long proofId) {
         Proof proof = findProofById(proofId);
         return skillRepo.findAllByProofsId(proof.getId());
     }
@@ -143,6 +143,7 @@ public class UtilServiceImpl implements UtilService {
         return skillRepo.findById(id)
                 .orElseThrow(SkillNotFoundException::new);
     }
+
     @Override
     public Set<Skill> parseAllSkills(String text) {
         Set<String> skills = Set.of(text.split(","));
@@ -158,6 +159,7 @@ public class UtilServiceImpl implements UtilService {
     public Set<Skill> stringToSkills(Set<String> newSet) {
         return newSet.stream().map(skillRepo::findByTitle).filter(Objects::nonNull).collect(Collectors.toSet());
     }
+
     @Override
     public void checkIfKudosIsPresent(Integer amount, Sponsor sponsor, Proof proof, Skill skill) {
         Kudos kudos = kudosRepo.findBySponsorAndProofAndSkill(sponsor, proof, skill);
@@ -175,6 +177,7 @@ public class UtilServiceImpl implements UtilService {
         }
         kudosRepo.save(kudos);
     }
+
     @Override
     public Set<SkillWithVerification> getSkillsWithVerification(Talent talent) {
         Set<Skill> verifiedSkills = getSkillsFromProofs(talent);
@@ -185,6 +188,7 @@ public class UtilServiceImpl implements UtilService {
 
     private Set<Skill> getSkillsFromProofs(Talent talent) {
         return talent.getProofs().stream()
+                .filter(proof -> proof.getStatus() == ProofStatus.PUBLISHED)
                 .flatMap(proof -> proof.getSkills().stream())
                 .collect(Collectors.toSet());
     }
@@ -199,7 +203,7 @@ public class UtilServiceImpl implements UtilService {
     }
 
     @Override
-    public boolean isCurrentKudos(Kudos kudos, User user){
+    public boolean isCurrentKudos(Kudos kudos, User user) {
         return kudos.getSponsor().getId().equals(user.getId());
     }
 }
