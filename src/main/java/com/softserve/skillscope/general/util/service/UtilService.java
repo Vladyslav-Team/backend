@@ -19,6 +19,8 @@ public interface UtilService {
 
     User findUserByEmail(String name);
 
+    User findUserById(Long id);
+
     User getCurrentUser();
 
     boolean isNotCurrentUser(User user);
@@ -34,6 +36,8 @@ public interface UtilService {
     String getRoles(User saveUser);
 
     Set<String> getRole(Set<Role> roles);
+
+    User buildUser(RegistrationRequest request);
 
     boolean updateTokenActivation(Sponsor sponsor);
 

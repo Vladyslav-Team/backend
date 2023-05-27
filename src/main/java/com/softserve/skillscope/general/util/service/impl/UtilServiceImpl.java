@@ -67,6 +67,10 @@ public class UtilServiceImpl implements UtilService {
         return userRepo.findByEmail(name)
                 .orElseThrow(UserNotFoundException::new);
     }
+    @Override
+    public User findUserById(Long id) {
+        return userRepo.findById(id).orElseThrow(UserNotFoundException::new);
+    }
 
     @Override
     public User getCurrentUser() {
@@ -114,6 +118,11 @@ public class UtilServiceImpl implements UtilService {
         if (userRepo.existsByEmail(request.email())) {
             throw new UserAlreadyExistsException();
         }
+        return buildUser(request);
+    }
+
+    @Override
+    public User buildUser(RegistrationRequest request) {
         if (request.roles() == null) {
             throw new BadRequestException("Invalid user role");
         }

@@ -3,6 +3,7 @@ package com.softserve.skillscope.security.auth.service.impl;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.UnauthorizedUserException;
 import com.softserve.skillscope.general.util.service.UtilService;
+import com.softserve.skillscope.security.admin.service.AdminService;
 import com.softserve.skillscope.security.auth.JwtToken;
 import com.softserve.skillscope.security.auth.service.AuthenticationService;
 import com.softserve.skillscope.sponsor.model.entity.Sponsor;
@@ -36,9 +37,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private JwtEncoder jwtEncoder;
     private Map<String, String> verifiedTokens;
     private SponsorProperties sponsorProps;
+    private AdminService adminService;
 
     @Override
     public JwtToken registration(RegistrationRequest request) {
+        adminService.checkIfRegistrationIsLocked();
+
         User user = utilService.createUser(request);
         if (request.roles().contains(Role.TALENT)) {
             Talent talentInfo = Talent.builder()
@@ -49,7 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
             talentInfo.setUser(user);
             user.setTalent(talentInfo);
-        }else if (request.roles().contains(Role.SPONSOR)) {
+        } else if (request.roles().contains(Role.SPONSOR)) {
 
             Sponsor sponsor = Sponsor.builder()
                     .location(request.location())
@@ -60,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             sponsor.setUser(user);
             user.setSponsor(sponsor);
 
-        } else{
+        } else {
             throw new BadRequestException("Invalid user role");
         }
         User saveUser = userRepo.save(user);
