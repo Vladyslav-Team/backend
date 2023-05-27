@@ -1,9 +1,10 @@
 package com.softserve.skillscope.security.admin.service;
 
 import com.softserve.skillscope.general.model.GeneralResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface AdminService {
-    GeneralResponse createAdmin();
+    GeneralResponse createAdmin(HttpServletRequest request);
 
     GeneralResponse deleteUser(Long userId);
 

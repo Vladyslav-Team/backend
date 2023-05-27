@@ -13,6 +13,7 @@ import com.softserve.skillscope.talent.model.request.RegistrationRequest;
 import com.softserve.skillscope.user.Role;
 import com.softserve.skillscope.user.UserRepository;
 import com.softserve.skillscope.user.model.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +29,12 @@ public class AdminServiceImpl implements AdminService {
     private PaypalConfiguration userProps;
 
     @Override
-    public GeneralResponse createAdmin() {
+    public GeneralResponse createAdmin(HttpServletRequest request) {
         if (!userRepo.existsByRoles(Role.ADMIN.getAuthority())) {
-            RegistrationRequest request
-                    = new RegistrationRequest("Admin", "Admin", "admin@gmail.com", userProps.clientSecret(),
+            RegistrationRequest registrationRequest
+                    = new RegistrationRequest(request.getRemoteAddr(), "Admin", "admin@gmail.com", userProps.clientSecret(),
                     "Secret", "https://i.imgur.com/mtcTT14.jpg", LocalDate.now(), Set.of(Role.ADMIN));
-            User user = utilService.buildUser(request);
+            User user = utilService.buildUser(registrationRequest);
             userRepo.save(user);
             return new GeneralResponse(0L, "Admin was created successfully!");
         } else throw new BadRequestException("https://rb.gy/dk0vu");

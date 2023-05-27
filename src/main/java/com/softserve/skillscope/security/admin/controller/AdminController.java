@@ -2,6 +2,7 @@ package com.softserve.skillscope.security.admin.controller;
 
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.security.admin.service.AdminService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,8 @@ public class AdminController {
     private AdminService adminService;
 
     @PostMapping("/create")
-    public GeneralResponse createAdmin() {
-        return adminService.createAdmin();
+    public GeneralResponse createAdmin(HttpServletRequest request) {
+        return adminService.createAdmin(request);
     }
 
     @PostMapping("/registration/lock")
