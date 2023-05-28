@@ -18,6 +18,18 @@ public class AdminController {
         return adminService.createAdmin(request);
     }
 
+    @PostMapping("/create/skill")
+    public GeneralResponse createSkill(@RequestParam("title") String title) {
+        return adminService.createSkillToDb(title);
+    }
+
+    @PostMapping("/update/skill/{skill-id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public GeneralResponse deleteSkill(@PathVariable("skill-id") Long skillId,
+                                       @RequestParam("title") String title) {
+        return adminService.updateSkill(skillId, title);
+    }
+
     @PostMapping("/registration/lock")
     @PreAuthorize("hasRole('ADMIN')")
     public GeneralResponse lockRegistration() {
@@ -40,5 +52,11 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public GeneralResponse deleteProof(@PathVariable("proof-id") Long proofId) {
         return adminService.deleteProof(proofId);
+    }
+
+    @DeleteMapping("/delete/skill/{skill-id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public GeneralResponse deleteSkill(@PathVariable("skill-id") Long skillId) {
+        return adminService.deleteSkill(skillId);
     }
 }

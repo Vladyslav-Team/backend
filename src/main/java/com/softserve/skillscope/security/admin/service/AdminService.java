@@ -10,6 +10,12 @@ public interface AdminService {
 
     GeneralResponse deleteProof(Long proofId);
 
+    GeneralResponse updateSkill(Long skillId, String text);
+
+    GeneralResponse deleteSkill(Long skillId);
+
+    GeneralResponse createSkillToDb(String text);
+
     GeneralResponse lockRegistration();
 
     GeneralResponse unlockRegistration();

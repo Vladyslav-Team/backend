@@ -37,9 +37,9 @@ public class GeneralExceptionsControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO(exception.getMessage()));
     }
 
-    @ExceptionHandler({ValidationException.class})
+    @ExceptionHandler({ValidationException.class, ConflictException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<ErrorDTO> validationException(ValidationException exception) {
+    public ResponseEntity<ErrorDTO> conflictExceptionHandler(Exception exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO(exception.getMessage()));
     }
 }
