@@ -3,7 +3,6 @@ package com.softserve.skillscope.security.admin.service.impl;
 import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.ConflictException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
-import com.softserve.skillscope.general.handler.exception.generalException.UserNotFoundException;
 import com.softserve.skillscope.general.model.GeneralResponse;
 import com.softserve.skillscope.general.util.service.UtilService;
 import com.softserve.skillscope.proof.ProofRepository;
@@ -122,6 +121,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private User getUser() {
-        return userRepo.findByRoles(Role.ADMIN.getAuthority()).orElseThrow(UserNotFoundException::new);
+        return userRepo.findByRoles(Role.ADMIN.getAuthority()).orElse(null);
     }
 }
