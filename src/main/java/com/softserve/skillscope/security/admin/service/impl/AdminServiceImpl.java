@@ -1,6 +1,5 @@
 package com.softserve.skillscope.security.admin.service.impl;
 
-import com.softserve.skillscope.general.handler.exception.generalException.BadRequestException;
 import com.softserve.skillscope.general.handler.exception.generalException.ConflictException;
 import com.softserve.skillscope.general.handler.exception.generalException.ForbiddenRequestException;
 import com.softserve.skillscope.general.model.GeneralResponse;
@@ -112,7 +111,7 @@ public class AdminServiceImpl implements AdminService {
     public void checkIfRegistrationIsLocked() {
         User user = getUser();
         if (user != null && user.getSurname().equalsIgnoreCase(AdminStatus.LOCKED.name())) {
-            throw new BadRequestException("The registration is currently unavailable. Try again later.");
+            throw new ForbiddenRequestException("The registration is currently unavailable. Try again later.");
         }
     }
 
