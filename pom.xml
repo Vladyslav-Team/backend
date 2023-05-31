@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.softserve</groupId>
     <artifactId>skillscope</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>4.2.2-SNAPSHOT</version>
     <name>skillscope</name>
     <description>SkillScope project for Spring Boot</description>
     <properties>
@@ -65,6 +65,11 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>checkout-sdk</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

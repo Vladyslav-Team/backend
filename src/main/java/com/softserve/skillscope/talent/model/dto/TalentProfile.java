@@ -1,9 +1,10 @@
 package com.softserve.skillscope.talent.model.dto;
 
+import com.softserve.skillscope.skill.model.dto.SkillWithVerification;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
-import java.time.LocalDate;
+import java.util.Set;
 
 @Builder
 public record TalentProfile(
@@ -17,6 +18,8 @@ public record TalentProfile(
         @NotBlank String education,
         @NotBlank int age,
         @NotBlank String email,
-        @NotBlank String phone
+        @NotBlank String phone,
+        @NotBlank Set<SkillWithVerification> skills,
+        @NotBlank Integer balance
 ) {
 }
