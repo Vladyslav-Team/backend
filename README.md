@@ -1,6 +1,7 @@
 # Project SkillScope
 This is backend part of educational SkillScope project that will help you build website. Instruction describes how to clone and run the project on your local machine. 
-
+## SkillScope Release
+[<img src="https://drive.google.com/thumbnail?id=1RsMBZTH-PoQKe9Ws_6pYj1RzPA938d8f" width="50%">](https://youtu.be/4rrKhes_R_c)
 ## Getting Started
 These instructions will help you get a copy of the project and running it on your local machine for development and testing purposes.
 
