@@ -1,3 +1,4 @@
+[![Java CI](https://github.com/Vladyslav-Team/backend/actions/workflows/main.yml/badge.svg)](https://github.com/Vladyslav-Team/backend/actions/workflows/main.yml)
 # Project SkillScope
 This is backend part of educational SkillScope project that will help you build website. Instruction describes how to clone and run the project on your local machine. 
 ## SkillScope Release

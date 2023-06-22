@@ -1,10 +1,10 @@
-name: React CI
+name: Java CI
 
 on:
   workflow_dispatch: 
   push:
     branches:
-      - "dev"
+      - "main"
 
 
 jobs:
@@ -17,5 +17,35 @@ jobs:
         
     steps:
       - uses: actions/checkout@v1
-      - run: pkill java
-      - run: mvn clean package
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - run: sudo pkill -f 'java -jar' 
+      - run: cd src/main/; sudo rm -rf resources/
+      - run: cd src/main/; ls 
+      - run: cd ~; cp -R backend/src/main/resources/ actions-runner/_work/backend/backend/src/main/
+      - run: ls ; mvn clean package
+      - name: Rename the artifact
+        run: ls; cp target/skillscope-4.2.2-SNAPSHOT.jar skillscope-4.2.2-${{ github.sha }}.jar
+
+      - name: Save the artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: skillscope-4.2.2
+          path: skillscope-4.2.2-${{ github.sha }}.jar
+                  
+  fake-deploy:
+        runs-on: self-hosted
+        needs: build
+        steps:
+           - name: Get the artifact
+             uses: actions/download-artifact@master
+             with:
+              name: skillscope-4.2.2
+           - name: Fake deploy
+             run: sudo nohup java -jar skillscope-4.2.2-*.jar &
+     
+
+        
+      
+      
