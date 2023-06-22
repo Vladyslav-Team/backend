@@ -34,7 +34,7 @@ jobs:
           name: skillscope-4.2.2
           path: skillscope-4.2.2-${{ github.sha }}.jar
                   
-  fake-deploy:
+  deploy:
         runs-on: self-hosted
         needs: build
         steps:
