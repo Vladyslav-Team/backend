@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -162,8 +163,7 @@ public class TalentServiceImpl implements TalentService {
                 .filter(proof -> proof.getKudos().stream()
                         .mapToInt(Kudos::getAmount)
                         .sum() == maxTotalAmount)
-                .map(Proof::getId)
-                .toList());
+                .map(Proof::getId).collect(Collectors.toSet()));
     }
 
     @Override
@@ -193,8 +193,7 @@ public class TalentServiceImpl implements TalentService {
                         .filter(skill -> skill.getKudos().stream()
                                 .filter(kudos -> talent.getProofs().contains(kudos.getProof()))
                                 .mapToInt(Kudos::getAmount).sum() == maxTotalAmount)
-                        .map(Skill::getId)
-                        .toList()).build();
+                        .map(Skill::getId).collect(Collectors.toSet())).build();
     }
 
 
